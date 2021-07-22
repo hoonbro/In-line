@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,7 +21,7 @@ public class UserEntity {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY) //기본키 생성을 db에 위임하는 방법(auto increment)
-    private int userId;
+    private Long userId;
 
     @Column(name = "email")
     private String email;
@@ -54,14 +55,14 @@ public class UserEntity {
     private boolean login;
 
     @Column(name = "room_id")
-    private int roomId;
+    private Long roomId = 1l;
 
-    @Column(name = "belong_id")
-    private int belongId;
+    @Column(name = "dept_id")
+    private Long deptId;
 
-    @Column(name = "position_id")
-    private int positionId;
+    @Column(name = "job_id")
+    private Long jobId;
 
     @Column(name = "office_id")
-    private int officeId;
+    private Long officeId;
 }

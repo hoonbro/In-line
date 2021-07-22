@@ -12,14 +12,16 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "belong")
-public class BelongEntity {
+@Table(name = "job")
+public class JobEntity {
     @Id
-    @Column(name = "belong_id")
+    @Column(name = "job_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY) //기본키 생성을 db에 위임하는 방법(auto increment)
-    private int belongId;
-    @Column(name = "belong_name")
-    private String belongName;
+    private Long jobId;
+
+    @Column(name = "job_name")
+    private String jobName;
+
     @Column(name = "office_id")
-    private int officeId;
+    private Long office_id;
 }

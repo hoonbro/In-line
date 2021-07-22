@@ -12,13 +12,14 @@ import javax.persistence.*;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "office")
-public class OfficeEntity {
+@Table(name = "department")
+public class DeptEntity {
     @Id
-    @Column(name = "office_id")
+    @Column(name = "dept_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY) //기본키 생성을 db에 위임하는 방법(auto increment)
+    private Long deptId;
+    @Column(name = "dept_name")
+    private String deptName;
+    @Column(name = "office_id")
     private Long officeId;
-
-    @Column(name = "office_name")
-    private String officeName;
 }
