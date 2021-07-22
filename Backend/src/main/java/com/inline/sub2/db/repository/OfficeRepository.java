@@ -1,9 +1,9 @@
 package com.inline.sub2.db.repository;
 
-import com.inline.sub2.db.entity.officeEntity;
+import com.inline.sub2.db.entity.OfficeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface officeRepository extends JpaRepository<officeEntity, String> {
+public interface OfficeRepository extends JpaRepository<OfficeEntity, String> {
 }
