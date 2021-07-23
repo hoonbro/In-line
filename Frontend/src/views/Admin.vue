@@ -1,10 +1,11 @@
 <template>
-  <h1>Home</h1>
+  <h1>Admin</h1>
 </template>
 
 <script>
 export default {
-  name: "Home",
-  components: {},
+  name: "Admin",
 }
 </script>
+
+<style></style>
