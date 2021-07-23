@@ -38,15 +38,15 @@ public class AuthController {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
         try {
-            UserEntity loginUser = userService.getUserById(userDto.getEmail());
-
+            UserEntity loginUser = userService.getUserByEmail(userDto.getEmail());
             if(loginUser != null) {
                 if(passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
                     String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail(), "access-token");
                     logger.debug("로그인 토큰 정보 : {}", token);
                     map.put("accessToken", token);
-                    map.put("userId", userDto.getEmail());
+                    map.put("userDto",loginUser);
                     status = HttpStatus.CREATED;
+                    System.out.println(map.get("userDto"));
                 }
             }
         }catch (Exception e) {
