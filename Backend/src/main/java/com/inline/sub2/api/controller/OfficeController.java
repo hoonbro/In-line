@@ -5,13 +5,8 @@ import com.inline.sub2.api.service.DeptService;
 import com.inline.sub2.api.service.JobService;
 import com.inline.sub2.api.service.OfficeService;
 import com.inline.sub2.api.service.UserService;
-import com.inline.sub2.db.entity.DeptEntity;
-import com.inline.sub2.db.entity.JobEntity;
-import com.inline.sub2.db.entity.OfficeEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/office")
+@RequestMapping("/office")
 @CrossOrigin("*")
 public class OfficeController {
 
