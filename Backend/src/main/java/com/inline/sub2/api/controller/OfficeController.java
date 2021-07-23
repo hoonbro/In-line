@@ -38,15 +38,6 @@ public class OfficeController {
     @PostMapping()
     public ResponseEntity<Void> registUser(@RequestBody AdminRegistDto admin) {
         HttpStatus httpStatus = HttpStatus.OK;
-        try {
-            OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
-            log.info("회사 등록 완료");
-            DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName()); //부서 번호 조회
-            JobEntity jobEntity = jobService.getJobId(admin.getJobName()); //직책 번호 조회
-
-            admin.setOfficeId(officeEntity.getOfficeId());
-            admin.setDeptId(deptEntity.getDeptId());
-            admin.setJobId(jobEntity.getJobId());
 
             //임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
             UserEntity userEntity = userService.registAdmin(admin);
@@ -56,10 +47,6 @@ public class OfficeController {
                 log.error("회원 등록 실패");
                 httpStatus = HttpStatus.BAD_REQUEST;
             }
-        } catch (Exception e) {
-            log.error("회사 등록 실패 : {}", e);
-            httpStatus = HttpStatus.BAD_REQUEST;
-        }
 
         return new ResponseEntity<Void>(httpStatus);
     }
