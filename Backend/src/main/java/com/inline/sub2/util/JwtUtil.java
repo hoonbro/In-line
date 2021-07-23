@@ -30,7 +30,6 @@ public class JwtUtil{
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-        System.out.println("여기 제대로 들어왔니???!!!2222222222222222222222222222222222222222!!");
 
         JwtBuilder builder = Jwts.builder()
                 .setSubject(subject) // user를 구분할 수 있는 값

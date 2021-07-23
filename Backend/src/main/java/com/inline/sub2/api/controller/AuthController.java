@@ -46,7 +46,6 @@ public class AuthController {
                     map.put("accessToken", token);
                     map.put("userDto",loginUser);
                     status = HttpStatus.CREATED;
-                    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                     System.out.println(map.get("userDto"));
                 }
             }
