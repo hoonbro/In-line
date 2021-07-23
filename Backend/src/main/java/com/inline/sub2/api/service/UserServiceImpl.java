@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity getUserById(String userId) {
-        return userRepository.getById(userId);
+    public UserEntity getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

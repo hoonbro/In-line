@@ -9,6 +9,6 @@ public interface UserService {
 
     UserEntity registUser(UserDto user);
 
-    UserEntity getUserById(String userId) ;
+    UserEntity getUserByEmail(String email) ;
 }
 
