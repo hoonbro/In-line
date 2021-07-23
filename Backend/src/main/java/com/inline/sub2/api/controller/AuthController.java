@@ -23,38 +23,13 @@ public class AuthController {
 
     public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    @Autowired
-    UserService userService;
 
     @Autowired
     JwtUtil jwtUtil;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto){
-        Map<String, Object> map = new HashMap<String, Object>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        try {
-            UserEntity loginUser = userService.getUserByEmail(userDto.getEmail());
-            if(loginUser != null) {
-                if(passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
-                    String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail(), "access-token");
-                    logger.debug("로그인 토큰 정보 : {}", token);
-                    map.put("accessToken", token);
-                    map.put("userDto",loginUser);
-                    status = HttpStatus.CREATED;
-                    System.out.println(map.get("userDto"));
-                }
-            }
-        }catch (Exception e) {
-            logger.error("로그인 실패 : {}", e);
-            status = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<Map<String, Object>>(map, status);
-    }
+
 
     @GetMapping("/valiable")
     public ResponseEntity<Map<String, Object>> valiable(HttpServletRequest request) {
