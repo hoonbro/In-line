@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 @CrossOrigin("*")
 public class UserController {
     public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);

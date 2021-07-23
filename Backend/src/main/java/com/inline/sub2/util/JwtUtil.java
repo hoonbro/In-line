@@ -24,7 +24,7 @@ public class JwtUtil{
     @Value("${jwt.expiration}")
     private int EXPIRE_TIME;
 
-    public <T> String createToken(String userId, T data, String subject) {
+    public <T> String createToken(String email, T data, String subject) {
         Date now = new Date();
         //HS256 방식으로 암호화 방식 설정
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -34,7 +34,7 @@ public class JwtUtil{
         JwtBuilder builder = Jwts.builder()
                 .setSubject(subject) // user를 구분할 수 있는 값
                 .setExpiration(new Date(now.getTime() + EXPIRE_TIME))
-                .setAudience(userId)
+                .setAudience(email)
                 .signWith(SignatureAlgorithm.HS256, signingKey); //암호화 알고리즘
 
         return builder.compact();
