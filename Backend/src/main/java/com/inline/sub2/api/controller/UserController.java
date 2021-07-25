@@ -45,40 +45,35 @@ public class UserController {
     PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto){
+    public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto) {
         Map<String, Object> map = new HashMap<String, Object>();
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
         try {
             UserEntity loginUser = userService.getUserByEmail(userDto.getEmail());
-            if(loginUser != null) {
-                if(passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
-                    String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail(), "access-token");
+            if (loginUser != null) {
+                if (passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
+                    String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail());
                     logger.debug("로그인 토큰 정보 : {}", token);
                     map.put("accessToken", token);
-                    map.put("userDto",loginUser);
+                    map.put("userDto", loginUser);
                     status = HttpStatus.CREATED;
-                    System.out.println(map.get("userDto"));
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("로그인 실패 : {}", e);
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<Map<String, Object>>(map, status);
     }
 
-
-
-
-
-
-
-
-
+    @GetMapping("/test")
+    public ResponseEntity<Void> test() {
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
 
     @PostMapping("/account")
-    public ResponseEntity<Void> registUser(@RequestBody UserDto user){
+    public ResponseEntity<Void> registUser(@RequestBody UserDto user) {
         HttpStatus httpStatus = HttpStatus.OK;
         //회사 등록
         try {
@@ -86,14 +81,12 @@ public class UserController {
 
             //임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
             UserEntity userEntity = userService.registUser(user);
-            if(userEntity != null)
+            if (userEntity != null)
                 httpStatus = HttpStatus.CREATED;
-        }catch (Exception e) {
+        } catch (Exception e) {
             httpStatus = HttpStatus.BAD_REQUEST;
         }
-
-
-            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
     }
 
 }

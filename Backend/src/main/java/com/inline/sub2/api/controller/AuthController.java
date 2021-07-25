@@ -23,20 +23,15 @@ public class AuthController {
 
     public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-
     @Autowired
     JwtUtil jwtUtil;
-
-
-
-
 
     @GetMapping("/valiable")
     public ResponseEntity<Map<String, Object>> valiable(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
-        if (jwtUtil.validateToken(request.getHeader("Authorization"))) {
+        if (jwtUtil.validateToken(request.getHeader("accessToken"))) {
             logger.info("사용 가능한 토큰!!!");
         } else {
             status = HttpStatus.UNAUTHORIZED;
