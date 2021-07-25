@@ -3,11 +3,10 @@ package com.inline.sub2.auth;
 import com.inline.sub2.db.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class UserAuthDetail implements UserDetails {
     @Autowired
@@ -20,6 +19,8 @@ public class UserAuthDetail implements UserDetails {
 
     public UserAuthDetail(UserEntity userEntity) {
         this.userEntity = userEntity;
+        System.out.println(userEntity.getAuth());
+        roles.add(new SimpleGrantedAuthority(userEntity.getAuth()));
     }
 
 

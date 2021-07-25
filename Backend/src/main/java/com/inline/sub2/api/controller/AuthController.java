@@ -36,7 +36,7 @@ public class AuthController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
-        if (jwtUtil.validateToken(request.getHeader("Authorization"))) {
+        if (jwtUtil.validateToken(request.getHeader("accessToken"))) {
             logger.info("사용 가능한 토큰!!!");
         } else {
             status = HttpStatus.UNAUTHORIZED;

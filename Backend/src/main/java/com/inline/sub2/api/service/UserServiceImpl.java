@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setName(admin.getName());
             userEntity.setPhone(admin.getPhone());
             userEntity.setPassword(passwordEncoder.encode(admin.getPassword()));
-            userEntity.setAuth("ADMIN");
+            userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
             userEntity.setOfficeId(admin.getOfficeId());
         } catch (Exception e) {
