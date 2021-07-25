@@ -47,7 +47,7 @@ public class JwtUtil{
 
     public boolean validateToken(String jwt){
         return this.getClaims(jwt) != null;
-    }
+    }2
 
     //claims : 속성 정보(?), 권한 집합
     //JWT는 속성 정보 (Claim)를 JSON 데이터 구조로 표현한 토큰
