@@ -4,6 +4,7 @@ import com.inline.sub2.api.service.UserService;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -67,10 +68,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 UserEntity userEntity = userService.getUserByEmail(email);
                 if(userEntity != null) {
                     // 식별된 정상 유저인 경우, 요청 context 내에서 참조 가능한 인증 정보(jwtAuthentication) 생성.
-                    SsafyUserDetails userDetails = new SsafyUserDetails(user);
+                    UserAuthDetail userAuthDetails = new UserAuthDetail(userEntity);
                     UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(email,
-                            null, userDetails.getAuthorities());
-                    jwtAuthentication.setDetails(userDetails);
+                            null, userAuthDetails.getAuthorities());
+                    jwtAuthentication.setDetails(userAuthDetails);
                     return jwtAuthentication;
                 }
             }
