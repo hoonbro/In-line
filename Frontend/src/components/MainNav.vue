@@ -19,7 +19,7 @@ export default {
 <style lang="scss" scoped>
 nav {
   height: 60px;
-  @apply px-4 flex items-center shadow-md relative z-50;
+  @apply px-4 flex items-center shadow-md relative z-50 flex-shrink-0;
 
   .logo {
     @apply text-2xl font-bold;
