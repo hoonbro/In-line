@@ -1,25 +1,68 @@
 <template>
   <div class="noti-container">
     <div class="noti-list">
-      <div class="noti-list-item" v-for="i in 20" :key="i">
+      <div
+        class="noti-list-item"
+        v-for="notification in notifications"
+        :key="notification.id"
+      >
         <div class="content-container">
           <div class="contents">
-            <p><b>김병훈</b>님이 회의실로 초대하였습니다.</p>
-            <p class="time">10분 전</p>
+            <p>
+              <b>{{ notification.user }}</b
+              >님이 회의실로 초대하였습니다.
+            </p>
+            <p class="time">{{ notification.created }}</p>
           </div>
-          <button class="close-btn">
+          <button
+            class="close-btn"
+            @click="deleteNotification(notification.id)"
+          >
             <span class="material-icons">close</span>
           </button>
         </div>
-        <button class="join-room-btn">회의실 이동</button>
+        <button class="join-room-btn">
+          회의실 이동 ({{ notification.roomId }})
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from "@vue/reactivity"
+import axios from "axios"
+import { onMounted } from "@vue/runtime-core"
 export default {
   name: "NotiCenter",
+  setup() {
+    const notifications = ref([])
+
+    const getNotifications = async () => {
+      const res = await axios({
+        url: "http://localhost:3000/notifications",
+      })
+      notifications.value = res.data
+    }
+
+    const deleteNotification = async notiId => {
+      const res = await axios({
+        url: `http://localhost:3000/notifications/${notiId}`,
+        method: "DELETE",
+      })
+      notifications.value = notifications.value.filter(
+        noti => noti.id !== notiId
+      )
+    }
+
+    onMounted(() => {
+      getNotifications()
+    })
+    return {
+      notifications,
+      deleteNotification,
+    }
+  },
 }
 </script>
 
