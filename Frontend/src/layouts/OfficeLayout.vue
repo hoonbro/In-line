@@ -2,6 +2,8 @@
   <div class="layout">
     <MainNav />
     <main>
+      <LeftAsidebar />
+      <router-view class="flex-1" />
       <RightAsidebar />
     </main>
   </div>
@@ -10,12 +12,14 @@
 <script>
 import MainNav from "@/components/MainNav.vue"
 import RightAsidebar from "@/components/RightAsidebar.vue"
+import LeftAsidebar from "@/components/LeftAsidebar.vue"
 
 export default {
   name: "OfficeLayout",
   components: {
     MainNav,
     RightAsidebar,
+    LeftAsidebar,
   },
 }
 </script>
@@ -25,7 +29,7 @@ export default {
   @apply h-screen flex flex-col overflow-hidden;
 
   main {
-    @apply h-full overflow-hidden;
+    @apply h-full overflow-hidden flex;
   }
 }
 </style>
