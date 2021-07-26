@@ -1,11 +1,16 @@
 <template>
-  <h1>OfficeLayout</h1>
+  <MainNav />
   <router-view />
 </template>
 
 <script>
+import MainNav from "@/components/MainNav.vue"
+
 export default {
   name: "OfficeLayout",
+  components: {
+    MainNav,
+  },
 }
 </script>
 
