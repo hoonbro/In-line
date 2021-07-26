@@ -1,5 +1,5 @@
 <template>
-  <div class="backdrop">
+  <div class="backdrop" @click.self="$emit('close')">
     <div class="modal-container">
       <div class="flex justify-between">
         <h1 class="text-4xl font-bold">회사 등록</h1>
