@@ -1,7 +1,14 @@
 <template>
   <div class="backdrop">
     <div class="modal-container">
-      <h1 class="text-4xl font-bold">회사 등록</h1>
+      <div class="flex justify-between">
+        <h1 class="text-4xl font-bold">회사 등록</h1>
+        <button @click="$emit('close')">
+          <span class="material-icons-outlined">
+            close
+          </span>
+        </button>
+      </div>
       <div class="input-list">
         <TextInput
           v-model="formData.officeName"
