@@ -6,7 +6,11 @@
         <router-link class="btn" to="#">기능 소개</router-link>
       </li>
       <li>
-        <a class="btn cursor-pointer">회사 등록</a>
+        <a
+          class="btn cursor-pointer"
+          @click="isRegistOfficeModalActivation = true"
+          >회사 등록</a
+        >
       </li>
       <li>
         <router-link class="btn" :to="{ name: 'Login2' }">로그인</router-link>
@@ -14,12 +18,26 @@
     </ul>
   </div>
   <router-view />
+  <RegistOfficeModal
+    v-show="isRegistOfficeModalActivation"
+    @close="isRegistOfficeModalActivation = false"
+  />
 </template>
 
 <script>
+import { ref } from "vue"
+import RegistOfficeModal from "@/components/RegistOfficeModal.vue"
+
 export default {
   name: "LandingLayout",
-  components: {},
+  components: { RegistOfficeModal },
+  setup() {
+    const isRegistOfficeModalActivation = ref(false)
+
+    return {
+      isRegistOfficeModalActivation,
+    }
+  },
 }
 </script>
 
