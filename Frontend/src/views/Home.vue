@@ -1,6 +1,4 @@
-<template>
-  <h1>Home</h1>
-</template>
+<template></template>
 
 <script>
 export default {
@@ -8,3 +6,5 @@ export default {
   components: {},
 }
 </script>
+
+<style scoped lang="scss"></style>

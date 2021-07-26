@@ -1,9 +1,8 @@
-// 영수님
-// test
+// 영수
 export const landing = {
   namespaced: true,
   state: () => ({}),
-  mutations: {},
   getters: {},
+  mutations: {},
   actions: {},
 }
