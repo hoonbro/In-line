@@ -7,14 +7,13 @@
         class="picture"
       />
     </div>
-    <div class="face2" v-if="videoList > 9">
+    <!-- <div class="face2" v-if="videoList > 9">
       <img
         src="http://placeimg.com/400/240/any?t=1627265125999"
         alt=""
         class="picture"
       />
-    </div>
-    <!-- <p>{{ videoList }}</p> -->
+    </div> -->
   </div>
 </template>
 
@@ -29,14 +28,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+// @apply grid grid-rows-3 grid-cols-1;
 .face {
-  @apply grid grid-rows-3;
+  // @apply grid auto-cols-fr object-scale-down;
   width: 400px;
   height: 240px;
-  display: flex;
-  /* border: 5px solid skyblue; */
-  border-radius: 15px;
+  /* border-radius: 15px; */
 }
 
 .face2 {
@@ -44,12 +42,13 @@ export default {
   height: 180px;
   display: flex;
   /* border: 5px solid skyblue; */
-  border-radius: 15px;
+  /* border-radius: 15px; */
 }
 
 .picture {
+  @apply rounded-2xl;
   width: 395px;
   height: 230px;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 </style>
