@@ -9,11 +9,14 @@
         <a
           class="btn cursor-pointer"
           @click="isRegistOfficeModalActivation = true"
-          >회사 등록</a
         >
+          회사 등록
+        </a>
       </li>
       <li>
-        <router-link class="btn" :to="{ name: 'Login2' }">로그인</router-link>
+        <a class="btn cursor-pointer" @click="isLoginModalActivation = true">
+          로그인
+        </a>
       </li>
     </ul>
   </div>
@@ -22,20 +25,27 @@
     v-show="isRegistOfficeModalActivation"
     @close="isRegistOfficeModalActivation = false"
   />
+  <LoginModal
+    v-show="isLoginModalActivation"
+    @close="isLoginModalActivation = false"
+  />
 </template>
 
 <script>
 import { ref } from "vue"
 import RegistOfficeModal from "@/components/RegistOfficeModal.vue"
+import LoginModal from "@/components/LoginModal.vue"
 
 export default {
   name: "LandingLayout",
-  components: { RegistOfficeModal },
+  components: { RegistOfficeModal, LoginModal },
   setup() {
     const isRegistOfficeModalActivation = ref(false)
+    const isLoginModalActivation = ref(false)
 
     return {
       isRegistOfficeModalActivation,
+      isLoginModalActivation,
     }
   },
 }

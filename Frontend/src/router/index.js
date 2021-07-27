@@ -4,7 +4,6 @@ import OfficeLayout from "@/layouts/OfficeLayout.vue"
 
 import Home from "@/views/Home.vue"
 import RegistOffice from "@/views/RegistOffice.vue"
-import Login from "@/views/Login.vue"
 import Office from "@/views/Office.vue"
 import Members from "@/views/Members.vue"
 import Admin from "@/views/Admin.vue"
@@ -24,11 +23,6 @@ const routes = [
         path: "regist-office",
         name: "RegistOffice",
         component: RegistOffice,
-      },
-      {
-        path: "login",
-        name: "Login2",
-        component: Login,
       },
     ],
   },
