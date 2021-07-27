@@ -13,45 +13,27 @@
     </div>
     <hr class="border-gray-300 my-4" />
     <div class="todo-list">
-      <div
-        class="todo-list-item"
-        :class="{ completed: todo.done }"
+      <TodoListItem
         v-for="todo in todos"
         :key="todo.id"
-      >
-        <div class="inner-top">
-          <div class="content">
-            <p class="title">{{ todo.title }}</p>
-            <p class="detail">
-              {{ todo.content }}
-            </p>
-          </div>
-          <button
-            class="done-btn"
-            @click="toggleTodoComplete(todo.id, todo.done)"
-          >
-            <span class="material-icons icon">done</span>
-          </button>
-        </div>
-        <hr class="border-gray-300" />
-        <div class="inner-bottom">
-          <p class="duedate">{{ todo.day }}</p>
-          <button class="delete-btn" @click="deleteTodo(todo.id)">
-            <span class="material-icons icon">close</span>
-          </button>
-        </div>
-      </div>
+        :todo="todo"
+        @toggleComplete="handleToggleComplete"
+        @delete="deleteTodo"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios"
-import { reactive, ref } from "@vue/reactivity"
-import { onMounted } from "@vue/runtime-core"
+import { reactive, ref, onMounted } from "vue"
+import TodoListItem from "@/components/RightAsidebar/TodoListItem.vue"
 
 export default {
   name: "Todo",
+  components: {
+    TodoListItem,
+  },
   setup() {
     const todos = ref([])
     const formData = reactive({
@@ -92,7 +74,7 @@ export default {
       }
     }
 
-    const toggleTodoComplete = async (todoId, currentDone) => {
+    const handleToggleComplete = async (todoId, currentDone) => {
       const res = await axios({
         url: `http://localhost:3000/todos/${todoId}`,
         method: "PATCH",
@@ -125,7 +107,7 @@ export default {
       todos,
       formData,
       createTodos,
-      toggleTodoComplete,
+      handleToggleComplete,
       deleteTodo,
     }
   },

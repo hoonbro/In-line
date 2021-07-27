@@ -19,7 +19,7 @@
       "title": "할 일 제목3",
       "content": "할 일 내용입니다. 할 일 내용입니다. 할 일 내용입니다.",
       "day": "2021-07-26",
-      "done": true
+      "done": false
     }
   ],
   "notifications": [
