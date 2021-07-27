@@ -5,17 +5,29 @@
     </div>
     <div class="menu-container">
       <div class="menu-list">
-        <button class="menu-list-item noti" @click="handleActiveMenu('noti')">
+        <button
+          class="menu-list-item noti"
+          :class="{ active: activeMenu === 'noti' }"
+          @click="handleActiveMenu('noti')"
+        >
           <span class="material-icons">
             notifications
           </span>
         </button>
-        <button class="menu-list-item chat" @click="handleActiveMenu('chat')">
+        <button
+          class="menu-list-item chat"
+          :class="{ active: activeMenu === 'chat' }"
+          @click="handleActiveMenu('chat')"
+        >
           <span class="material-icons">
             chat
           </span>
         </button>
-        <button class="menu-list-item todo" @click="handleActiveMenu('todo')">
+        <button
+          class="menu-list-item todo"
+          :class="{ active: activeMenu === 'todo' }"
+          @click="handleActiveMenu('todo')"
+        >
           <span class="material-icons">
             done
           </span>
@@ -74,7 +86,7 @@ export default {
 
 <style scoped lang="scss">
 aside {
-  @apply flex-shrink-0 bg-white h-full shadow-xl flex;
+  @apply flex-shrink-0 bg-white h-full shadow-xl flex relative;
 
   .menu-container {
     width: 60px;
@@ -85,19 +97,24 @@ aside {
 
       .menu-list-item {
         @apply p-2 text-gray-400 relative;
-      }
 
-      .noti {
-        &::before {
-          content: "";
-          @apply absolute w-2 h-2 top-3 left-3 bg-red-500 rounded-full;
+        &.active {
+          @apply text-blue-500;
+        }
+
+        &.noti {
+          &::before {
+            content: "";
+            @apply absolute w-2 h-2 top-3 left-3 bg-red-500 rounded-full;
+          }
         }
       }
     }
   }
 
   .menu-content-container {
-    @apply h-full overflow-hidden;
+    right: 60px;
+    @apply h-full overflow-hidden absolute top-0 bg-white shadow-xl;
   }
 }
 </style>

@@ -31,7 +31,7 @@ nav {
     a {
       @apply py-2 px-4 font-bold rounded inline-block mr-6;
 
-      &.router-link-active {
+      &.router-link-exact-active {
         @apply text-blue-900 bg-blue-200;
       }
 
