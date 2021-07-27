@@ -108,7 +108,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .all {
   @apply w-full flex bg-purple-500;
 }
