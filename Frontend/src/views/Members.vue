@@ -49,6 +49,7 @@
         </div>
       </div>
     </section>
+    <AddMemberModal />
   </div>
 </template>
 
@@ -57,12 +58,14 @@ import { onMounted, ref } from "vue"
 import axios from "axios"
 import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
+import AddMemberModal from "@/components/Members/AddMemberModal.vue"
 
 export default {
   name: "Members",
   components: {
     MemberListItem,
     DepartmentListItem,
+    AddMemberModal,
   },
   setup() {
     const members = ref([])
