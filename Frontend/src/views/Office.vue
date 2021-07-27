@@ -1,63 +1,11 @@
 <template>
-  <div class="office">
-    <div class="rooms-row">
-      <div class="rooms-container">
-        <RoomLink :title="'전체회의'" :roomId="1" :large="true" />
-      </div>
-    </div>
-    <div class="rooms-row">
-      <h1 class="rooms-title">팀별 미팅룸</h1>
-      <div class="rooms-container">
-        <RoomLink :title="'Developer'" :roomId="1" :large="true" />
-        <RoomLink :title="'Marketing'" :roomId="1" :large="true" />
-      </div>
-    </div>
-    <div class="rooms-row">
-      <h1 class="rooms-title">소규모 회의실</h1>
-      <div class="rooms-container mini">
-        <RoomLink :title="'Developer'" :roomId="1" />
-        <RoomLink :title="'Marketing'" :roomId="1" />
-        <RoomLink :title="'MiniRoom'" :roomId="1" />
-        <RoomLink :title="'Marketing'" :roomId="1" />
-      </div>
-    </div>
-  </div>
+  <h1>Office</h1>
 </template>
 
 <script>
-import RoomLink from "@/components/Office/RoomLink.vue"
-
 export default {
   name: "Office",
-  components: {
-    RoomLink,
-  },
 }
 </script>
 
-<style scoped lang="scss">
-.office {
-  scrollbar-width: none;
-  @apply bg-gray-100 p-10 grid gap-10 content-start overflow-auto;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  .rooms-row {
-    @apply w-full grid gap-4;
-
-    .rooms-title {
-      @apply text-2xl font-bold;
-    }
-
-    .rooms-container {
-      @apply w-full grid grid-cols-1 gap-8 md:grid-cols-2;
-
-      &.mini {
-        @apply grid-cols-3;
-      }
-    }
-  }
-}
-</style>
+<style></style>

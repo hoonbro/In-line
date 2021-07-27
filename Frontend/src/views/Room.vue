@@ -1,28 +1,39 @@
 <template>
-  <div class="all">
-    <div class="shot">
-      <div class="videoChat">
+  <div class="wrapper">
+    <div class="video-chat">
+      <!-- ------------------------------------------------------------------------- -->
+      <div class="video-part" v-if="videoList > 16">
         <Video v-for="video in videoList" :key="video" :videoList="videoList" />
       </div>
-      <div class="bottomBar">
-        <div class="micButton">
+      <div class="video-part2" v-else-if="videoList > 9">
+        <Video v-for="video in videoList" :key="video" :videoList="videoList" />
+      </div>
+      <div class="video-part3" v-else-if="videoList > 4">
+        <Video v-for="video in videoList" :key="video" :videoList="videoList" />
+      </div>
+      <div class="video-part4" v-else>
+        <Video v-for="video in videoList" :key="video" :videoList="videoList" />
+      </div>
+      <!-- ------------------------------------------------------------------------- -->
+      <div class="bar-part">
+        <div class="mic-button">
           <span class="material-icons"> mic </span> 마이크 끄기
         </div>
-        <div class="camButton">
+        <div class="cam-button">
           <span class="material-icons"> videocam </span> 카메라 끄기
         </div>
-        <div class="closeButton">
+        <div class="close-button">
           <router-link :to="{ name: 'Office' }"><span>X</span></router-link>
         </div>
       </div>
     </div>
 
-    <div class="sidebar">
-      <div class="icons">
+    <div class="side-bar">
+      <div class="icon-list">
         <ul>
           <li
-            :class="{ active: activeMenu === 'chat' }"
-            @click="changeActiveMenu('chat')"
+            :class="{ active: activeMenu === 'roomChat' }"
+            @click="changeActiveMenu('roomChat')"
           >
             <span class="icon"
               ><span class="material-icons">
@@ -52,8 +63,8 @@
             >
           </li>
           <li
-            :class="{ active: activeMenu === 'chat2' }"
-            @click="changeActiveMenu('chat2')"
+            :class="{ active: activeMenu === 'officeChat' }"
+            @click="changeActiveMenu('officeChat')"
           >
             <span class="icon"
               ><span class="material-icons">
@@ -73,8 +84,10 @@
           </li>
         </ul>
       </div>
-      <div class="chatList" v-if="activeMenu === 'chat'">채팅 목록입니다</div>
-      <div class="peopleList" v-if="activeMenu === 'people'">
+      <div class="chat-list" v-if="activeMenu === 'officeChat'">
+        채팅 목록입니다
+      </div>
+      <div class="people-list" v-if="activeMenu === 'people'">
         사람 목록입니다
       </div>
     </div>
@@ -91,12 +104,13 @@ export default {
     Video,
   },
   setup() {
-    const videoList = 6
+    const videoList = 16
     const activeMenu = ref("")
     // 처음에 아무것도 활성화되어 있지 않아도 되므로 공백으로 남겨둠
     const changeActiveMenu = menuTitle => {
       activeMenu.value = menuTitle
     }
+
     // 마이크 끄기, 카메라 끄기 버튼 눌렀을 때, 아이콘 전환되게 만들기
 
     return {
@@ -108,55 +122,62 @@ export default {
 }
 </script>
 
-<style scoped>
-.all {
-  @apply w-full flex bg-purple-500;
-}
+<style scoped lang="scss">
+.wrapper {
+  @apply h-full flex bg-purple-500 border-yellow-400 border-2;
 
-.shot {
-  @apply flex grid;
-}
+  .video-chat {
+    @apply border-red-500 border-2 flex-1;
 
-.bottomBar {
-  @apply flex justify-center align-middle;
-}
-.micButton {
-  @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
-}
+    .video-part {
+      @apply grid grid-cols-5 m-12 bg-Teal-300;
+    }
+    .video-part2 {
+      @apply grid grid-cols-4 m-12 bg-red-500;
+    }
+    .video-part3 {
+      @apply grid grid-cols-3 m-12 bg-yellow-300;
+    }
+    .video-part4 {
+      @apply grid grid-cols-2 m-12 bg-black;
+    }
 
-.camButton {
-  @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
-}
+    .bar-part {
+      @apply flex fixed left-1/3 bottom-10;
 
-.closeButton {
-  @apply flex bg-red-600 rounded-full h-10 w-10 text-white justify-center mx-2 place-items-center;
-}
+      .mic-button {
+        @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
+      }
 
-.videoChat {
-  @apply flex-1 grid grid-cols-3 m-28;
-}
+      .cam-button {
+        @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
+      }
 
-.sidebar {
-  @apply flex flex-row-reverse w-96 h-screen ml-auto border-yellow-400 border-2;
-}
+      .close-button {
+        @apply flex bg-red-600 rounded-full h-10 w-10 text-white justify-center mx-2 place-items-center;
+      }
+    }
+  }
 
-.chatList {
-  @apply flex bg-white w-full h-full;
-}
+  .side-bar {
+    @apply flex flex-row-reverse w-16 h-screen ml-auto border-yellow-400 border-2;
 
-.peopleList {
-  @apply flex bg-white w-full h-full;
-}
+    .chat-list {
+      @apply bg-white w-full h-full;
+    }
 
-.icon {
-  @apply p-4 inline-block justify-center cursor-pointer;
-}
-
-.icons {
-  border: 1px solid gray;
-}
-
-.sidebar ul li.active {
-  @apply text-blue-700;
+    .people-list {
+      @apply bg-white w-full h-full;
+    }
+    .icon-list {
+      border: 1px solid gray;
+      .icon {
+        @apply p-4 inline-block justify-center cursor-pointer;
+      }
+    }
+  }
+  .side-bar ul li.active {
+    @apply text-blue-700;
+  }
 }
 </style>
