@@ -14,23 +14,60 @@
           v-model="formData.officeName"
           label="회사 이름"
           type="text"
+          :required="true"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'officeName')"
         />
         <hr />
-        <TextInput v-model="formData.email" label="이메일" type="email" />
-        <TextInput v-model="formData.department" label="소속" type="text" />
-        <TextInput v-model="formData.position" label="직무" type="text" />
-        <TextInput v-model="formData.name" label="이름" type="text" />
-        <TextInput v-model="formData.phone" label="휴대전화" type="text" />
+        <TextInput
+          v-model="formData.email"
+          label="이메일"
+          type="email"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'email')"
+        />
+        <TextInput
+          v-model="formData.deptName"
+          label="소속"
+          type="text"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'deptName')"
+        />
+        <TextInput
+          v-model="formData.jobname"
+          label="직무"
+          type="text"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'jobName')"
+        />
+        <TextInput
+          v-model="formData.name"
+          label="이름"
+          type="text"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'name')"
+        />
+        <TextInput
+          v-model="formData.phone"
+          label="휴대전화"
+          type="text"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'phone')"
+        />
         <hr />
         <TextInput
           v-model="formData.password"
           label="비밀번호"
           type="password"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'password')"
         />
         <TextInput
           v-model="formData.password2"
           label="비밀번호 확인"
           type="password"
+          :shouldEmitEvent="true"
+          @blur="validation($event, 'password2')"
         />
         <div>
           <input
@@ -64,10 +101,10 @@ export default {
     const store = useStore()
 
     const formData = reactive({
-      officeName: "SSAFY",
+      officeName: "",
       email: "",
-      department: "",
-      position: "",
+      deptName: "",
+      jobname: "",
       name: "",
       phone: "",
       password: "",
@@ -76,15 +113,33 @@ export default {
     })
 
     const registerOffice = async () => {
-      // 유효성 검사 여기서 ?
       const res = await store.dispatch("landing/registerOffice", formData)
+      console.log("res: ", res)
       emit("close")
     }
 
+    const validation = (event, field) => {
+      const data = event.target.value
+      // 유효성 검사
+      // 1. 필수 입력
+      //  - 모두
+      if (!data) {
+        // tag를 빨간색으로 바꾸고, 밑에 안내 메시지 보여주기
+        //
+      }
+      // 2. 중복검사
+      //  - officeName, email
+      //    -> rest API로 검사 요청 (DB TABLE의 해당 field에 해당 data가 존재하는지)
+      if (field === "officeName" || field === "email") {
+        console.log("중복검사를 해야합니다.")
+      }
+    }
+
     return {
-      formData,
       store,
+      formData,
       registerOffice,
+      validation,
     }
   },
 }
