@@ -11,9 +11,12 @@
             <TextInput
               v-for="(field, key) in formData"
               :key="key"
+              :name="key"
               :label="field.label"
               v-model="field.value"
               :type="field.type"
+              :errors="field.errors"
+              :validators="field.validators"
             />
           </div>
           <button class="submit-btn" @click="submitForm">
@@ -42,7 +45,43 @@ export default {
         formData[key].errors.required = "필수 입력 요소입니다."
         return false
       }
-      formData[key].errors.required && delete formData[key].errors.required
+      delete formData[key].errors.required
+      return true
+    }
+
+    const emailValidator = key => {
+      if (
+        !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
+          formData[key].value
+        )
+      ) {
+        formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
+        return false
+      }
+      delete formData[key].errors.invalidEmail
+      return true
+    }
+
+    const confirmPasswordValidator = key => {
+      if (formData[key].value !== formData.password.value) {
+        formData[key].errors.notMatch = "비밀번호가 일치하지 않습니다."
+        return false
+      }
+      delete formData[key].errors.notMatch
+      return true
+    }
+
+    const passwordSecurityValidator = key => {
+      if (
+        !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
+          formData[key].value
+        )
+      ) {
+        formData[key].errors.weekPassword =
+          "대소문자, 숫자, 특수문자 조합으로 8자리 이상으로 작성하세요."
+        return false
+      }
+      delete formData[key].errors.weekPassword
       return true
     }
 
@@ -58,7 +97,7 @@ export default {
         label: "이메일",
         type: "email",
         value: "",
-        validators: [requiredValidator],
+        validators: [requiredValidator, emailValidator],
         errors: {},
       },
       department: {
@@ -79,30 +118,30 @@ export default {
         label: "비밀번호",
         type: "password",
         value: "",
-        validators: [requiredValidator],
+        validators: [requiredValidator, passwordSecurityValidator],
         errors: {},
       },
       confirmPassword: {
         label: "비밀번호 확인",
         type: "password",
         value: "",
-        validators: [requiredValidator],
+        validators: [requiredValidator, confirmPasswordValidator],
         errors: {},
       },
     })
 
-    const validateFormData = () => {
-      // 모든 field를 순회하며 검증 작업을 시작한다.
-      Object.keys(formData).forEach(key => {
-        const field = formData[key]
-        field.validators.forEach(validator => {
-          return validator(key)
-        })
-      })
-    }
+    // const validateFormData = () => {
+    //   // 모든 field를 순회하며 검증 작업을 시작한다.
+    //   Object.keys(formData).forEach(key => {
+    //     const field = formData[key]
+    //     field.validators.forEach(validator => {
+    //       return validator(key)
+    //     })
+    //   })
+    // }
 
     const submitForm = () => {
-      validateFormData()
+      // validateFormData()
       alert("검증 완료")
     }
 
