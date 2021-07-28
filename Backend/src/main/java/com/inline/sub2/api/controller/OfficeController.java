@@ -6,6 +6,7 @@ import com.inline.sub2.api.service.JobService;
 import com.inline.sub2.api.service.OfficeService;
 import com.inline.sub2.api.service.UserService;
 import com.inline.sub2.db.entity.UserEntity;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,8 @@ public class OfficeController {
     JobService jobService;
 
     @PostMapping()
-    public ResponseEntity<Void> registUser(@RequestBody AdminRegistDto admin) {
+    @ApiOperation(value = "회사 정보와 관리자 정보를 DB에 저장한다.")
+    public ResponseEntity<Void> registAdmin(@RequestBody AdminRegistDto admin) {
         HttpStatus httpStatus = HttpStatus.OK;
 
             //임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
