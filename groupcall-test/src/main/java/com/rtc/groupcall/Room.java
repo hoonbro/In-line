@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.PreDestroy;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.kurento.client.Continuation;
 import org.kurento.client.MediaPipeline;
 import org.slf4j.Logger;
@@ -25,20 +27,20 @@ import com.google.gson.JsonPrimitive;
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
+@Getter
+@Setter
 public class Room implements Closeable {
     private final Logger log = LoggerFactory.getLogger(Room.class);
 
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
     private final MediaPipeline pipeline;
-    private final String name;
+    private final String roomName;
+    private final Long roomId;
 
-    public String getName() {
-        return name;
-    }
-
-    public Room(String roomName, MediaPipeline pipeline) {
-        this.name = roomName;
+    public Room(String roomName, MediaPipeline pipeline, Long roomId) {
+        this.roomName = roomName;
         this.pipeline = pipeline;
+        this.roomId = roomId;
         log.info("ROOM {} has been created", roomName);
     }
 
@@ -48,8 +50,8 @@ public class Room implements Closeable {
     }
 
     public UserSession join(String userName, WebSocketSession session) throws IOException {
-        log.info("ROOM {}: adding participant {}", this.name, userName);
-        final UserSession participant = new UserSession(userName, this.name, session, this.pipeline);
+        log.info("ROOM {}: adding participant {}", this.roomName, userName);
+        final UserSession participant = new UserSession(userName, this.roomName, session, this.pipeline);
         joinRoom(participant);
         participants.put(participant.getName(), participant);
         sendParticipantNames(participant);
@@ -57,7 +59,7 @@ public class Room implements Closeable {
     }
 
     public void leave(UserSession user) throws IOException {
-        log.debug("PARTICIPANT {}: Leaving room {}", user.getName(), this.name);
+        log.debug("PARTICIPANT {}: Leaving room {}", user.getName(), this.roomName);
         this.removeParticipant(user.getName());
         user.close();
     }
@@ -68,14 +70,14 @@ public class Room implements Closeable {
         newParticipantMsg.addProperty("name", newParticipant.getName());
 
         final List<String> participantsList = new ArrayList<>(participants.values().size());
-        log.debug("ROOM {}: notifying other participants of new participant {}", name,
+        log.debug("ROOM {}: notifying other participants of new participant {}", roomName,
                 newParticipant.getName());
 
         for (final UserSession participant : participants.values()) {
             try {
                 participant.sendMessage(newParticipantMsg);
             } catch (final IOException e) {
-                log.debug("ROOM {}: participant {} could not be notified", name, participant.getName(), e);
+                log.debug("ROOM {}: participant {} could not be notified", roomName, participant.getName(), e);
             }
             participantsList.add(participant.getName());
         }
@@ -86,7 +88,7 @@ public class Room implements Closeable {
     private void removeParticipant(String name) throws IOException {
         participants.remove(name);
 
-        log.debug("ROOM {}: notifying all users that {} is leaving the room", this.name, name);
+        log.debug("ROOM {}: notifying all users that {} is leaving the room", this.roomName, name);
 
         final List<String> unnotifiedParticipants = new ArrayList<>();
         final JsonObject participantLeftJson = new JsonObject();
@@ -102,7 +104,7 @@ public class Room implements Closeable {
         }
 
         if (!unnotifiedParticipants.isEmpty()) {
-            log.debug("ROOM {}: The users {} could not be notified that {} left the room", this.name,
+            log.debug("ROOM {}: The users {} could not be notified that {} left the room", this.roomName,
                     unnotifiedParticipants, name);
         }
 
@@ -140,7 +142,7 @@ public class Room implements Closeable {
             try {
                 user.close();
             } catch (IOException e) {
-                log.debug("ROOM {}: Could not invoke close on participant {}", this.name, user.getName(),
+                log.debug("ROOM {}: Could not invoke close on participant {}", this.roomName, user.getName(),
                         e);
             }
         }
@@ -151,16 +153,16 @@ public class Room implements Closeable {
 
             @Override
             public void onSuccess(Void result) throws Exception {
-                log.trace("ROOM {}: Released Pipeline", Room.this.name);
+                log.trace("ROOM {}: Released Pipeline", Room.this.roomName);
             }
 
             @Override
             public void onError(Throwable cause) throws Exception {
-                log.warn("PARTICIPANT {}: Could not release Pipeline", Room.this.name);
+                log.warn("PARTICIPANT {}: Could not release Pipeline", Room.this.roomName);
             }
         });
 
-        log.debug("Room {} closed", this.name);
+        log.debug("Room {} closed", this.roomName);
     }
 
 }
