@@ -21,9 +21,12 @@ export default {
     const router = useRouter()
 
     const logout = () => {
-      localStorage.removeItem("jwt")
-      localStorage.removeItem("auth")
-      router.push({ name: "Home" })
+      const yes = confirm("로그아웃 하시겠습니까?")
+      if (yes) {
+        localStorage.removeItem("jwt")
+        localStorage.removeItem("auth")
+        router.push({ name: "Home" })
+      }
     }
 
     return {
