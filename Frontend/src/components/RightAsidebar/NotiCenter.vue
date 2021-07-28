@@ -26,14 +26,14 @@ export default {
 
     const getNotifications = async () => {
       const res = await axios({
-        url: "http://localhost:3000/notifications",
+        url: "/api/v1/notifications",
       })
       notifications.value = res.data
     }
 
     const deleteNotification = async notiId => {
       const res = await axios({
-        url: `http://localhost:3000/notifications/${notiId}`,
+        url: `/api/v1/notifications/${notiId}`,
         method: "DELETE",
       })
       notifications.value = notifications.value.filter(
