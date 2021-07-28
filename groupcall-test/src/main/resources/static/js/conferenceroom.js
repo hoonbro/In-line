@@ -17,7 +17,7 @@
 
 var ws = new WebSocket('wss://' + location.host + '/groupcall');
 var participants = {};
-var name;
+var name,nickName,room,temp;
 
 window.onbeforeunload = function() {
 	ws.close();
@@ -28,34 +28,49 @@ ws.onmessage = function(message) {
 	console.info('Received message: ' + message.data);
 
 	switch (parsedMessage.id) {
-	case 'existingParticipants':
-		onExistingParticipants(parsedMessage);
-		break;
-	case 'newParticipantArrived':
-		onNewParticipant(parsedMessage);
-		break;
-	case 'participantLeft':
-		onParticipantLeft(parsedMessage);
-		break;
-	case 'receiveVideoAnswer':
-		receiveVideoResponse(parsedMessage);
-		break;
-	case 'iceCandidate':
-		participants[parsedMessage.name].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
-	        if (error) {
-		      console.error("Error adding candidate: " + error);
-		      return;
-	        }
-	    });
-	    break;
-	default:
-		console.error('Unrecognized message', parsedMessage);
+		case 'existingParticipants':
+			onExistingParticipants(parsedMessage);
+			break;
+		case 'newParticipantArrived':
+			onNewParticipant(parsedMessage);
+			break;
+		case 'participantLeft':
+			onParticipantLeft(parsedMessage);
+			break;
+		case 'receiveVideoAnswer':
+			receiveVideoResponse(parsedMessage);
+			break;
+		case 'iceCandidate':
+			participants[parsedMessage.name].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
+				if (error) {
+					console.error("Error adding candidate: " + error);
+					return;
+				}
+			});
+			break;
+		default:
+			console.error('Unrecognized message', parsedMessage);
 	}
 }
 
+function nickRegister() {
+	nickName = document.getElementById('nickName').value;
+	localStorage.setItem("nickName",nickName);
+}
+
+function roomclick1() {
+	temp = "room1";
+}
+function roomclick2() {
+	temp = "room2";
+}
+function roomclick3() {
+	temp = "room3";
+}
+
 function register() {
-	name = document.getElementById('name').value;
-	var room = document.getElementById('roomName').value;
+	room = temp;
+	name = localStorage.getItem("nickName");
 
 	document.getElementById('room-header').innerText = 'ROOM ' + room;
 	document.getElementById('join').style.display = 'none';
@@ -107,17 +122,17 @@ function onExistingParticipants(msg) {
 	var video = participant.getVideoElement();
 
 	var options = {
-	      localVideo: video,
-	      mediaConstraints: constraints,
-	      onicecandidate: participant.onIceCandidate.bind(participant)
-	    }
+		localVideo: video,
+		mediaConstraints: constraints,
+		onicecandidate: participant.onIceCandidate.bind(participant)
+	}
 	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
 		function (error) {
-		  if(error) {
-			  return console.error(error);
-		  }
-		  this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-	});
+			if(error) {
+				return console.error(error);
+			}
+			this.generateOffer (participant.offerToReceiveVideo.bind(participant));
+		});
 
 	msg.data.forEach(receiveVideo);
 }
@@ -134,7 +149,7 @@ function leaveRoom() {
 	document.getElementById('join').style.display = 'block';
 	document.getElementById('room').style.display = 'none';
 
-	ws.close();
+	// ws.close();
 }
 
 function receiveVideo(sender) {
@@ -143,17 +158,17 @@ function receiveVideo(sender) {
 	var video = participant.getVideoElement();
 
 	var options = {
-      remoteVideo: video,
-      onicecandidate: participant.onIceCandidate.bind(participant)
-    }
+		remoteVideo: video,
+		onicecandidate: participant.onIceCandidate.bind(participant)
+	}
 
 	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
-			function (error) {
-			  if(error) {
-				  return console.error(error);
-			  }
-			  this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-	});;
+		function (error) {
+			if(error) {
+				return console.error(error);
+			}
+			this.generateOffer (participant.offerToReceiveVideo.bind(participant));
+		});;
 }
 
 function onParticipantLeft(request) {
