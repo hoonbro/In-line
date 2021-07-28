@@ -33,13 +33,19 @@ public class Room implements Closeable {
     private final Logger log = LoggerFactory.getLogger(Room.class);
 
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
-    private final MediaPipeline pipeline;
+    private MediaPipeline pipeline;
     private final String roomName;
     private final Long roomId;
 
     public Room(String roomName, MediaPipeline pipeline, Long roomId) {
         this.roomName = roomName;
         this.pipeline = pipeline;
+        this.roomId = roomId;
+        log.info("ROOM {} has been created", roomName);
+    }
+
+    public Room(String roomName, Long roomId) {
+        this.roomName = roomName;
         this.roomId = roomId;
         log.info("ROOM {} has been created", roomName);
     }

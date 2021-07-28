@@ -1,6 +1,6 @@
-package com.rtc.groupcall.repository;
+package com.rtc.groupcall.db.repository;
 
-import com.rtc.groupcall.entity.RoomEntity;
+import com.rtc.groupcall.db.entity.RoomEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

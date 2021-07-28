@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.rtc.groupcall.entity.RoomEntity;
-import com.rtc.groupcall.repository.RoomRepository;
+import com.rtc.groupcall.db.entity.RoomEntity;
+import com.rtc.groupcall.db.repository.RoomRepository;
 import org.kurento.client.KurentoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class RoomManager {
         List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
 
         for(RoomEntity r: roomEntitys){
-            rooms.put(r.getRoomName(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), 1l));
+            rooms.put(r.getRoomName(),  new Room(r.getRoomName(), 1l));
         }
 
         return roomRepository.findAllByOfficeId(OfficeId);
@@ -54,7 +54,7 @@ public class RoomManager {
             room = new Room(roomName, kurento.createMediaPipeline(), 1l);
             rooms.put(roomName, room);
         }else if(room.getPipeline() == null){
-
+            room.setPipeline(kurento.createMediaPipeline());
         }
         log.debug("Room {} found!", roomName);
         return room;

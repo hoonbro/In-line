@@ -1,4 +1,4 @@
-package com.rtc.groupcall.entity;
+package com.rtc.groupcall.db.entity;
 
 import lombok.Data;
 import lombok.Getter;
