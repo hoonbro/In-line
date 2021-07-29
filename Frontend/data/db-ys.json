@@ -11,6 +11,19 @@
       "password": "1q2w3e4r",
       "password2": "1q2w3e4r",
       "term": false
+    },
+    {
+      "term": true,
+      "officeName": "ssafy",
+      "email": "soc4585@gmail.com",
+      "deptName": "dev",
+      "jobname": "fe",
+      "name": "cys",
+      "phone": "01012341234",
+      "password": "1q2w3e4r1!Q",
+      "confirmPassword": "1q2w3e4r1!Q",
+      "apiId": "v1",
+      "id": 2
     }
   ]
 }

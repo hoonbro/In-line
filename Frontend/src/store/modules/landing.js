@@ -11,17 +11,26 @@ export const landing = {
       try {
         const res = await axios({
           method: "post",
-          url: "http://localhost:3000/api/v1/office",
+          url: "/api/v1/office",
           data: formData,
         })
-        // const response = await axios.post(
-        //   "http://localhost:3000/office",
-        //   formData
-        // )
-        console.log(res)
         return new Promise((resolve, reject) => resolve(res))
       } catch (error) {
         console.error(error)
+      }
+    },
+    login: async (context, formData) => {
+      try {
+        const res = await axios({
+          method: "post",
+          url: "/api/v1/users/login",
+          data: formData,
+        })
+        localStorage.setItem("jwt", res.data.accessToken)
+        localStorage.setItem("auth", res.data.userDto.auth)
+        return new Promise(resolve => resolve(res))
+      } catch (error) {
+        console.log(error)
       }
     },
   },
