@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import LandingLayout from "@/layouts/LandingLayout.vue"
 import OfficeLayout from "@/layouts/OfficeLayout.vue"
+import RoomLayout from "@/layouts/RoomLayout.vue"
 
 import Home from "@/views/Home.vue"
 import RegistOffice from "@/views/RegistOffice.vue"
@@ -48,9 +49,15 @@ const routes = [
     ],
   },
   {
-    path: "/rooms/:roomId",
-    name: "Room",
-    component: Room,
+    path: "/rooms/",
+    component: RoomLayout,
+    children: [
+      {
+        path: "/rooms/:roomId",
+        name: "Room",
+        component: Room,
+      },
+    ],
   },
 ]
 
