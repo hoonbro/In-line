@@ -50,7 +50,6 @@ public class CallHandler extends TextWebSocketHandler {
         switch (jsonMessage.get("id").getAsString()) {
             case "joinRoom":
                 System.out.println("방들어올떄!!");
-                System.out.println("!!!");
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
