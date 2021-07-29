@@ -35,9 +35,12 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
-
+        System.out.println("방입장하면 이쪽으로 들어오겠지?");
+        System.out.println(message);
+        System.out.println(jsonMessage);
         final UserSession user = registry.getBySession(session);
-
+        System.out.println("너는 뭘까?");
+        System.out.println(user);
         if (user != null) {
             log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
         } else {
@@ -46,6 +49,8 @@ public class CallHandler extends TextWebSocketHandler {
 
         switch (jsonMessage.get("id").getAsString()) {
             case "joinRoom":
+                System.out.println("방들어올떄!!");
+                System.out.println("!!!");
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
@@ -55,9 +60,11 @@ public class CallHandler extends TextWebSocketHandler {
                 user.receiveVideoFrom(sender, sdpOffer);
                 break;
             case "leaveRoom":
+                System.out.println("방나갈떄!!");
                 leaveRoom(user);
                 break;
             case "onIceCandidate":
+                System.out.println("onIceCandiadate로 들어오니?");
                 JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
 
                 if (user != null) {
