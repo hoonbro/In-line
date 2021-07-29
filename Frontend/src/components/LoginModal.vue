@@ -1,33 +1,22 @@
 <template>
   <div class="backdrop" @click.self="$emit('close')">
     <div class="modal-container">
-      <div class="flex justify-between">
-        <h1 class="text-4xl font-bold">로그인</h1>
-        <button @click="$emit('close')">
-          <span class="material-icons-outlined">
-            close
-          </span>
-        </button>
+      <div class="flex justify-center">
+        <h1 class="text-3xl font-bold">로그인</h1>
       </div>
       <div class="input-list">
         <TextInput
-          v-model="formData.email.value"
-          name="email"
-          label="이메일"
-          type="email"
-          :errors="formData.email.errors"
-          :validators="formData.email.validators"
+          v-for="(field, key) in formData"
+          :key="key"
+          :name="key"
+          v-model="field.value"
+          :field="field"
+          :formData="formData"
         />
         <div>
-          <TextInput
-            v-model="formData.password.value"
-            label="비밀번호"
-            type="password"
-            name="password"
-            :errors="formData.password.errors"
-            :validators="formData.password.validators"
-          />
-          <a href="#" class="text-sm">😅비밀번호를 잊으셨나요?</a>
+          <router-link to="#" class="text-sm">
+            😅비밀번호를 잊으셨나요?
+          </router-link>
         </div>
         <button class="common-btn login-btn" @click="login">
           로그인하기
@@ -60,13 +49,13 @@
         </div>
         <hr />
         <h2 class="text-2xl font-bold text-center">SNS 로그인</h2>
-        <button class="common-btn bg-yellow-400" @click="">
+        <button class="common-btn bg-yellow-400">
           카카오로 시작하기
         </button>
-        <button class="common-btn bg-gray-100" @click="">
+        <button class="common-btn bg-gray-100">
           구글로 시작하기
         </button>
-        <button class="common-btn bg-green-500" @click="">
+        <button class="common-btn bg-green-500">
           네이버로 시작하기
         </button>
       </div>
@@ -75,10 +64,11 @@
 </template>
 
 <script>
-import TextInput from "@/components/TextInput.vue"
 import { reactive, ref } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import { loginRequiredValidator, emailValidator } from "@/lib/validator"
+import TextInput from "@/components/TextInput.vue"
 
 export default {
   name: "LoginModal",
@@ -90,44 +80,19 @@ export default {
     const willStayLogin = ref(false)
     const willRememberEamil = ref(false)
 
-    const requiredValidator = key => {
-      if (formData[key].value < 1) {
-        formData[key].errors.required =
-          key === "email"
-            ? "이메일을 입력해주세요."
-            : "비밀번호를 입력해주세요."
-        return false
-      }
-      delete formData[key].errors.required
-      return true
-    }
-
-    const emailValidator = key => {
-      if (
-        !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
-          formData[key].value
-        )
-      ) {
-        formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
-        return false
-      }
-      delete formData[key].errors.invalidEmail
-      return true
-    }
-
     const formData = reactive({
       email: {
         label: "이메일",
         type: "email",
         value: "",
-        validators: [requiredValidator, emailValidator],
+        validators: [loginRequiredValidator, emailValidator],
         errors: {},
       },
       password: {
         label: "비밀번호",
         type: "password",
         value: "",
-        validators: [requiredValidator],
+        validators: [loginRequiredValidator],
         errors: {},
       },
     })
@@ -158,7 +123,7 @@ export default {
   @apply fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center;
 
   .modal-container {
-    @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg p-10 grid gap-10;
+    @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg py-16 px-20 grid gap-10;
 
     .input-list {
       @apply grid gap-4 w-full;

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import MainNav from "@/components/MainNav.vue"
+import MainNav from "@/components/Nav/MainNav.vue"
 import RoomRightAsidebar from "@/components/Room/RoomRightAsidebar.vue"
 import Room from "@/views/Room.vue"
 

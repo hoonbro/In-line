@@ -14,34 +14,10 @@
           v-for="(field, key) in formData"
           :key="key"
           :name="key"
-          :label="field.label"
           v-model="field.value"
-          :type="field.type"
-          :errors="field.errors"
-          :validators="field.validators"
+          :formData="formData"
+          :field="field"
         />
-        <!-- <TextInput
-          v-model="formData.officeName"
-          label="회사 이름"
-          type="text"
-        />
-        <hr />
-        <TextInput v-model="formData.email" label="이메일" type="email" />
-        <TextInput v-model="formData.deptName" label="소속" type="text" />
-        <TextInput v-model="formData.jobName" label="직무" type="text" />
-        <TextInput v-model="formData.name" label="이름" type="text" />
-        <TextInput v-model="formData.phone" label="휴대전화" type="text" />
-        <hr />
-        <TextInput
-          v-model="formData.password"
-          label="비밀번호"
-          type="password"
-        />
-        <TextInput
-          v-model="formData.confirmPassword"
-          label="비밀번호 확인"
-          type="password"
-        /> -->
         <div>
           <input
             class="mr-1"
@@ -50,11 +26,16 @@
             id="term"
             v-model="term"
           />
-          <label class="text-sm font-medium" for="term"
-            >이용약관 및 개인정보처리방침 동의</label
-          >
+          <label class="text-sm font-medium" for="term">
+            이용약관 및 개인정보처리방침 동의
+          </label>
         </div>
-        <button class="regist-btn" @click="registerOffice">
+        <button
+          class="regist-btn"
+          :class="{ disabled: !formIsValid }"
+          :disabled="!formIsValid"
+          @click="registerOffice"
+        >
           회사 등록하기
         </button>
       </div>
@@ -64,7 +45,13 @@
 
 <script>
 import TextInput from "@/components/TextInput.vue"
-import { reactive, ref } from "vue"
+import {
+  requiredValidator,
+  emailValidator,
+  confirmPasswordValidator,
+  passwordSecurityValidator,
+} from "@/lib/validator"
+import { computed, reactive, ref } from "vue"
 import { useStore } from "vuex"
 
 export default {
@@ -72,51 +59,6 @@ export default {
   components: { TextInput },
   setup(props, { emit }) {
     const store = useStore()
-
-    const requiredValidator = key => {
-      if (formData[key].value < 1) {
-        formData[key].errors.required = "필수 입력 요소입니다."
-        return false
-      }
-      delete formData[key].errors.required
-      return true
-    }
-
-    const emailValidator = key => {
-      if (
-        !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
-          formData[key].value
-        )
-      ) {
-        formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
-        return false
-      }
-      delete formData[key].errors.invalidEmail
-      return true
-    }
-
-    const passwordSecurityValidator = key => {
-      if (
-        !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
-          formData[key].value
-        )
-      ) {
-        formData[key].errors.weekPassword =
-          "대소문자, 숫자, 특수문자 조합으로 8자리 이상으로 작성하세요."
-        return false
-      }
-      delete formData[key].errors.weekPassword
-      return true
-    }
-
-    const confirmPasswordValidator = key => {
-      if (formData[key].value !== formData.password.value) {
-        formData[key].errors.notMatch = "비밀번호가 일치하지 않습니다."
-        return false
-      }
-      delete formData[key].errors.notMatch
-      return true
-    }
 
     const formData = reactive({
       officeName: {
@@ -177,7 +119,23 @@ export default {
       },
     })
 
+    const allFormIsFilled = computed(() => {
+      return Object.keys(formData).every(key => formData[key].value)
+    })
+
+    const allFormIsValid = computed(() => {
+      return Object.keys(formData).every(key => {
+        return formData[key].validators.every(validator =>
+          validator(formData, key)
+        )
+      })
+    })
+
     const term = ref(false)
+
+    const formIsValid = computed(() => {
+      return allFormIsFilled.value && allFormIsValid.value && term.value
+    })
 
     const registerOffice = async () => {
       const submitData = { term: term.value }
@@ -193,6 +151,7 @@ export default {
       formData,
       term,
       registerOffice,
+      formIsValid,
     }
   },
 }
@@ -210,7 +169,11 @@ export default {
       @apply grid gap-4 w-full;
 
       .regist-btn {
-        @apply bg-gray-400 rounded-xl py-4 text-white font-bold;
+        @apply bg-blue-600 rounded-xl py-4 text-white font-bold;
+
+        &.disabled {
+          @apply bg-gray-400;
+        }
       }
     }
   }

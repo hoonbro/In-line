@@ -11,11 +11,9 @@
             v-for="(field, key) in formData"
             :key="key"
             :name="key"
-            :label="field.label"
             v-model="field.value"
-            :type="field.type"
-            :errors="field.errors"
-            :validators="field.validators"
+            :field="field"
+            :formData="formData"
           />
         </div>
         <button
@@ -35,7 +33,7 @@
 import { reactive, ref } from "@vue/reactivity"
 import { computed } from "@vue/runtime-core"
 import axios from "axios"
-import TextInput from "@/components/Members/TextInput.vue"
+import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
