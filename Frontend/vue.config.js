@@ -8,5 +8,6 @@ module.exports = {
         target: "https://13.124.47.223:8443",
       },
     },
+    overlay: true,
   },
 }
