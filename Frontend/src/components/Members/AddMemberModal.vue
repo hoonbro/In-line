@@ -1,45 +1,50 @@
 <template>
-  <teleport to="body">
-    <div class="backdrop">
-      <div class="modal-container">
-        <div class="header">
-          <h3 class="title">구성원 추가</h3>
-          <p class="detail">구미 2반 7팀의 구성원을 추가합니다.</p>
-        </div>
-        <div class="add-form">
-          <div class="input-list">
-            <TextInput
-              v-for="(field, key) in formData"
-              :key="key"
-              :name="key"
-              :label="field.label"
-              v-model="field.value"
-              :type="field.type"
-              :errors="field.errors"
-              :validators="field.validators"
-            />
-          </div>
-          <button class="submit-btn" @click="submitForm">
-            구성원 추가하기
-          </button>
-        </div>
+  <Modal>
+    <template v-slot:modal-body>
+      <div class="header">
+        <h3 class="title" @click="$emit('close')">구성원 추가</h3>
+        <p class="detail">구미 2반 7팀의 구성원을 추가합니다.</p>
       </div>
-    </div>
-  </teleport>
+      <div class="add-form">
+        <div class="input-list">
+          <TextInput
+            v-for="(field, key) in formData"
+            :key="key"
+            :name="key"
+            :label="field.label"
+            v-model="field.value"
+            :type="field.type"
+            :errors="field.errors"
+            :validators="field.validators"
+          />
+        </div>
+        <button
+          class="submit-btn"
+          :class="{ disabled: !formIsValid }"
+          :disabled="!formIsValid"
+          @click="submitForm"
+        >
+          구성원 추가하기
+        </button>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <script>
-import TextInput from "@/components/Members/TextInput.vue"
 import { reactive, ref } from "@vue/reactivity"
+import { computed } from "@vue/runtime-core"
+import axios from "axios"
+import TextInput from "@/components/Members/TextInput.vue"
+import Modal from "@/components/Common/Modal.vue"
 
 export default {
   name: "AddMemberModal",
   components: {
+    Modal,
     TextInput,
   },
-  setup() {
-    const formDataIsValid = ref(false)
-
+  setup(_, { emit }) {
     const requiredValidator = key => {
       if (formData[key].value < 1) {
         formData[key].errors.required = "필수 입력 요소입니다."
@@ -130,56 +135,71 @@ export default {
       },
     })
 
-    // const validateFormData = () => {
-    //   // 모든 field를 순회하며 검증 작업을 시작한다.
-    //   Object.keys(formData).forEach(key => {
-    //     const field = formData[key]
-    //     field.validators.forEach(validator => {
-    //       return validator(key)
-    //     })
-    //   })
-    // }
+    const allFieldIsFilled = computed(() => {
+      return Object.keys(formData).every(key => formData[key].value)
+    })
+
+    const allFieldDoesNotHaveError = computed(() => {
+      return Object.keys(formData).every(
+        key => !Object.keys(formData[key].errors).length
+      )
+    })
+
+    const formIsValid = computed(() => {
+      return allFieldIsFilled.value && allFieldDoesNotHaveError.value
+    })
 
     const submitForm = () => {
-      // validateFormData()
-      alert("검증 완료")
+      const submitData = {}
+      Object.keys(formData).forEach(key => {
+        if (key === "confirmPassword") return
+        submitData[key] = formData[key].value
+      })
+      alert("Post 요청")
+      axios({
+        url: "/api/v1/users",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: submitData,
+      }).then(res => {
+        console.log(res)
+        emit("close")
+      })
     }
 
     return {
       formData,
       submitForm,
+      allFieldIsFilled,
+      allFieldDoesNotHaveError,
+      formIsValid,
     }
   },
 }
 </script>
 
 <style scoped lang="scss">
-.backdrop {
-  z-index: 999;
-  background: rgba(46, 46, 51, 0.6);
-  @apply absolute inset-0 flex items-center justify-center;
+.header {
+  @apply grid gap-6 mb-10;
 
-  .modal-container {
-    max-width: 480px;
-    @apply p-10 bg-white shadow-lg rounded-xl w-full;
+  .title {
+    @apply text-3xl font-bold;
+  }
+}
 
-    .header {
-      @apply grid gap-6 mb-10;
+.add-form {
+  @apply grid gap-10;
 
-      .title {
-        @apply text-3xl font-bold;
-      }
-    }
+  .input-list {
+    @apply grid gap-4;
+  }
+  .submit-btn {
+    @apply py-4 rounded-xl bg-blue-400 text-white font-bold;
 
-    .add-form {
-      @apply grid gap-10;
-
-      .input-list {
-        @apply grid gap-4;
-      }
-      .submit-btn {
-        @apply py-4 rounded-xl bg-gray-400 text-white font-bold;
-      }
+    &.disabled {
+      @apply bg-gray-400;
     }
   }
 }
