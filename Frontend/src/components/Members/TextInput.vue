@@ -1,10 +1,13 @@
 <template>
   <div class="grid gap-2">
-    <div class="input-container">
+    <div
+      class="input-container"
+      :class="{ error: errors && Object.keys(errors).length }"
+    >
       <input
         :type="type"
         :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="handleInput"
         @focus="labelActive = true"
         @blur="handleBlur"
         autocomplete="off"
@@ -44,7 +47,7 @@ export default {
     },
   },
   emits: ["update:modelValue"],
-  setup(props) {
+  setup(props, { emit }) {
     const labelActive = ref(Boolean(props.modelValue))
 
     const validate = () => {
@@ -58,9 +61,19 @@ export default {
       labelActive.value = props.modelValue ? true : false
     }
 
+    const handleInput = event => {
+      // emit 이벤트를 먼저 발생시키지 않으면, 한 타이밍 늦게 error 관련 이벤트가 처리된다.
+      emit("update:modelValue", event.target.value)
+      // Error가 있는 경우, Input Event 발생 시 매번 검사
+      if (props.errors && Object.keys(props.errors).length) {
+        validate()
+      }
+    }
+
     return {
       labelActive,
       handleBlur,
+      handleInput,
     }
   },
 }
@@ -82,6 +95,13 @@ export default {
 
   input {
     @apply w-full pt-6 pb-2 px-4 bg-transparent z-10 relative outline-none rounded-md border border-gray-300 focus:border-blue-600;
+  }
+  &.error {
+    @apply bg-red-50;
+
+    input {
+      @apply border-red-500;
+    }
   }
 }
 </style>
