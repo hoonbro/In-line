@@ -5,4 +5,5 @@ import com.inline.sub2.db.entity.OnBoardEntity;
 
 public interface OnBoardService {
     OnBoardEntity registUserOnboard(UserRegistDto user);
+    void deleteUserOnboard(String email);
 }
