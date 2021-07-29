@@ -43,9 +43,7 @@ export default {
     })
 
     const getTodos = async () => {
-      const res = await axios({
-        url: "/api/v1/todos",
-      })
+      const res = await axios.get("http://localhost:3000/todos")
       todos.value = res.data
     }
 
@@ -56,7 +54,8 @@ export default {
 
       try {
         const res = await axios({
-          url: "/api/v1/todos",
+          // url: "/api/v1/todos",
+          url: "http://localhost:3000/todos",
           method: "POST",
           data: {
             title: formData.title,
@@ -76,7 +75,8 @@ export default {
 
     const handleToggleComplete = async (todoId, currentDone) => {
       const res = await axios({
-        url: `/api/v1/todos/${todoId}`,
+        // url: `/api/v1/todos/${todoId}`,
+        url: `http://localhost:3000/todos/${todoId}`,
         method: "PATCH",
         data: {
           done: !currentDone,
@@ -92,7 +92,8 @@ export default {
 
     const deleteTodo = async todoId => {
       const res = await axios({
-        url: `/api/v1/todos/${todoId}`,
+        // url: `/api/v1/todos/${todoId}`,
+        url: `http://localhost:3000/todos/${todoId}`,
         method: "DELETE",
       })
       console.log(res)

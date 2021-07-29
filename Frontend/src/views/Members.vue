@@ -47,15 +47,22 @@
                 v-for="member in members"
                 :key="member.id"
                 :member="member"
-                @click="profileModalOpen = true"
+                @click="openProfileModal(member.id)"
               />
             </ul>
           </div>
         </div>
       </div>
     </section>
-    <AddMemberModal v-if="addMemberModalOpen" @close="closeAddMemberModal" />
-    <ProfileModal v-if="profileModalOpen" @close="closeProfileModal" />
+    <AddMemberModal
+      v-if="addMemberModalOpen"
+      @close="addMemberModalOpen = false"
+    />
+    <ProfileModal
+      v-if="profileModalOpen"
+      @close="profileModalOpen = false"
+      :userId="profileUserId"
+    />
   </div>
 </template>
 
@@ -79,13 +86,11 @@ export default {
     const members = ref([])
     const addMemberModalOpen = ref(false)
     const profileModalOpen = ref(false)
+    const profileUserId = ref(null)
 
-    const closeProfileModal = () => {
-      profileModalOpen.value = false
-    }
-
-    const closeAddMemberModal = () => {
-      addMemberModalOpen.value = false
+    const openProfileModal = userId => {
+      profileUserId.value = userId
+      profileModalOpen.value = true
     }
 
     onMounted(async () => {
@@ -99,8 +104,8 @@ export default {
       members,
       addMemberModalOpen,
       profileModalOpen,
-      closeProfileModal,
-      closeAddMemberModal,
+      openProfileModal,
+      profileUserId,
     }
   },
 }
