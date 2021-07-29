@@ -1,14 +1,19 @@
 <template>
-  <div class="input-container" :class="{ redbox: required && isEmpty }">
-    <input
-      :type="type"
-      :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
-      @focus="labelActive = true"
-      @blur="onBlur"
-      autocomplete="off"
-    />
-    <label class="label" :class="{ active: labelActive }">{{ label }}</label>
+  <div class="grid gap-2">
+    <div class="input-container">
+      <input
+        :type="type"
+        :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
+        @focus="labelActive = true"
+        @blur="handleBlur"
+        autocomplete="off"
+      />
+      <label class="label" :class="{ active: labelActive }">{{ label }}</label>
+    </div>
+    <div class="text-sm text-red-500 font-medium grid gap-1">
+      <p v-for="(error, key) in errors" :key="key">{{ error }}</p>
+    </div>
   </div>
 </template>
 
@@ -28,37 +33,34 @@ export default {
       type: String,
       default: "라벨",
     },
-    required: {
-      type: Boolean,
-      default: false,
+    errors: {
+      type: Object,
     },
-    shouldEmitEvent: {
-      type: Boolean,
-      default: false,
+    validators: {
+      type: Array,
+    },
+    name: {
+      type: String,
     },
   },
-  emits: ["update:modelValue", "blur"],
-  setup(props, { emit }) {
+  emits: ["update:modelValue"],
+  setup(props) {
     const labelActive = ref(Boolean(props.modelValue))
 
-    const isEmpty = ref(false)
+    const validate = () => {
+      props.validators.forEach(validator => {
+        validator(props.name)
+      })
+    }
 
-    const onBlur = e => {
+    const handleBlur = () => {
+      validate()
       labelActive.value = props.modelValue ? true : false
-      const inputValue = e.target.value
-      console.log("onBlur 실행")
-      if (props.required) {
-        console.log("required 요소")
-        isEmpty.value = !inputValue ? true : false
-        console.log(isEmpty.value)
-      }
-      if (props.shouldEmitEvent) emit("blur", e)
     }
 
     return {
       labelActive,
-      isEmpty,
-      onBlur,
+      handleBlur,
     }
   },
 }
@@ -79,9 +81,5 @@ export default {
   input {
     @apply w-full pt-6 pb-2 px-4 bg-transparent z-10 relative outline-none ring-red-900;
   }
-}
-
-.redbox {
-  @apply bg-red-50 border-red-400;
 }
 </style>

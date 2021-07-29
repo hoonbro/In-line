@@ -3,7 +3,11 @@
     <section>
       <div class="header">
         <h1 class="section-title">구성원</h1>
-        <button class="add-member-btn" v-if="true">
+        <button
+          class="add-member-btn"
+          v-if="true"
+          @click="addMemberModalOpen = true"
+        >
           <span class="material-icons">add</span>
           <span>구성원 추가</span>
         </button>
@@ -43,13 +47,15 @@
                 v-for="member in members"
                 :key="member.id"
                 :member="member"
+                @click="profileModalOpen = true"
               />
             </ul>
           </div>
         </div>
       </div>
     </section>
-    <AddMemberModal />
+    <AddMemberModal v-if="addMemberModalOpen" @close="closeAddMemberModal" />
+    <ProfileModal v-if="profileModalOpen" @close="closeProfileModal" />
   </div>
 </template>
 
@@ -59,6 +65,7 @@ import axios from "axios"
 import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 import AddMemberModal from "@/components/Members/AddMemberModal.vue"
+import ProfileModal from "@/components/Members/ProfileModal.vue"
 
 export default {
   name: "Members",
@@ -66,9 +73,20 @@ export default {
     MemberListItem,
     DepartmentListItem,
     AddMemberModal,
+    ProfileModal,
   },
   setup() {
     const members = ref([])
+    const addMemberModalOpen = ref(false)
+    const profileModalOpen = ref(false)
+
+    const closeProfileModal = () => {
+      profileModalOpen.value = false
+    }
+
+    const closeAddMemberModal = () => {
+      addMemberModalOpen.value = false
+    }
 
     onMounted(async () => {
       const res = await axios({
@@ -79,6 +97,10 @@ export default {
 
     return {
       members,
+      addMemberModalOpen,
+      profileModalOpen,
+      closeProfileModal,
+      closeAddMemberModal,
     }
   },
 }

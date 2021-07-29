@@ -35,13 +35,18 @@
 import { ref } from "vue"
 import RegistOfficeModal from "@/components/RegistOfficeModal.vue"
 import LoginModal from "@/components/LoginModal.vue"
+import { useRoute } from "vue-router"
 
 export default {
   name: "LandingLayout",
   components: { RegistOfficeModal, LoginModal },
   setup() {
+    const route = useRoute()
+
     const isRegistOfficeModalActivation = ref(false)
     const isLoginModalActivation = ref(false)
+
+    if (route.params.shouldLogin) isLoginModalActivation.value = true
 
     return {
       isRegistOfficeModalActivation,

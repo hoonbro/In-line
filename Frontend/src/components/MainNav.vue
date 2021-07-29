@@ -6,13 +6,33 @@
       <router-link :to="{ name: 'Members' }">구성원</router-link>
       <router-link :to="{ name: 'Admin' }">관리자</router-link>
     </div>
-    <button class="logout">로그아웃</button>
+    <button class="logout" @click="logout">
+      로그아웃
+    </button>
   </nav>
 </template>
 
 <script>
+import { useRouter } from "vue-router"
+
 export default {
   name: "MainNav",
+  setup() {
+    const router = useRouter()
+
+    const logout = () => {
+      const yes = confirm("로그아웃 하시겠습니까?")
+      if (yes) {
+        localStorage.removeItem("jwt")
+        localStorage.removeItem("auth")
+        router.push({ name: "Home" })
+      }
+    }
+
+    return {
+      logout,
+    }
+  },
 }
 </script>
 

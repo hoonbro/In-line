@@ -14,6 +14,11 @@ const routes = [
   {
     path: "/",
     component: LandingLayout,
+    // localStorage에 jwt가 있으면 Office로 라우팅
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("jwt")) next({ name: "Office" })
+      else next()
+    },
     children: [
       {
         path: "",
@@ -30,6 +35,7 @@ const routes = [
   {
     path: "/office",
     component: OfficeLayout,
+    meta: { loginRequired: true },
     children: [
       {
         path: "",
@@ -51,6 +57,7 @@ const routes = [
   {
     path: "/rooms/",
     component: RoomLayout,
+    meta: { loginRequired: true },
     children: [
       {
         path: "/rooms/:roomId",
@@ -59,11 +66,30 @@ const routes = [
       },
     ],
   },
+  {
+    // 위 경로를 제외한 모든 url 접근에 대해 NotFoundPage.vue를 rendering
+    path: "/:pathMatch(.*)*",
+    component: () => import("@/views/NotFoundPage.vue"),
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+})
+
+// to: 이동할 url에 해당하는 라우팅 객체
+// from: 현재 url에 해당하는 라우팅 객체
+// next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
+router.beforeEach((to, from, next) => {
+  // login이 필수인데, localStorage에 jwt가 없으면
+  //  -> Home으로 보낸다 (로그인을 하라는 param과 함께)
+  const isLoginRequired = to.matched.some(
+    routeInfo => routeInfo.meta.loginRequired
+  )
+  if (isLoginRequired && !localStorage.getItem("jwt")) {
+    next({ name: "Home", params: { shouldLogin: true } })
+  } else next()
 })
 
 export default router
