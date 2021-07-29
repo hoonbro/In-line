@@ -1,0 +1,209 @@
+<template>
+  <div class="todo-container">
+    <div class="todo-form">
+      <div class="input-container">
+        <input type="text" placeholder="제목" v-model="formData.title" />
+        <textarea placeholder="내용" v-model="formData.content"></textarea>
+        <input type="date" placeholder="마감기한" v-model="formData.day" />
+      </div>
+      <div class="button-container">
+        <button class="form-btn add" @click="createTodos">할 일 추가</button>
+        <button class="form-btn cancel">취소</button>
+      </div>
+    </div>
+    <hr class="border-gray-300 my-4" />
+    <div class="todo-list">
+      <TodoListItem
+        v-for="todo in todos"
+        :key="todo.id"
+        :todo="todo"
+        @toggleComplete="handleToggleComplete"
+        @delete="deleteTodo"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios"
+import { reactive, ref, onMounted } from "vue"
+import TodoListItem from "@/components/RightAsidebar/TodoListItem.vue"
+
+export default {
+  name: "Todo",
+  components: {
+    TodoListItem,
+  },
+  setup() {
+    const todos = ref([])
+    const formData = reactive({
+      title: "",
+      content: "",
+      day: "",
+    })
+
+    const getTodos = async () => {
+      const res = await axios.get("http://localhost:3000/todos")
+      todos.value = res.data
+    }
+
+    const createTodos = async () => {
+      if (!formData.title || !formData.content) {
+        return
+      }
+
+      try {
+        const res = await axios({
+          // url: "/api/v1/todos",
+          url: "http://localhost:3000/todos",
+          method: "POST",
+          data: {
+            title: formData.title,
+            content: formData.content,
+            day: formData.day,
+            done: false,
+          },
+        })
+        todos.value.push(res.data)
+        Object.keys(formData).forEach(key => {
+          formData[key] = ""
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    const handleToggleComplete = async (todoId, currentDone) => {
+      const res = await axios({
+        // url: `/api/v1/todos/${todoId}`,
+        url: `http://localhost:3000/todos/${todoId}`,
+        method: "PATCH",
+        data: {
+          done: !currentDone,
+        },
+      })
+      todos.value.forEach(todo => {
+        if (todo.id === todoId) {
+          todo.done = !todo.done
+        }
+      })
+      console.log(res)
+    }
+
+    const deleteTodo = async todoId => {
+      const res = await axios({
+        // url: `/api/v1/todos/${todoId}`,
+        url: `http://localhost:3000/todos/${todoId}`,
+        method: "DELETE",
+      })
+      console.log(res)
+      todos.value = todos.value.filter(todo => todo.id !== todoId)
+    }
+
+    onMounted(() => {
+      getTodos()
+    })
+
+    return {
+      todos,
+      formData,
+      createTodos,
+      handleToggleComplete,
+      deleteTodo,
+    }
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.todo-container {
+  width: 360px;
+  @apply h-full overflow-hidden flex flex-col py-6 px-4;
+
+  .todo-form {
+    @apply grid gap-4;
+
+    .input-container {
+      @apply grid gap-2;
+
+      input,
+      textarea {
+        @apply bg-gray-100 py-2 px-4 text-sm rounded;
+      }
+
+      textarea {
+        @apply resize-none;
+      }
+    }
+
+    .button-container {
+      @apply flex;
+
+      .form-btn {
+        @apply text-sm font-medium text-white flex-1 py-2 flex items-center justify-center rounded-lg;
+
+        &.add {
+          @apply bg-blue-800 mr-1;
+        }
+
+        &.cancel {
+          @apply bg-gray-400;
+        }
+      }
+    }
+  }
+
+  .todo-list {
+    @apply grid gap-4 max-h-full overflow-auto;
+
+    .todo-list-item {
+      @apply p-4 bg-gray-50 grid gap-2;
+
+      .inner-top {
+        @apply flex items-start;
+
+        .content {
+          @apply flex-1 mr-2 grid gap-1;
+
+          .title {
+            @apply font-bold;
+          }
+
+          .detail {
+            @apply text-sm;
+          }
+        }
+
+        .done-btn:hover .icon {
+          @apply text-green-500;
+        }
+      }
+
+      .inner-bottom {
+        @apply flex;
+
+        .duedate {
+          @apply text-sm text-red-500 flex-1;
+        }
+
+        .delete-btn .icon {
+          font-size: 1rem;
+          @apply text-gray-400;
+
+          &:hover {
+            @apply text-red-500;
+          }
+        }
+      }
+
+      &.completed {
+        @apply text-gray-400;
+
+        .duedate {
+          @apply text-gray-400;
+        }
+      }
+    }
+  }
+}
+</style>
