@@ -4,7 +4,9 @@ import com.inline.sub2.api.dto.UserRegistDto;
 import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.JobEntity;
 import com.inline.sub2.db.entity.OnBoardEntity;
+import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.db.repository.OnBoardRepository;
+import com.inline.sub2.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,13 @@ public class OnBoardServiceImpl implements OnBoardService{
 
     @Autowired
     JobService jobService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    OnBoardService onBoardService;
+
 
     @Override
     @Transactional
@@ -39,5 +48,17 @@ public class OnBoardServiceImpl implements OnBoardService{
         onBoardEntity.setOfficeId(user.getOfficeId());
         onBoardEntity.setDeptId(user.getDeptId());
         return onBoardRepository.save(onBoardEntity);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserOnboard(String email) {
+//        UserEntity userEntity = userService.getUserByEmail(email);
+        System.out.println("여기1");
+        OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
+        System.out.println(onBoardEntity.getName());
+        onBoardRepository.delete(onBoardEntity);
+
+
     }
 }
