@@ -60,6 +60,7 @@ public class CallHandler extends TextWebSocketHandler {
                 break;
             case "leaveRoom":
                 System.out.println("방나갈떄!!");
+                System.out.println("방나갈떄22");
                 leaveRoom(user);
                 break;
             case "onIceCandidate":
