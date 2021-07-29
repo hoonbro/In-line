@@ -26,9 +26,10 @@ const PARTICIPANT_CLASS = "participant"
  *                        The tag of the new element will be 'video<name>'
  * @return
  */
-function Participant(name) {
+export function Participant(name) {
   this.name = name
   let container = document.createElement("div")
+  // PARTICIPANT_MAIN_CLASS가 없을 때
   container.className = isPresentMainParticipant()
     ? PARTICIPANT_CLASS
     : PARTICIPANT_MAIN_CLASS

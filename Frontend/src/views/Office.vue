@@ -50,6 +50,10 @@ export default {
   .rooms-row {
     @apply w-full grid gap-4;
 
+    &:last-child {
+      @apply mb-10;
+    }
+
     .rooms-title {
       @apply text-2xl font-bold;
     }

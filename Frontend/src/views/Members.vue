@@ -95,7 +95,8 @@ export default {
 
     onMounted(async () => {
       const res = await axios({
-        url: `/api/v1/users`,
+        url: `http://localhost:3000/users`,
+        // url: `/api/v1/users`,
       })
       members.value = res.data
     })
