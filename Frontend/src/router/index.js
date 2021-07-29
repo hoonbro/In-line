@@ -8,7 +8,7 @@ import RegistOffice from "@/views/RegistOffice.vue"
 import Office from "@/views/Office.vue"
 import Members from "@/views/Members.vue"
 import Admin from "@/views/Admin.vue"
-import Room from "@/views/Room.vue"
+import Room2 from "@/views/Room2.vue"
 
 const routes = [
   {
@@ -62,7 +62,8 @@ const routes = [
       {
         path: "/rooms/:roomId",
         name: "Room",
-        component: Room,
+        component: Room2,
+        props: true,
       },
     ],
   },

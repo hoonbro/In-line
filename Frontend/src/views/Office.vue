@@ -8,17 +8,17 @@
     <div class="rooms-row">
       <h1 class="rooms-title">팀별 미팅룸</h1>
       <div class="rooms-container">
-        <RoomLink :title="'Developer'" :roomId="1" :large="true" />
-        <RoomLink :title="'Marketing'" :roomId="1" :large="true" />
+        <RoomLink :title="'Developer'" :roomId="2" :large="true" />
+        <RoomLink :title="'Marketing'" :roomId="3" :large="true" />
       </div>
     </div>
     <div class="rooms-row">
       <h1 class="rooms-title">소규모 회의실</h1>
       <div class="rooms-container mini">
-        <RoomLink :title="'Developer'" :roomId="1" />
-        <RoomLink :title="'Marketing'" :roomId="1" />
-        <RoomLink :title="'MiniRoom'" :roomId="1" />
-        <RoomLink :title="'Marketing'" :roomId="1" />
+        <RoomLink :title="'Developer'" :roomId="4" />
+        <RoomLink :title="'Marketing'" :roomId="5" />
+        <RoomLink :title="'MiniRoom'" :roomId="6" />
+        <RoomLink :title="'Marketing'" :roomId="7" />
       </div>
     </div>
   </div>
@@ -31,6 +31,9 @@ export default {
   name: "Office",
   components: {
     RoomLink,
+  },
+  setup() {
+    return {}
   },
 }
 </script>

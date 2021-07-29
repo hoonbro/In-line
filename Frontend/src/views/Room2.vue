@@ -1,72 +1,7 @@
 <template>
   <div class="layout">
     <div class="wrapper">
-      <div class="video-chat">
-        <!-- ------------------------------------------------------------------------- -->
-        <div class="video-part" v-if="videoList > 16">
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
-        </div>
-        <div class="video-part2" v-else-if="videoList > 9">
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
-        </div>
-        <div class="video-part3" v-else-if="videoList > 4">
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
-        </div>
-        <div class="video-part4" v-else>
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
-        </div>
-        <!-- ------------------------------------------------------------------------- -->
-
-        <div class="bar-part">
-          <div
-            class="mic-button"
-            @click="changeMic()"
-            v-if="switchMic === true"
-          >
-            <span class="material-icons"> mic </span> 마이크 끄기
-          </div>
-          <div
-            class="mic-button"
-            @click="changeMic()"
-            v-if="switchMic === false"
-          >
-            <span class="material-icons"> mic_off </span> 마이크 켜기
-          </div>
-          <div
-            class="cam-button"
-            @click="changeCam()"
-            v-if="switchCam === true"
-          >
-            <span class="material-icons"> videocam </span> 카메라 끄기
-          </div>
-          <div
-            class="cam-button"
-            @click="changeCam()"
-            v-if="switchCam === false"
-          >
-            <span class="material-icons"> videocam_off </span> 카메라 켜기
-          </div>
-          <div class="close-button">
-            <router-link :to="{ name: 'Office' }"><span>✕</span></router-link>
-          </div>
-        </div>
-      </div>
+      <div id="participants"></div>
     </div>
   </div>
 </template>
@@ -77,7 +12,7 @@ import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
 
 export default {
-  name: "Room",
+  name: "Room2",
   components: {
     Video,
   },
@@ -102,7 +37,7 @@ export default {
     //   sendMessage(message)
     // }
 
-    let ws = new WebSocket(`wss://13.124.47.223:8995/groupcall`)
+    let ws = new WebSocket(`wss://13.124.47.223:8080/groupcall`)
     // const participants = {}
 
     // window.onbeforeunload = function() {
