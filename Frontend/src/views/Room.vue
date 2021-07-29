@@ -73,14 +73,186 @@
 
 <script>
 import Video from "@/components/Room/Video.vue"
-import { ref } from "@vue/runtime-core"
+import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
+import { useStore } from "vuex"
 
 export default {
   name: "Room",
   components: {
     Video,
   },
+  props: {
+    roomId: [String || Number],
+  },
   setup() {
+    const store = useStore()
+
+    const state = reactive({
+      room: "",
+      name: store.state["user"].name,
+    })
+
+    // const register = () => {
+    //   const message = {
+    //     id: "JoinRoom",
+    //     name: state.name,
+    //     room: state.room,
+    //   }
+
+    //   sendMessage(message)
+    // }
+
+    let ws = new WebSocket(`wss://13.124.47.223:8995/groupcall`)
+    // const participants = {}
+
+    // window.onbeforeunload = function() {
+    //   ws.close()
+    // }
+
+    // ws.onmessage = function(message) {
+    //   let parsedMessage = JSON.parse(message.data)
+    //   console.info("Received message: " + message.data)
+
+    //   switch (parsedMessage.id) {
+    //     case "existingParticipants":
+    //       onExistingParticipants(parsedMessage)
+    //       break
+    //     case "newParticipantArrived":
+    //       onNewParticipant(parsedMessage)
+    //       break
+    //     case "participantLeft":
+    //       onParticipantLeft(parsedMessage)
+    //       break
+    //     case "receiveVideoAnswer":
+    //       receiveVideoResponse(parsedMessage)
+    //       break
+    //     case "iceCandidate":
+    //       participants[parsedMessage.name].rtcPeer.addIceCandidate(
+    //         parsedMessage.candidate,
+    //         function(error) {
+    //           if (error) {
+    //             console.error("Error adding candidate: " + error)
+    //             return
+    //           }
+    //         }
+    //       )
+    //       break
+    //     default:
+    //       console.error("Unrecognized message", parsedMessage)
+    //   }
+    // }
+
+    // function onNewParticipant(request) {
+    //   receiveVideo(request.name)
+    // }
+
+    // function receiveVideoResponse(result) {
+    //   participants[result.name].rtcPeer.processAnswer(
+    //     result.sdpAnswer,
+    //     function(error) {
+    //       if (error) return console.error(error)
+    //     }
+    //   )
+    // }
+
+    // // 안씀...
+    // function callResponse(message) {
+    //   if (message.response != "accepted") {
+    //     console.info("Call not accepted by peer. Closing call")
+    //     stop()
+    //   } else {
+    //     webRtcPeer.processAnswer(message.sdpAnswer, function(error) {
+    //       if (error) return console.error(error)
+    //     })
+    //   }
+    // }
+
+    // function onExistingParticipants(msg) {
+    //   let constraints = {
+    //     audio: true,
+    //     video: {
+    //       mandatory: {
+    //         maxWidth: 320,
+    //         maxFrameRate: 15,
+    //         minFrameRate: 15,
+    //       },
+    //     },
+    //   }
+    //   console.log(state.name + " registered in room " + state.room)
+    //   let participant = new Participant(state.name)
+    //   participants[state.name] = participant
+    //   let video = participant.getVideoElement()
+
+    //   let options = {
+    //     localVideo: video,
+    //     mediaConstraints: constraints,
+    //     onicecandidate: participant.onIceCandidate.bind(participant),
+    //   }
+    //   participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
+    //     options,
+    //     function(error) {
+    //       if (error) {
+    //         return console.error(error)
+    //       }
+    //       this.generateOffer(participant.offerToReceiveVideo.bind(participant))
+    //     }
+    //   )
+
+    //   msg.data.forEach(receiveVideo)
+    // }
+
+    // // RoomComponent
+    // function leaveRoom() {
+    //   sendMessage({
+    //     id: "leaveRoom",
+    //   })
+
+    //   for (let key in participants) {
+    //     participants[key].dispose()
+    //   }
+
+    //   // document.getElementById("join").style.display = "block"
+    //   // document.getElementById("room").style.display = "none"
+
+    //   // ws.close();
+    // }
+
+    // function receiveVideo(sender) {
+    //   let participant = new Participant(sender)
+    //   participants[sender] = participant
+    //   let video = participant.getVideoElement()
+
+    //   let options = {
+    //     remoteVideo: video,
+    //     onicecandidate: participant.onIceCandidate.bind(participant),
+    //   }
+
+    //   participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
+    //     options,
+    //     function(error) {
+    //       if (error) {
+    //         return console.error(error)
+    //       }
+    //       this.generateOffer(participant.offerToReceiveVideo.bind(participant))
+    //     }
+    //   )
+    // }
+
+    // function onParticipantLeft(request) {
+    //   console.log("Participant " + request.name + " left")
+    //   let participant = participants[request.name]
+    //   participant.dispose()
+    //   delete participants[request.name]
+    // }
+
+    // function sendMessage(message) {
+    //   const jsonMessage = JSON.stringify(message)
+    //   console.log("Sending message: " + jsonMessage)
+    //   ws.send(jsonMessage)
+    //   console.log("Sending message: " + jsonMessage)
+    // }
+
+    // -------------------------------------------------------------------------------
     const videoList = 6
 
     // 여기서부터
@@ -96,6 +268,10 @@ export default {
       console.log(switchCam.value)
     }
     // 여기까지 마이크, 캠 껐다 켰다하기
+
+    onMounted(() => {
+      // register()
+    })
 
     return {
       videoList,
