@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import LandingLayout from "@/layouts/LandingLayout.vue"
 import OfficeLayout from "@/layouts/OfficeLayout.vue"
+import RoomLayout from "@/layouts/RoomLayout.vue"
 
 import Home from "@/views/Home.vue"
 import RegistOffice from "@/views/RegistOffice.vue"
@@ -54,10 +55,16 @@ const routes = [
     ],
   },
   {
-    path: "/rooms/:roomId",
-    name: "Room",
-    component: Room,
+    path: "/rooms/",
+    component: RoomLayout,
     meta: { loginRequired: true },
+    children: [
+      {
+        path: "/rooms/:roomId",
+        name: "Room",
+        component: Room,
+      },
+    ],
   },
   {
     // 위 경로를 제외한 모든 url 접근에 대해 NotFoundPage.vue를 rendering

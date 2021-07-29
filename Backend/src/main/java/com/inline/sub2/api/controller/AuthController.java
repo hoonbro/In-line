@@ -4,6 +4,7 @@ import com.inline.sub2.api.dto.UserDto;
 import com.inline.sub2.util.JwtUtil;
 import com.inline.sub2.api.service.UserService;
 import com.inline.sub2.db.entity.UserEntity;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class AuthController {
     JwtUtil jwtUtil;
 
     @GetMapping("/valiable")
+    @ApiOperation(value = "토큰이 사용 가능한지 확인하기 위함", response = Map.class)
     public ResponseEntity<Map<String, Object>> valiable(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
