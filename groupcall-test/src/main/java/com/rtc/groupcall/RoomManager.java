@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.rtc.groupcall.db.entity.RoomEntity;
-import com.rtc.groupcall.db.repository.RoomRepository;
+//import com.rtc.groupcall.db.entity.RoomEntity;
+//import com.rtc.groupcall.db.repository.RoomRepository;
 import org.kurento.client.KurentoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,8 @@ public class RoomManager {
     @Autowired
     private KurentoClient kurento;
 
-    @Autowired
-    RoomRepository roomRepository;
+//    @Autowired
+//    RoomRepository roomRepository;
 
     private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
 
@@ -35,15 +35,15 @@ public class RoomManager {
      * @return the room if it was already created, or a new one if it is the first time this room is
      *         accessed
      */
-    public List<RoomEntity> getAllRooms(Long OfficeId){
-        List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
-
-        for(RoomEntity r: roomEntitys){
-            rooms.put(r.getRoomName(),  new Room(r.getRoomName(), 1l));
-        }
-
-        return roomRepository.findAllByOfficeId(OfficeId);
-    }
+//    public List<RoomEntity> getAllRooms(Long OfficeId){
+//        List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
+//
+//        for(RoomEntity r: roomEntitys){
+//            rooms.put(r.getRoomName(),  new Room(r.getRoomName(), 1l));
+//        }
+//
+//        return roomRepository.findAllByOfficeId(OfficeId);
+//    }
 
     public Room getRoom(String roomName) {
         log.debug("Searching for room {}", roomName);
