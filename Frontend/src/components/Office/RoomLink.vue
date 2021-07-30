@@ -11,7 +11,7 @@
     <img
       class="img"
       :class="{ large: large }"
-      :src="`https://picsum.photos/seed/room-${roomId}/200/200`"
+      :src="`https://picsum.photos/seed/room-${roomId}/100`"
       alt="이미지"
     />
   </router-link>
