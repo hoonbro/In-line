@@ -48,6 +48,10 @@ export default {
 
   &.top {
     @apply bg-white text-gray-900;
+
+    .btn:hover {
+      @apply bg-gray-900 text-white;
+    }
   }
 
   .home-btn {
@@ -58,7 +62,11 @@ export default {
     @apply flex;
 
     .btn {
-      @apply py-2 px-4 rounded-md font-bold hover:bg-white hover:text-gray-900 mx-4;
+      @apply py-2 px-4 rounded-md font-bold mx-4;
+
+      &:hover {
+        @apply bg-white text-gray-900;
+      }
     }
   }
 }

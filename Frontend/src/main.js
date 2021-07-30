@@ -9,5 +9,5 @@ import "aos/dist/aos.css"
 createApp(App)
   .use(store)
   .use(router)
-  .mount("#app")
   .use(AOS)
+  .mount("#app")

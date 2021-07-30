@@ -2,54 +2,55 @@
   <div class="back-ground"></div>
   <section class="home">
     <!--  -->
-    <article class="article">
+    <article class="">
       <h2 class="title">인-라인[명사] : 선 안에 있는, 사람을 잇는</h2>
       <div class="content">
-        <div class="item-left-img">
+        <div class="item-img-container">
           <img src="@/assets/home-image.png" alt="" />
         </div>
-        <div class="item-right-text">
+        <div class="item-text-container">
           <div class="">
-            <span class="big">In-Line</span><br />
-            <span class="medium">
+            <p class="item-title">In-Line</p>
+            <p class="item-content">
               단일 회의실에 불과했던 기존의 <br />
-              가상회의 서비스를 개선한 웹 사무실 플랫폼입니다.</span
-            >
+              가상회의 서비스를 개선한 웹 사무실 플랫폼입니다.
+            </p>
           </div>
           <div class="">
-            <span class="big">人-Line</span><br /><span class="medium">
+            <p class="item-title">人-Line</p>
+            <p class="item-content">
               직원들의 재택근무 소통 환경을 개선하고, <br />관리자의 관리
-              편의성을 높이는 서비스입니다.</span
-            >
+              편의성을 높이는 서비스입니다.
+            </p>
           </div>
         </div>
       </div>
     </article>
     <!--  -->
-    <article class="article" data-aos="fade-left" data-aos-duration="2000">
+    <article data-aos="fade-left" data-aos-duration="2000">
       <h2 class="title text-right">Office</h2>
       <div class="content">
-        <div class="item-left-text">
+        <div class="item-text-container">
           <div class="main-explain">
-            <span class="explain"
-              >아직도 회의실로 출근하시나요?<br />
-              이제부터는 '인-라인'입니다.</span
-            >
+            <p class="explain">
+              아직도 회의실로 출근하시나요?<br />
+              이제부터는 '인-라인'입니다.
+            </p>
           </div>
         </div>
-        <div class="item-right-img">
+        <div class="item-img-container">
           <img src="@/assets/home-image2.png" alt="" />
         </div>
       </div>
     </article>
     <!--  -->
-    <article class="article" data-aos="fade-right" data-aos-duration="2000">
+    <article data-aos="fade-right" data-aos-duration="2000">
       <h2 class="title">Room</h2>
       <div class="content">
-        <div class="item-left-img">
+        <div class="item-img-container">
           <img src="@/assets/home-image3.png" alt="" />
         </div>
-        <div class="item-right-text">
+        <div class="item-text-container">
           <div class="main-explain">
             <span class="explain"
               >불필요하고 복잡한 UI? <br />
@@ -60,15 +61,10 @@
       </div>
     </article>
     <!--  -->
-    <article
-      class="article"
-      data-aos="fade-up"
-      data-aos-duration="4000"
-      data-aos-delay="500"
-    >
+    <article data-aos="fade-up" data-aos-duration="4000" data-aos-delay="500">
       <h2 class="title text-right">Admin</h2>
       <div class="content">
-        <div class="item-left-text">
+        <div class="item-text-container">
           <div class="main-explain">
             <span class="explain"
               >비대면으로 불편해진 인사 관리?<br />
@@ -77,7 +73,7 @@
             </span>
           </div>
         </div>
-        <div class="item-right-img">
+        <div class="item-img-container">
           <img src="@/assets/home-image4.png" alt="" />
         </div>
       </div>
@@ -105,22 +101,57 @@ export default {
   font-family: "Gowun Batang", serif;
 }
 .home {
-  @apply container mx-auto mb-20;
+  @apply container mt-40 px-4 mx-auto mb-20 grid gap-40;
 
   img {
     @apply border-4 border-black;
   }
 
+  article {
+    @apply bg-gray-100 rounded px-4 py-6 md:p-10;
+
+    .title {
+      @apply text-2xl font-bold mb-6 md:text-4xl md:mb-10;
+    }
+
+    .content {
+      @apply grid gap-10 lg:grid-cols-12 lg:gap-6;
+    }
+
+    .item-img-container {
+      @apply w-full rounded-xl lg:col-span-6;
+
+      img {
+        @apply rounded-lg;
+      }
+    }
+
+    .item-text-container {
+      @apply grid gap-6 lg:col-span-6;
+
+      .item-title {
+        @apply text-xl font-bold mb-2 md:text-2xl;
+      }
+
+      .item-content {
+        @apply text-lg font-medium md:text-xl;
+      }
+    }
+
+    .main-explain {
+      @apply text-xl font-bold md:text-2xl;
+    }
+  }
+
   .article {
-    @apply mt-80 mb-56 bg-gray-50 rounded-2xl px-1;
-    height: 500px;
+    @apply bg-gray-100 rounded p-4;
 
     .explain {
       @apply text-6xl;
     }
 
     .title {
-      @apply text-3xl font-bold mb-4 mx-4 pt-3;
+      @apply text-xl md:text-3xl font-bold;
     }
 
     .content {
@@ -131,17 +162,17 @@ export default {
         line-height: 220px;
       }
       .item-left-img {
-        @apply col-start-1 col-end-6 mt-10;
+        @apply col-span-12 md:col-start-1 md:col-end-6 mt-10;
       }
       .item-right-text {
-        @apply col-start-6 col-end-13 grid gap-4;
+        @apply col-span-12 md:col-start-6 md:col-end-13 grid gap-4;
 
         .big {
-          @apply text-6xl;
+          @apply md:text-6xl;
         }
 
         .medium {
-          @apply text-4xl;
+          @apply md:text-4xl;
         }
       }
 
