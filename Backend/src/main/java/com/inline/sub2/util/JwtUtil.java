@@ -6,10 +6,15 @@ import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.omg.CORBA.INTERNAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +24,18 @@ public class JwtUtil{
 
     public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    @Value("${jwt.secret")
-    private String SECRET_KEY;
-    @Value("${jwt.expiration}")
-    private int EXPIRE_TIME;
+    private static String SECRET_KEY;
+    private static Integer EXPIRE_TIME;
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "accessToken";
 
-    public <T> String createToken(String userId, T data, String subject) {
+    @Autowired
+    public JwtUtil(@Value("${jwt.secret}") String SECRET_KEY, @Value("${jwt.expiration}") Integer EXPIRE_TIME) {
+        this.SECRET_KEY = SECRET_KEY;
+        this.EXPIRE_TIME = EXPIRE_TIME;
+    }
+
+    public <T> String createToken(String email, T data) {
         Date now = new Date();
         //HS256 방식으로 암호화 방식 설정
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -32,9 +43,8 @@ public class JwtUtil{
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         JwtBuilder builder = Jwts.builder()
-                .setSubject(subject) // user를 구분할 수 있는 값
+                .setSubject(email) // user를 구분할 수 있는 값
                 .setExpiration(new Date(now.getTime() + EXPIRE_TIME))
-                .setAudience(userId)
                 .signWith(SignatureAlgorithm.HS256, signingKey); //암호화 알고리즘
 
         return builder.compact();
@@ -45,14 +55,20 @@ public class JwtUtil{
         return getClaims(jwt).getBody().getId();
     }
 
-    public boolean validateToken(String jwt){
-        return this.getClaims(jwt) != null;
+    public static boolean validateToken(String jwt){
+        return getClaims(jwt) != null;
     }
+
+//    public static JWTVerifier getVerifier() {
+//        return JWT
+//                .require(Algorithm.HMAC512(SECRET_KEY.getBytes()))
+//                .build();
+//    }
 
     //claims : 속성 정보(?), 권한 집합
     //JWT는 속성 정보 (Claim)를 JSON 데이터 구조로 표현한 토큰
     //Jwt토큰 유효성 검증 메서드
-    private Jws<Claims> getClaims(String jwt){
+    private static Jws<Claims> getClaims(String jwt){
         try{
             return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwt);
         }catch (SignatureException ex) {
