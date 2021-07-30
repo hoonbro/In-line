@@ -85,10 +85,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // login이 필수인데, localStorage에 jwt가 없으면
   //  -> Home으로 보낸다 (로그인을 하라는 param과 함께)
-  const isLoginRequired = to.matched.some(
-    routeInfo => routeInfo.meta.loginRequired
-  )
-  if (isLoginRequired && !localStorage.getItem("jwt")) {
+  // const isLoginRequired = to.matched.some(
+  //   routeInfo => routeInfo.meta.loginRequired
+  // )
+  if (to.meta.loginRequired && !localStorage.getItem("jwt")) {
     next({ name: "Home", params: { shouldLogin: true } })
   } else next()
 })
