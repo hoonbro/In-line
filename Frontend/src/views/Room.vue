@@ -19,8 +19,9 @@
         </div>
         <div class="video-part3" v-else-if="videoList > 4">
           <Video
-            v-for="video in videoList"
+            v-for="(video, idx) in videoList"
             :key="video"
+            :idx="idx"
             :videoList="videoList"
           />
         </div>

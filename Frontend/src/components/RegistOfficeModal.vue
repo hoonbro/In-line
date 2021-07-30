@@ -161,6 +161,7 @@ export default {
 .backdrop {
   background: rgba(46, 46, 51, 0.6);
   @apply fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center;
+  z-index: 5;
 
   .modal-container {
     @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg p-10 grid gap-10;

@@ -44,6 +44,7 @@ export default {
 .navbar {
   height: 60px;
   @apply flex justify-between items-center font-bold fixed top-0 left-0 w-full px-4 bg-gray-900 text-white border-b transition-all duration-500;
+  z-index: 3;
 
   &.top {
     @apply bg-white text-gray-900;
