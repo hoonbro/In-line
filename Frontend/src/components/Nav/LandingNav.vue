@@ -58,7 +58,7 @@ export default {
     @apply flex;
 
     .btn {
-      @apply py-2 px-4 rounded-md font-bold hover:bg-white mx-4;
+      @apply py-2 px-4 rounded-md font-bold hover:bg-white hover:text-gray-900 mx-4;
     }
   }
 }
