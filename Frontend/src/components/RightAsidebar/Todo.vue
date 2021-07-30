@@ -1,14 +1,22 @@
 <template>
   <div class="todo-container">
     <div class="todo-form">
-      <div class="input-container">
+      <div class="input-container" v-show="editMode">
         <input type="text" placeholder="제목" v-model="formData.title" />
         <textarea placeholder="내용" v-model="formData.content"></textarea>
         <input type="date" placeholder="마감기한" v-model="formData.day" />
       </div>
       <div class="button-container">
-        <button class="form-btn add" @click="createTodos">할 일 추가</button>
-        <button class="form-btn cancel">취소</button>
+        <button class="form-btn add" @click="handleAddBtnClick">
+          할 일 추가
+        </button>
+        <button
+          class="form-btn cancel"
+          v-show="editMode"
+          @click="editMode = false"
+        >
+          취소
+        </button>
       </div>
     </div>
     <hr class="border-gray-300 my-4" />
@@ -41,6 +49,7 @@ export default {
       content: "",
       day: "",
     })
+    const editMode = ref(false)
 
     const getTodos = async () => {
       const res = await axios.get("http://localhost:3000/todos")
@@ -49,6 +58,7 @@ export default {
 
     const createTodos = async () => {
       if (!formData.title || !formData.content) {
+        alert("내용을 입력하세요")
         return
       }
 
@@ -70,6 +80,14 @@ export default {
         })
       } catch (error) {
         console.log(error)
+      }
+    }
+
+    const handleAddBtnClick = () => {
+      if (editMode.value) {
+        createTodos()
+      } else {
+        editMode.value = true
       }
     }
 
@@ -107,7 +125,8 @@ export default {
     return {
       todos,
       formData,
-      createTodos,
+      editMode,
+      handleAddBtnClick,
       handleToggleComplete,
       deleteTodo,
     }

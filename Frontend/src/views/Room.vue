@@ -19,8 +19,9 @@
         </div>
         <div class="video-part3" v-else-if="videoList > 4">
           <Video
-            v-for="video in videoList"
+            v-for="(video, idx) in videoList"
             :key="video"
+            :idx="idx"
             :videoList="videoList"
           />
         </div>
@@ -103,6 +104,7 @@ export default {
     // }
 
     let ws = new WebSocket(`wss://13.124.47.223:8995/groupcall`)
+    // let ws = new WebSocket(`wss://localhost:8083/groupcall`)
     // const participants = {}
 
     // window.onbeforeunload = function() {

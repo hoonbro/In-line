@@ -5,20 +5,20 @@
         <div class="member online">
           <img src="https://picsum.photos/200/200" alt="프로필" />
           <div>
-            <div class="test">
-              <span class="material-icons">
-                mic_off
-              </span>
-            </div>
             <p class="name">김병훈</p>
-            <p class="department">Develop</p>
+            <p class="department">Master</p>
           </div>
         </div>
         <div class="member online">
           <img src="https://picsum.photos/200/199" alt="프로필" />
           <div>
+            <div class="test">
+              <span class="material-icons">
+                mic_off
+              </span>
+            </div>
             <p class="name">선명준</p>
-            <p class="department">캡틴</p>
+            <p class="department">Captain</p>
           </div>
         </div>
         <div class="member online">
@@ -30,7 +30,21 @@
               </span>
             </div>
             <p class="name">이원우</p>
-            <p class="department">광대</p>
+            <p class="department">QA</p>
+          </div>
+        </div>
+        <div class="member online">
+          <img src="https://picsum.photos/200/196" alt="프로필" />
+          <div>
+            <p class="name">최영수</p>
+            <p class="department">CEO</p>
+          </div>
+        </div>
+        <div class="member online">
+          <img src="https://picsum.photos/200/195" alt="프로필" />
+          <div>
+            <p class="name">변지훈</p>
+            <p class="department">Midas</p>
           </div>
         </div>
         <div class="member online">
@@ -45,7 +59,7 @@
               </span>
             </div>
             <p class="name">조여래</p>
-            <p class="department">Devops</p>
+            <p class="department">DevOps</p>
           </div>
         </div>
       </div>

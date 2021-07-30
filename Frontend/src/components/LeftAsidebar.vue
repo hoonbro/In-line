@@ -30,14 +30,14 @@
     <hr />
     <div class="members">
       <div class="member online" v-for="i in 4" :key="i">
-        <img src="https://picsum.photos/200/200" alt="프로필" />
+        <img :src="`https://picsum.photos/seed/user-1-${i}/40`" alt="프로필" />
         <div>
           <p class="name">김병훈</p>
           <p class="department">Develop</p>
         </div>
       </div>
       <div class="member" v-for="i in 10" :key="i">
-        <img src="https://picsum.photos/200/200" alt="프로필" />
+        <img :src="`https://picsum.photos/seed/user-2-${i}/40`" alt="프로필" />
         <div>
           <p class="name">김병훈</p>
           <p class="department">Develop</p>

@@ -8,6 +8,12 @@
     <div>
       참가자 이미지
     </div>
+    <img
+      class="img"
+      :class="{ large: large }"
+      :src="`https://picsum.photos/seed/room-${roomId}/100`"
+      alt="이미지"
+    />
   </router-link>
 </template>
 
@@ -28,10 +34,14 @@ export default {
 <style scoped lang="scss">
 .room {
   height: 160px;
-  @apply p-6 rounded-lg bg-white flex flex-col justify-between shadow;
+  @apply p-6 rounded-lg bg-white flex flex-col justify-between shadow relative;
 
   .title {
     @apply text-xl font-bold;
+  }
+
+  .img {
+    @apply absolute w-16 h-16 top-6 right-6 rounded-full;
   }
 
   &.large {
@@ -39,6 +49,10 @@ export default {
 
     .title {
       @apply text-2xl font-bold;
+    }
+
+    .img {
+      @apply w-24 h-24;
     }
   }
 }
