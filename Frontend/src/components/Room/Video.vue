@@ -1,10 +1,8 @@
 <template>
-  <div class="box">
-    <img
-      src="https://img1.daumcdn.net/thumb/C500x500.fpng/?fname=http://t1.daumcdn.net/brunch/service/user/azBb/image/30IyjiaExqw30pVdBvuEnAzjr2M.png"
-      alt=""
-    />
+  <div class="box" :class="{ talking: idx === 1 }">
+    <img :src="srcPath" alt="엑박" />
   </div>
+  <!-- <p>{{ idx }}</p> -->
 </template>
 
 <script>
@@ -14,17 +12,28 @@ export default {
     videoList: {
       type: Number,
     },
+    idx: {
+      type: Number,
+    },
   },
-  setup() {
-    return {}
+  setup(props) {
+    const srcPath = require("@/assets/image-" + props.idx + ".png")
+    return {
+      srcPath,
+    }
   },
 }
 </script>
 
 <style scoped lang="scss">
+// img {
+//   @apply rounded-xl;
+// }
+
 img {
-  width: 400px;
-  height: 225px;
+  @apply w-96;
+  // width: 400px;
+  // height: 225px;;
 }
 
 .picture {
@@ -54,5 +63,14 @@ img {
   width: 800px;
   height: 450px;
   border: 3px solid white;
+}
+
+.talking {
+  @apply border-4 border-blue-700;
+}
+
+.box {
+  @apply w-96;
+  // width: 20vw;
 }
 </style>
