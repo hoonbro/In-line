@@ -2,7 +2,7 @@ module.exports = {
   // publicPath: "/",
   devServer: {
     https: true,
-    // host: "localhost",
+    host: "localhost",
     port: 8083,
     proxy: {
       "/api/v1": {
