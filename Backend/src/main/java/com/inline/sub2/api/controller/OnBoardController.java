@@ -24,7 +24,7 @@ public class OnBoardController {
     }
 
     @DeleteMapping("/user/{email}")
-//    @ApiOperation(value = "관리자가 onBoard 테이블에서 구성원을 삭제한다.")
+    @ApiOperation(value = "관리자가 onBoard 테이블에서 구성원을 삭제한다.")
     public ResponseEntity<Void> deleteUserOnboard(@PathVariable("email") String email) {
         System.out.println(email);
        HttpStatus httpStatus = HttpStatus.OK;
