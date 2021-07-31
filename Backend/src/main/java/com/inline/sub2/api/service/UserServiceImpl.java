@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
@@ -57,6 +58,15 @@ public class UserServiceImpl implements UserService {
             userEntity.setPassword(passwordEncoder.encode(admin.getPassword()));
             userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
+
+//            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+//            SimpleDateFormat format2 = new SimpleDateFormat("HH:mm:ss");
+//            String year = format1.format(System.currentTimeMillis());
+//            String whatTime = format2.format(System.currentTimeMillis());
+//            System.out.println(year);
+//            System.out.println(whatTime);
+
+
             userEntity.setOfficeId(admin.getOfficeId());
         } catch (Exception e) {
             log.error("회사 등록 실패 : {}", e);

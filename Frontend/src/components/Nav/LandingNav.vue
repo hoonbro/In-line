@@ -44,9 +44,14 @@ export default {
 .navbar {
   height: 60px;
   @apply flex justify-between items-center font-bold fixed top-0 left-0 w-full px-4 bg-gray-900 text-white border-b transition-all duration-500;
+  z-index: 3;
 
   &.top {
     @apply bg-white text-gray-900;
+
+    .btn:hover {
+      @apply bg-gray-900 text-white;
+    }
   }
 
   .home-btn {
@@ -57,7 +62,11 @@ export default {
     @apply flex;
 
     .btn {
-      @apply py-2 px-4 rounded-md font-bold hover:bg-white mx-4;
+      @apply py-2 px-4 rounded-md font-bold mx-4;
+
+      &:hover {
+        @apply bg-white text-gray-900;
+      }
     }
   }
 }

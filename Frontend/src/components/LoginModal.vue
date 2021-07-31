@@ -1,10 +1,10 @@
 <template>
-  <div class="backdrop" @click.self="$emit('close')">
-    <div class="modal-container">
-      <div class="flex justify-center">
+  <Modal>
+    <template v-slot:modal-body>
+      <div class="flex justify-center mb-10">
         <h1 class="text-3xl font-bold">로그인</h1>
       </div>
-      <div class="input-list">
+      <div class="local-login-container">
         <TextInput
           v-for="(field, key) in formData"
           :key="key"
@@ -13,11 +13,10 @@
           :field="field"
           :formData="formData"
         />
-        <div>
-          <router-link to="#" class="text-sm">
-            😅비밀번호를 잊으셨나요?
-          </router-link>
-        </div>
+        <router-link to="#" class="text-sm inline-block mr-auto">
+          😅비밀번호를 잊으셨나요?
+        </router-link>
+
         <button class="common-btn login-btn" @click="login">
           로그인하기
         </button>
@@ -30,7 +29,7 @@
               id="willStayLogin"
               v-model="willStayLogin"
             />
-            <label class="text-sm font-medium" for="willStayLogin"
+            <label class="text-sm font-medium text-gray-700" for="willStayLogin"
               >로그인 상태 유지</label
             >
           </div>
@@ -42,25 +41,29 @@
               id="willRememberEamil"
               v-model="willRememberEamil"
             />
-            <label class="text-sm font-medium" for="willRememberEamil"
+            <label
+              class="text-sm font-medium text-gray-700"
+              for="willRememberEamil"
               >이메일 기억하기</label
             >
           </div>
         </div>
-        <hr />
-        <h2 class="text-2xl font-bold text-center">SNS 로그인</h2>
-        <button class="common-btn bg-yellow-400">
+      </div>
+      <hr class="my-6" />
+      <div class="sns-container">
+        <h2 class="text-xl font-bold text-center">SNS 로그인</h2>
+        <button class="common-btn sns-btn bg-yellow-400">
           카카오로 시작하기
         </button>
-        <button class="common-btn bg-gray-100">
+        <button class="common-btn sns-btn bg-gray-100">
           구글로 시작하기
         </button>
-        <button class="common-btn bg-green-500">
+        <button class="common-btn sns-btn bg-green-500">
           네이버로 시작하기
         </button>
       </div>
-    </div>
-  </div>
+    </template>
+  </Modal>
 </template>
 
 <script>
@@ -69,10 +72,11 @@ import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import { loginRequiredValidator, emailValidator } from "@/lib/validator"
 import TextInput from "@/components/TextInput.vue"
+import Modal from "@/components/Common/Modal.vue"
 
 export default {
   name: "LoginModal",
-  components: { TextInput },
+  components: { Modal, TextInput },
   setup(props, { emit }) {
     const store = useStore()
     const router = useRouter()
@@ -107,35 +111,28 @@ export default {
       router.push({ name: "Office" })
     }
 
-    return {
-      formData,
-      willStayLogin,
-      willRememberEamil,
-      login,
-    }
+    return { formData, willStayLogin, willRememberEamil, login }
   },
 }
 </script>
 
 <style scoped lang="scss">
-.backdrop {
-  background: rgba(46, 46, 51, 0.6);
-  @apply fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center;
+.local-login-container {
+  @apply grid gap-4 w-full;
+}
+.common-btn {
+  @apply rounded-lg font-medium w-full;
+}
 
-  .modal-container {
-    @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg py-16 px-20 grid gap-10;
+.login-btn {
+  @apply rounded-xl  py-4 bg-indigo-900 text-white font-bold;
+}
 
-    .input-list {
-      @apply grid gap-4 w-full;
+.sns-container {
+  @apply grid gap-4;
 
-      .common-btn {
-        @apply rounded-lg py-4 font-medium;
-      }
-
-      .login-btn {
-        @apply rounded-xl bg-indigo-900 text-white font-bold;
-      }
-    }
+  .sns-btn {
+    @apply py-3;
   }
 }
 </style>

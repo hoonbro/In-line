@@ -1,8 +1,8 @@
 <template>
-  <div class="backdrop" @click.self="$emit('close')">
-    <div class="modal-container">
-      <div class="flex justify-between">
-        <h1 class="text-4xl font-bold">회사 등록</h1>
+  <Modal>
+    <template v-slot:modal-body>
+      <div class="flex justify-between mb-10">
+        <h1 class="text-3xl font-bold">회사 등록</h1>
         <button @click="$emit('close')">
           <span class="material-icons-outlined">
             close
@@ -39,12 +39,11 @@
           회사 등록하기
         </button>
       </div>
-    </div>
-  </div>
+    </template>
+  </Modal>
 </template>
 
 <script>
-import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
   emailValidator,
@@ -53,10 +52,12 @@ import {
 } from "@/lib/validator"
 import { computed, reactive, ref } from "vue"
 import { useStore } from "vuex"
+import TextInput from "@/components/TextInput.vue"
+import Modal from "@/components/Common/Modal.vue"
 
 export default {
   name: "RegistOfficeModal",
-  components: { TextInput },
+  components: { TextInput, Modal },
   setup(props, { emit }) {
     const store = useStore()
 
@@ -161,6 +162,7 @@ export default {
 .backdrop {
   background: rgba(46, 46, 51, 0.6);
   @apply fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center;
+  z-index: 5;
 
   .modal-container {
     @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg p-10 grid gap-10;

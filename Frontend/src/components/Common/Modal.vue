@@ -22,7 +22,7 @@ export default {
 .backdrop {
   z-index: 999;
   background: rgba(46, 46, 51, 0.6);
-  @apply absolute inset-0 flex items-center justify-center;
+  @apply fixed inset-0 flex items-center justify-center;
 
   .modal-container {
     max-width: 480px;

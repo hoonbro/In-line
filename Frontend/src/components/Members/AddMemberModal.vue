@@ -30,9 +30,15 @@
 </template>
 
 <script>
-import { reactive, ref } from "@vue/reactivity"
+import { reactive } from "@vue/reactivity"
 import { computed } from "@vue/runtime-core"
 import axios from "axios"
+import {
+  requiredValidator,
+  emailValidator,
+  confirmPasswordValidator,
+  passwordSecurityValidator,
+} from "@/lib/validator"
 import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
 
@@ -43,50 +49,50 @@ export default {
     TextInput,
   },
   setup(_, { emit }) {
-    const requiredValidator = key => {
-      if (formData[key].value < 1) {
-        formData[key].errors.required = "필수 입력 요소입니다."
-        return false
-      }
-      delete formData[key].errors.required
-      return true
-    }
+    // const requiredValidator = key => {
+    //   if (formData[key].value < 1) {
+    //     formData[key].errors.required = "필수 입력 요소입니다."
+    //     return false
+    //   }
+    //   delete formData[key].errors.required
+    //   return true
+    // }
 
-    const emailValidator = key => {
-      if (
-        !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
-          formData[key].value
-        )
-      ) {
-        formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
-        return false
-      }
-      delete formData[key].errors.invalidEmail
-      return true
-    }
+    // const emailValidator = key => {
+    //   if (
+    //     !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
+    //       formData[key].value
+    //     )
+    //   ) {
+    //     formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
+    //     return false
+    //   }
+    //   delete formData[key].errors.invalidEmail
+    //   return true
+    // }
 
-    const confirmPasswordValidator = key => {
-      if (formData[key].value !== formData.password.value) {
-        formData[key].errors.notMatch = "비밀번호가 일치하지 않습니다."
-        return false
-      }
-      delete formData[key].errors.notMatch
-      return true
-    }
+    // const confirmPasswordValidator = key => {
+    //   if (formData[key].value !== formData.password.value) {
+    //     formData[key].errors.notMatch = "비밀번호가 일치하지 않습니다."
+    //     return false
+    //   }
+    //   delete formData[key].errors.notMatch
+    //   return true
+    // }
 
-    const passwordSecurityValidator = key => {
-      if (
-        !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
-          formData[key].value
-        )
-      ) {
-        formData[key].errors.weekPassword =
-          "대소문자, 숫자, 특수문자 조합으로 8자리 이상으로 작성하세요."
-        return false
-      }
-      delete formData[key].errors.weekPassword
-      return true
-    }
+    // const passwordSecurityValidator = key => {
+    //   if (
+    //     !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
+    //       formData[key].value
+    //     )
+    //   ) {
+    //     formData[key].errors.weekPassword =
+    //       "대소문자, 숫자, 특수문자 조합으로 8자리 이상으로 작성하세요."
+    //     return false
+    //   }
+    //   delete formData[key].errors.weekPassword
+    //   return true
+    // }
 
     const formData = reactive({
       name: {

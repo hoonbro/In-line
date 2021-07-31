@@ -6,7 +6,7 @@
       "content": "할 일 내용입니다. 할 일 내용입니다. 할 일 내용입니다.",
       "day": "2021-07-26",
       "apiId": "v1",
-      "done": true
+      "done": false
     },
     {
       "id": 2,
@@ -14,7 +14,7 @@
       "content": "할 일 내용입니다. 할 일 내용입니다. 할 일 내용입니다.",
       "day": "2021-07-26",
       "apiId": "v1",
-      "done": true
+      "done": false
     },
     {
       "id": 3,
@@ -22,7 +22,7 @@
       "content": "할 일 내용입니다. 할 일 내용입니다. 할 일 내용입니다.",
       "day": "2021-07-26",
       "apiId": "v1",
-      "done": true
+      "done": false
     },
     {
       "title": "asdf",

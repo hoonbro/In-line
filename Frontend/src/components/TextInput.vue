@@ -18,7 +18,10 @@
         {{ field.label }}
       </label>
     </div>
-    <div class="text-sm text-red-500 font-medium grid gap-1">
+    <div
+      class="text-sm text-red-500 font-medium grid gap-1"
+      v-if="field.errors && Object.keys(field.errors).length"
+    >
       <p v-for="(error, key) in field.errors" :key="key">
         {{ error }}
       </p>
