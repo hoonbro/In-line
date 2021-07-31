@@ -1,6 +1,7 @@
 package com.inline.sub2.api.controller;
 
 import com.inline.sub2.api.dto.UserDto;
+import com.inline.sub2.api.dto.UserUpdateDto;
 import com.inline.sub2.api.service.DeptService;
 import com.inline.sub2.api.service.JobService;
 import com.inline.sub2.api.service.OfficeService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +61,7 @@ public class UserController {
                     logger.debug("로그인 토큰 정보 : {}", token);
                     map.put("accessToken", token);
                     map.put("userDto", loginUser);
-                    status = HttpStatus.CREATED;
+                    status = HttpStatus.OK;
                 }
             }
         } catch (Exception e) {
@@ -72,8 +74,51 @@ public class UserController {
     @GetMapping("/test")
     @ApiOperation(value = "관리자와 사용자 권한에 따라 입력이 되는지 확인 위해 만들었습니다(신경쓰지 않으셔도 돼요)", response = Map.class)
     public ResponseEntity<Void> test() {
+        System.out.println("권한 있는지여부 확인중");
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
+
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Map<String,Object>> getUserInfo(@PathVariable("userId") Long userId) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        Map<String,Object> map = new HashMap<>();
+        try {
+            UserEntity userEntity = userService.getUserInfo(userId);
+            map.put("userDto",userEntity);
+        }
+        catch(Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+
+    }
+
+
+
+
+
+    @PutMapping("/user")
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        UserEntity userEntity = null;
+        try {
+            userEntity = userService.updateUser(userUpdateDto);
+            httpStatus = HttpStatus.CREATED;
+        }
+        catch(Exception e) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+
+        }
+        return new ResponseEntity<UserEntity>(userEntity,httpStatus);
+    }
+
+
+
+
+
+
 
 //    @PostMapping("/account")
 //    public ResponseEntity<Void> registUser(@RequestBody UserDto user) {

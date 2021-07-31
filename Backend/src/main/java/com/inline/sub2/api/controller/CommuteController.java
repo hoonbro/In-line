@@ -48,7 +48,7 @@ public class CommuteController {
         System.out.println(commuteId);
 
         HttpStatus httpStatus = HttpStatus.OK;
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<String,Object> ();
         try {
             CommuteEntity commuteEntity = commuteService.commuteOut(commuteId);
             map.put("commuteId",commuteEntity.getCommuteId());

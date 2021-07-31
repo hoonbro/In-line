@@ -16,4 +16,9 @@ public class DeptServiceImpl implements DeptService{
     public DeptEntity getDeptId(String detpName) {
         return deptRepository.findByDeptName(detpName);
     }
+
+    @Override
+    public DeptEntity getDeptId(String deptName, Long officeId) {
+        return deptRepository.findByDeptNameAndOfficeId(deptName,officeId);
+    }
 }
