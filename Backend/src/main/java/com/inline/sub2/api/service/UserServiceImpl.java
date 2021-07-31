@@ -2,6 +2,7 @@ package com.inline.sub2.api.service;
 
 import com.inline.sub2.api.dto.AdminRegistDto;
 import com.inline.sub2.api.dto.UserDto;
+import com.inline.sub2.api.dto.UserUpdateDto;
 import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.JobEntity;
 import com.inline.sub2.db.entity.OfficeEntity;
@@ -43,11 +44,11 @@ public class UserServiceImpl implements UserService {
             OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
             log.info("회사 등록 완료");
             DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName()); //부서 번호 조회
-            JobEntity jobEntity = jobService.getJobId(admin.getJobName()); //직책 번호 조회
+//            JobEntity jobEntity = jobService.getJobId(admin.getJobName()); //직책 번호 조회
 
             admin.setOfficeId(officeEntity.getOfficeId());
             admin.setDeptId(deptEntity.getDeptId());
-            admin.setJobId(jobEntity.getJobId());
+//            admin.setJobId(jobEntity.getJobId());
 
             //유저 정보 기입\
             userEntity.setEmail(admin.getEmail());
@@ -59,12 +60,6 @@ public class UserServiceImpl implements UserService {
             userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
 
-//            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-//            SimpleDateFormat format2 = new SimpleDateFormat("HH:mm:ss");
-//            String year = format1.format(System.currentTimeMillis());
-//            String whatTime = format2.format(System.currentTimeMillis());
-//            System.out.println(year);
-//            System.out.println(whatTime);
 
 
             userEntity.setOfficeId(admin.getOfficeId());
@@ -93,4 +88,35 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    @Override
+    public UserEntity getUserInfo(Long userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+
+    @Override
+    public UserEntity updateUser(UserUpdateDto userUpdateDto) {
+        System.out.println("여기들어와?1");
+        UserEntity userEntity = userRepository.findByUserId(userUpdateDto.getUserId());
+//        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName()); //부서 번호 조회
+//        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName()); //직책 번호 조회
+
+        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),userEntity.getOfficeId());
+        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), userEntity.getOfficeId());
+
+        System.out.println("여기들어와?2");
+        userEntity.setDeptId(deptEntity.getDeptId());
+        userEntity.setJobId(jobEntity.getJobId());
+
+        userEntity.setUserId(userUpdateDto.getUserId());
+        userEntity.setName(userUpdateDto.getName());
+        userEntity.setNickName(userUpdateDto.getNickName());
+        userEntity.setPhone(userUpdateDto.getPhone());
+        System.out.println("여기들어와?3");
+        return userRepository.save(userEntity);
+
+    }
+
+
 }

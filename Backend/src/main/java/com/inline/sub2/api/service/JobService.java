@@ -6,4 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface JobService {
     @Transactional(rollbackFor = Exception.class)
     JobEntity getJobId(String jobName);
+//    JobEntity getJobId(String jobName,Long officeId);
+    JobEntity getJobId(String jobName,Long officeId);
 }
