@@ -15,7 +15,7 @@ public interface UserService {
     UserEntity getUserByEmail(String email) ;
 
     UserEntity getUserInfo(Long userId);
-
     UserEntity updateUser(UserUpdateDto userUpdateDto);
+    void updatePassword(UserEntity userEntity,String password);
 }
 

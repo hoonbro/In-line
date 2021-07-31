@@ -1,23 +1,28 @@
 package com.inline.sub2.api.controller;
 
+import com.inline.sub2.api.dto.PasswordDto;
 import com.inline.sub2.api.dto.UserDto;
 import com.inline.sub2.api.dto.UserUpdateDto;
 import com.inline.sub2.api.service.DeptService;
 import com.inline.sub2.api.service.JobService;
 import com.inline.sub2.api.service.OfficeService;
 import com.inline.sub2.api.service.UserService;
+import com.inline.sub2.auth.UserAuthDetail;
 import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.OfficeEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.xml.ws.Response;
 import java.util.HashMap;
@@ -114,7 +119,30 @@ public class UserController {
         return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
+    @PutMapping("/password")
+    public ResponseEntity<Void> updateUserPassword(@RequestHeader Map<String,String> requestHeader, @RequestBody PasswordDto passwordDto) {
 
+        String currentPassword = passwordDto.getCurrentPassword();
+        String newPassword = passwordDto.getNewPassword();
+        HttpStatus httpStatus = HttpStatus.CREATED;
+        try {
+            String token = requestHeader.get("accesstoken");
+            String email = jwtUtil.getUserNameFromJwt(token); //복호화 하여 email 얻기
+            UserEntity userEntity = userService.getUserByEmail(email);
+            if(passwordEncoder.matches(currentPassword,userEntity.getPassword())) {
+                userService.updatePassword(userEntity,newPassword);
+            }
+            else {
+                httpStatus = HttpStatus.UNAUTHORIZED;
+            }
+
+        }
+        catch(Exception e) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+        }
+
+        return new ResponseEntity<Void>(httpStatus);
+    }
 
 
 
