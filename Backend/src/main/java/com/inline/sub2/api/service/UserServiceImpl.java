@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
     @Override
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
         System.out.println("여기들어와?1");
@@ -116,6 +117,12 @@ public class UserServiceImpl implements UserService {
         System.out.println("여기들어와?3");
         return userRepository.save(userEntity);
 
+    }
+
+    @Override
+    public void updatePassword(UserEntity userEntity,String password) {
+        userEntity.setPassword(passwordEncoder.encode(password));
+         userRepository.save(userEntity);
     }
 
 
