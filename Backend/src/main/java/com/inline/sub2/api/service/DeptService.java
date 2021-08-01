@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface DeptService {
     @Transactional(rollbackFor = Exception.class)
-    DeptEntity getDeptId(String DeptName);
     DeptEntity getDeptId(String deptName,Long officeId);
+
+    DeptEntity getDeptName(Long deptId);
 }

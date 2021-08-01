@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         try {
             OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
             log.info("회사 등록 완료");
-            DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName()); //부서 번호 조회
+            DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), admin.getOfficeId()); //부서 번호 조회
 //            JobEntity jobEntity = jobService.getJobId(admin.getJobName()); //직책 번호 조회
 
             admin.setOfficeId(officeEntity.getOfficeId());

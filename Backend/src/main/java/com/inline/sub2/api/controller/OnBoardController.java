@@ -17,10 +17,24 @@ public class OnBoardController {
     OnBoardService onBoardService;
 
     @PostMapping("/user")
-    @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가한다.")
+    @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가하고 이메일을 보낸다.")
     public ResponseEntity<Void> registUserOnboard(@RequestBody UserRegistDto user) {
         OnBoardEntity onBoardEntity = onBoardService.registUserOnboard(user);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/user/{email}")
+    @ApiOperation(value = "구성원이 초대 메일을 클릭했을 시 Data를 넘겨준다.")
+    public ResponseEntity<UserRegistDto> clickEmail(@PathVariable("email") String email) {
+        UserRegistDto userRegistDto = new UserRegistDto();
+        HttpStatus httpStatus = HttpStatus.OK;
+        try{
+            userRegistDto = onBoardService.clickEmail(email);
+        }
+        catch(Exception e){
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<UserRegistDto>(userRegistDto, httpStatus);
     }
 
     @DeleteMapping("/user/{email}")
