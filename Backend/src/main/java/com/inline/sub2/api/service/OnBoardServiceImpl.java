@@ -42,8 +42,8 @@ public class OnBoardServiceImpl implements OnBoardService{
     @Transactional
     public OnBoardEntity registUserOnboard(UserRegistDto user) {
 
-        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), user.getOfficeId()); //부서 번호 조회
-        JobEntity jobEntity = jobService.getJobId(user.getJobName(), user.getOfficeId()); //직책 번호 조회
+        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), 1l); //부서 번호 조회
+        JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l); //직책 번호 조회
 
         user.setDeptId(deptEntity.getDeptId());
         user.setJobId(jobEntity.getJobId());

@@ -1,7 +1,7 @@
 package com.inline.sub2.api.service;
 
-import com.inline.sub2.api.dto.AdminRegistDto;
 import com.inline.sub2.api.dto.UserDto;
+import com.inline.sub2.api.dto.UserRegistDto;
 import com.inline.sub2.api.dto.UserUpdateDto;
 import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.JobEntity;
@@ -10,11 +10,9 @@ import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.db.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Slf4j
@@ -37,18 +35,18 @@ public class UserServiceImpl implements UserService {
     OfficeService officeService;
 
     @Override
-    public UserEntity registAdmin(AdminRegistDto admin) {
+    public UserEntity registAdmin(UserRegistDto admin) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
         try {
             OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
             log.info("회사 등록 완료");
-            DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), admin.getOfficeId()); //부서 번호 조회
-//            JobEntity jobEntity = jobService.getJobId(admin.getJobName()); //직책 번호 조회
+            DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), 1l); //부서 번호 조회
+            JobEntity jobEntity = jobService.getJobId(admin.getJobName(), 1l); //직책 번호 조회
 
             admin.setOfficeId(officeEntity.getOfficeId());
             admin.setDeptId(deptEntity.getDeptId());
-//            admin.setJobId(jobEntity.getJobId());
+            admin.setJobId(jobEntity.getJobId());
 
             //유저 정보 기입\
             userEntity.setEmail(admin.getEmail());
@@ -59,10 +57,9 @@ public class UserServiceImpl implements UserService {
             userEntity.setPassword(passwordEncoder.encode(admin.getPassword()));
             userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
-
-
-
             userEntity.setOfficeId(admin.getOfficeId());
+
+            log.info("user 정보{}", userEntity.toString());
         } catch (Exception e) {
             log.error("회사 등록 실패 : {}", e);
         }
@@ -71,16 +68,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity registUser(UserDto user) {
+    public UserEntity registUser(UserRegistDto user) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
-//        userEntity.setEmail(user.getEmail());
-//        userEntity.setDeptId(user.getDeptId());
-//        userEntity.setJobId(user.getJobId());
-//        userEntity.setName(user.getName());
-//        userEntity.setPhone(user.getPhone());
-//        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
-//        userEntity.setJoinDate(now);
+        
+        //유저정보 기입
+        userEntity.setEmail(user.getEmail());
+        userEntity.setDeptId(user.getDeptId());
+        userEntity.setJobId(user.getJobId());
+        userEntity.setName(user.getName());
+        userEntity.setPhone(user.getPhone());
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userEntity.setJoinDate(now);
         return userRepository.save(userEntity);
     }
 
@@ -93,7 +92,6 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserInfo(Long userId) {
         return userRepository.findByUserId(userId);
     }
-
 
 
     @Override
