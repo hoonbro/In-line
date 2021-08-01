@@ -43,6 +43,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/login").permitAll()
                 .antMatchers("/users/user").permitAll()
                 .antMatchers("/office").permitAll()
+                .antMatchers(
+                        "/v2/api-docs",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**" ,
+                        /*Probably not needed*/ "/swagger.json")
+                .permitAll()
                 .antMatchers("/users/test").hasRole("ADMIN")
                 .antMatchers("/").authenticated()       //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
                 .anyRequest().hasAnyRole("USER", "ADMIN")		//permitAll()는 모든 사용자가 접근할 수 있다는 것을 의미
