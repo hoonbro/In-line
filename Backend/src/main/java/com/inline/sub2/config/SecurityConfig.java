@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() //시큐리티 처리에 HttpServletRequest를 이용한다는 것을 의미
                 //antMatchers()는 특정한 경로를 지정합니다.
                 .antMatchers("/users/login").permitAll()
+                .antMatchers("/office").permitAll()
                 .antMatchers("/users/test").hasRole("ADMIN")
                 .antMatchers("/").authenticated()       //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
                 .anyRequest().hasAnyRole("USER", "ADMIN")		//permitAll()는 모든 사용자가 접근할 수 있다는 것을 의미
