@@ -19,7 +19,7 @@ public class OnBoardController {
     @PostMapping("/user")
     @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가한다.")
     public ResponseEntity<Void> registUserOnboard(@RequestBody UserRegistDto user) {
-        OnBoardEntity onBoardEntity = onBoardService.registUserOnboard(user);
+        onBoardService.registUserOnboard(user);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 

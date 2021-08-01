@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //antMatchers()는 특정한 경로를 지정합니다.
                 .antMatchers("/users/test").hasRole("ADMIN")
                 .antMatchers("/").authenticated()       //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
-                .anyRequest().permitAll()		//permitAll()는 모든 사용자가 접근할 수 있다는 것을 의미
+                .anyRequest().hasAnyRole("USER", "ADMIN")		//permitAll()는 모든 사용자가 접근할 수 있다는 것을 의미
                 .and().cors();
     }
 }
