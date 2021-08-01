@@ -99,15 +99,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
-        System.out.println("여기들어와?1");
         UserEntity userEntity = userRepository.findByUserId(userUpdateDto.getUserId());
-//        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName()); //부서 번호 조회
-//        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName()); //직책 번호 조회
 
         DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),userEntity.getOfficeId());
         JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), userEntity.getOfficeId());
 
-        System.out.println("여기들어와?2");
         userEntity.setDeptId(deptEntity.getDeptId());
         userEntity.setJobId(jobEntity.getJobId());
 
@@ -115,9 +111,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setName(userUpdateDto.getName());
         userEntity.setNickName(userUpdateDto.getNickName());
         userEntity.setPhone(userUpdateDto.getPhone());
-        System.out.println("여기들어와?3");
         return userRepository.save(userEntity);
-
     }
 
     @Override
