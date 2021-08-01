@@ -39,21 +39,21 @@ public class OnBoardServiceImpl implements OnBoardService{
 
     @Override
     @Transactional
-    public void registUserOnboard(UserRegistDto user) {
+    public OnBoardEntity registUserOnboard(UserRegistDto user) {
 
-//        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName()); //부서 번호 조회
-//        JobEntity jobEntity = jobService.getJobId(user.getJobName()); //직책 번호 조회
-//
-//        user.setDeptId(deptEntity.getDeptId());
-//        user.setJobId(jobEntity.getJobId());
+        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName()); //부서 번호 조회
+        JobEntity jobEntity = jobService.getJobId(user.getJobName()); //직책 번호 조회
+
+        user.setDeptId(deptEntity.getDeptId());
+        user.setJobId(jobEntity.getJobId());
 
         //onboard에 올릴 정보 기입
-//        OnBoardEntity onBoardEntity = new OnBoardEntity();
-//        onBoardEntity.setEmail(user.getEmail());
-//        onBoardEntity.setJobId(user.getJobId());
-//        onBoardEntity.setName(user.getName());
-//        onBoardEntity.setOfficeId(user.getOfficeId());
-//        onBoardEntity.setDeptId(user.getDeptId());
+        OnBoardEntity onBoardEntity = new OnBoardEntity();
+        onBoardEntity.setEmail(user.getEmail());
+        onBoardEntity.setJobId(user.getJobId());
+        onBoardEntity.setName(user.getName());
+        onBoardEntity.setOfficeId(user.getOfficeId());
+        onBoardEntity.setDeptId(user.getDeptId());
 
         //구성원에게 이메일 발송
         EmailDto emailDto = new EmailDto();
@@ -63,7 +63,7 @@ public class OnBoardServiceImpl implements OnBoardService{
         emailService.sendEmail(emailDto);
         log.info("구성원에게 이메일 발송 성공");
 
-//        return onBoardRepository.save(onBoardEntity);
+        return onBoardRepository.save(onBoardEntity);
     }
 
     @Override

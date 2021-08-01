@@ -19,18 +19,16 @@ public class OnBoardController {
     @PostMapping("/user")
     @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가한다.")
     public ResponseEntity<Void> registUserOnboard(@RequestBody UserRegistDto user) {
-        onBoardService.registUserOnboard(user);
+        OnBoardEntity onBoardEntity = onBoardService.registUserOnboard(user);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/user/{email}")
     @ApiOperation(value = "관리자가 onBoard 테이블에서 구성원을 삭제한다.")
     public ResponseEntity<Void> deleteUserOnboard(@PathVariable("email") String email) {
-        System.out.println(email);
        HttpStatus httpStatus = HttpStatus.OK;
         try{
             onBoardService.deleteUserOnboard(email);
-            System.out.println("여기1");
         }
         catch(Exception e){
             httpStatus = HttpStatus.BAD_REQUEST;
