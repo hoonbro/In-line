@@ -110,5 +110,34 @@ public class TodoController {
 
     }
 
+
+
+    @PutMapping("/done")
+    public ResponseEntity<Void> taskTodo(@RequestBody TodoEntity todoEntity) {
+        HttpStatus httpStatus = HttpStatus.CREATED;
+
+
+        try{
+             TodoEntity todoEntity2 = todoService.findUserIdByTodoId(todoEntity.getTodoId());
+
+             if(todoEntity.getUserId() == todoEntity2.getUserId()) {
+                 todoService.taskTodo(todoEntity.getTodoId());
+             }
+             else {
+                 httpStatus = HttpStatus.UNAUTHORIZED;
+             }
+
+
+
+        }
+        catch(Exception e) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+        }
+
+        return new ResponseEntity<Void>(httpStatus);
+    }
+
+
+
 }
 
