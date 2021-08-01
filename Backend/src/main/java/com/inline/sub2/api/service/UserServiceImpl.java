@@ -12,11 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
 @Slf4j
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -33,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     OfficeService officeService;
+
+    @Autowired
+    OnBoardService onBoardService;
 
     @Override
     public UserEntity registAdmin(UserRegistDto admin) {
@@ -55,7 +60,6 @@ public class UserServiceImpl implements UserService {
             userEntity.setJoinDate(now);
             userEntity.setOfficeId(officeEntity.getOfficeId());
 
-            log.info("user 정보{}", userEntity.toString());
         } catch (Exception e) {
             log.error("회사 등록 실패 : {}", e);
         }
@@ -83,6 +87,15 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userEntity.setAuth("ROLE_USER");
         userEntity.setJoinDate(now);
+
+        //onBoard테이블 내 사용자 데이터 삭제
+        try {
+            onBoardService.deleteUserOnboard(user.getEmail());
+            log.info("onBoard테이블 사용자 데이터 삭제 성공");
+        }catch(Exception e){
+            log.error("onBoard테이블 사용자 데이터 삭제 실패 : {}", e);
+        }
+
         return userRepository.save(userEntity);
     }
 
@@ -99,15 +112,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
-        System.out.println("여기들어와?1");
         UserEntity userEntity = userRepository.findByUserId(userUpdateDto.getUserId());
-//        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName()); //부서 번호 조회
-//        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName()); //직책 번호 조회
 
         DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),userEntity.getOfficeId());
         JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), userEntity.getOfficeId());
 
-        System.out.println("여기들어와?2");
         userEntity.setDeptId(deptEntity.getDeptId());
         userEntity.setJobId(jobEntity.getJobId());
 
@@ -115,7 +124,6 @@ public class UserServiceImpl implements UserService {
         userEntity.setName(userUpdateDto.getName());
         userEntity.setNickName(userUpdateDto.getNickName());
         userEntity.setPhone(userUpdateDto.getPhone());
-        System.out.println("여기들어와?3");
         return userRepository.save(userEntity);
 
     }

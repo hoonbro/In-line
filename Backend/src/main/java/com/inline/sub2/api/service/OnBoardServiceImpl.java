@@ -85,12 +85,8 @@ public class OnBoardServiceImpl implements OnBoardService{
     @Override
     @Transactional
     public void deleteUserOnboard(String email) {
-//        UserEntity userEntity = userService.getUserByEmail(email);
-        System.out.println("여기1");
         OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
         System.out.println(onBoardEntity.getName());
         onBoardRepository.delete(onBoardEntity);
-
-
     }
 }
