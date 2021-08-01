@@ -6,6 +6,7 @@ import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.JobEntity;
 import com.inline.sub2.db.entity.OnBoardEntity;
 import com.inline.sub2.db.entity.UserEntity;
+import com.inline.sub2.db.repository.JobRepository;
 import com.inline.sub2.db.repository.OnBoardRepository;
 import com.inline.sub2.db.repository.UserRepository;
 import lombok.extern.java.Log;
@@ -41,8 +42,8 @@ public class OnBoardServiceImpl implements OnBoardService{
     @Transactional
     public OnBoardEntity registUserOnboard(UserRegistDto user) {
 
-        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName()); //부서 번호 조회
-        JobEntity jobEntity = jobService.getJobId(user.getJobName()); //직책 번호 조회
+        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), user.getOfficeId()); //부서 번호 조회
+        JobEntity jobEntity = jobService.getJobId(user.getJobName(), user.getOfficeId()); //직책 번호 조회
 
         user.setDeptId(deptEntity.getDeptId());
         user.setJobId(jobEntity.getJobId());
@@ -56,14 +57,29 @@ public class OnBoardServiceImpl implements OnBoardService{
         onBoardEntity.setDeptId(user.getDeptId());
 
         //구성원에게 이메일 발송
-        EmailDto emailDto = new EmailDto();
-        emailDto.setAddress(user.getEmail());
-        emailDto.setTitle("Welcome to Inline!");
-        emailDto.setContent("https://13.124.47.223:8083");
-        emailService.sendEmail(emailDto);
+        emailService.sendEmail(user.getEmail());
         log.info("구성원에게 이메일 발송 성공");
 
         return onBoardRepository.save(onBoardEntity);
+    }
+
+    @Override
+    public UserRegistDto clickEmail(String email) {
+        OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
+
+        String jobName = jobService.getJobName(onBoardEntity.getJobId()).getJobName();
+        String deptName = deptService.getDeptName(onBoardEntity.getDeptId()).getDeptName();
+
+        // 사용자가 이메일 클릭시 onBoard테이블의 데이터를 UserRegistDto 형식으로 변환해 반환해준다.
+        UserRegistDto userRegistDto = new UserRegistDto();
+        userRegistDto.setEmail(email);
+        userRegistDto.setName(onBoardEntity.getName());
+        userRegistDto.setDeptId(onBoardEntity.getDeptId());
+        userRegistDto.setJobId(onBoardEntity.getJobId());
+        userRegistDto.setOfficeId(onBoardEntity.getOfficeId());
+        userRegistDto.setJobName(jobName);
+        userRegistDto.setDeptName(deptName);
+        return userRegistDto;
     }
 
     @Override

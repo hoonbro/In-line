@@ -15,12 +15,14 @@ public class EmailServiceImpl implements EmailService{
     private JavaMailSender javaMailSender;
 
     @Override
-    public void sendEmail(EmailDto emailDto) {
+    public void sendEmail(String email) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(emailDto.getAddress());
-        message.setSubject(emailDto.getTitle());
-        message.setText(emailDto.getContent());
-        log.info(message.toString());
+
+        //구성원에게 이메일 발송
+        message.setTo(email);
+        message.setSubject("Welcome to Inline!");
+        message.setText("https://13.124.47.223:8083/");
+
         javaMailSender.send(message);
     }
 }
