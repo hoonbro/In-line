@@ -1,0 +1,29 @@
+{
+  "office": [
+    {
+      "id": 1,
+      "officeName": "SSAFY",
+      "email": "soc4585@gmail.com",
+      "deptName": "개발",
+      "jobname": "FE",
+      "name": "최영수",
+      "phone": "010-1234-1234",
+      "password": "1q2w3e4r",
+      "password2": "1q2w3e4r",
+      "term": false
+    },
+    {
+      "term": true,
+      "officeName": "ssafy",
+      "email": "soc4585@gmail.com",
+      "deptName": "dev",
+      "jobname": "fe",
+      "name": "cys",
+      "phone": "01012341234",
+      "password": "1q2w3e4r1!Q",
+      "confirmPassword": "1q2w3e4r1!Q",
+      "apiId": "v1",
+      "id": 2
+    }
+  ]
+}

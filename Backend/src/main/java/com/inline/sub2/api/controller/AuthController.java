@@ -4,6 +4,7 @@ import com.inline.sub2.api.dto.UserDto;
 import com.inline.sub2.util.JwtUtil;
 import com.inline.sub2.api.service.UserService;
 import com.inline.sub2.db.entity.UserEntity;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,51 +18,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
 
     public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @Autowired
-    UserService userService;
-
-    @Autowired
     JwtUtil jwtUtil;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto){
-        Map<String, Object> map = new HashMap<String, Object>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-
-        try {
-            UserEntity loginUser = userService.getUserById(userDto.getEmail());
-
-            if(loginUser != null) {
-                if(passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
-                    String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail(), "access-token");
-                    logger.debug("로그인 토큰 정보 : {}", token);
-                    map.put("accessToken", token);
-                    map.put("userId", userDto.getEmail());
-                    status = HttpStatus.CREATED;
-                }
-            }
-        }catch (Exception e) {
-            logger.error("로그인 실패 : {}", e);
-            status = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<Map<String, Object>>(map, status);
-    }
-
     @GetMapping("/valiable")
+    @ApiOperation(value = "토큰이 사용 가능한지 확인하기 위함", response = Map.class)
     public ResponseEntity<Map<String, Object>> valiable(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.OK;
 
-        if (jwtUtil.validateToken(request.getHeader("Authorization"))) {
+        if (jwtUtil.validateToken(request.getHeader("accessToken"))) {
             logger.info("사용 가능한 토큰!!!");
         } else {
             status = HttpStatus.UNAUTHORIZED;

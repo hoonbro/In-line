@@ -5,6 +5,7 @@ import com.inline.sub2.db.repository.DeptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class DeptServiceImpl implements DeptService{
 
@@ -12,7 +13,12 @@ public class DeptServiceImpl implements DeptService{
     DeptRepository deptRepository;
 
     @Override
-    public DeptEntity getDeptId(String detpName) {
-        return deptRepository.findByDeptName(detpName);
+    public DeptEntity getDeptId(String deptName, Long officeId) {
+        return deptRepository.findByDeptNameAndOfficeId(deptName,officeId);
+    }
+
+    @Override
+    public DeptEntity getDeptName(Long deptId) {
+        return deptRepository.findByDeptId(deptId);
     }
 }
