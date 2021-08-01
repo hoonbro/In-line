@@ -44,20 +44,16 @@ public class UserServiceImpl implements UserService {
             DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), 1l); //부서 번호 조회
             JobEntity jobEntity = jobService.getJobId(admin.getJobName(), 1l); //직책 번호 조회
 
-            admin.setOfficeId(officeEntity.getOfficeId());
-            admin.setDeptId(deptEntity.getDeptId());
-            admin.setJobId(jobEntity.getJobId());
-
             //유저 정보 기입\
             userEntity.setEmail(admin.getEmail());
-            userEntity.setDeptId(admin.getDeptId());
-            userEntity.setJobId(admin.getJobId());
+            userEntity.setDeptId(deptEntity.getDeptId());
+            userEntity.setJobId(jobEntity.getJobId());
             userEntity.setName(admin.getName());
             userEntity.setPhone(admin.getPhone());
             userEntity.setPassword(passwordEncoder.encode(admin.getPassword()));
             userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
-            userEntity.setOfficeId(admin.getOfficeId());
+            userEntity.setOfficeId(officeEntity.getOfficeId());
 
             log.info("user 정보{}", userEntity.toString());
         } catch (Exception e) {
@@ -71,14 +67,21 @@ public class UserServiceImpl implements UserService {
     public UserEntity registUser(UserRegistDto user) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
-        
+
+        //부서 번호 조회
+        DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), 1l);
+        //직책 번호 조회
+        JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l);
+
         //유저정보 기입
         userEntity.setEmail(user.getEmail());
-        userEntity.setDeptId(user.getDeptId());
-        userEntity.setJobId(user.getJobId());
+        userEntity.setOfficeId(user.getOfficeId());
+        userEntity.setDeptId(deptEntity.getDeptId());
+        userEntity.setJobId(jobEntity.getJobId());
         userEntity.setName(user.getName());
         userEntity.setPhone(user.getPhone());
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userEntity.setAuth("ROLE_USER");
         userEntity.setJoinDate(now);
         return userRepository.save(userEntity);
     }

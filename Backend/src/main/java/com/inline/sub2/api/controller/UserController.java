@@ -11,8 +11,7 @@ import com.inline.sub2.api.service.UserService;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @CrossOrigin("*")
 public class UserController {
-    public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     @Autowired
     UserService userService;
@@ -57,14 +56,14 @@ public class UserController {
             if (loginUser != null) {
                 if (passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
                     String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail());
-                    logger.debug("로그인 토큰 정보 : {}", token);
+                    log.debug("로그인 토큰 정보 : {}", token);
                     map.put("accessToken", token);
                     map.put("userDto", loginUser);
                     status = HttpStatus.OK;
                 }
             }
         } catch (Exception e) {
-            logger.error("로그인 실패 : {}", e);
+            log.error("로그인 실패 : {}", e);
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<Map<String, Object>>(map, status);
@@ -79,35 +78,38 @@ public class UserController {
 
     @GetMapping("/user/{userId}")
     @ApiOperation(value = "유저 아이티(userId)로 부터 회원 정보를 조회(반환)한다", response = Map.class)
-    public ResponseEntity<Map<String,Object>> getUserInfo(@PathVariable("userId") Long userId) {
+    public ResponseEntity<UserEntity> getUserInfo(@PathVariable("userId") Long userId) {
         HttpStatus httpStatus = HttpStatus.OK;
         Map<String,Object> map = new HashMap<>();
+        UserEntity userEntity = null;
         try {
-            UserEntity userEntity = userService.getUserInfo(userId);
+            userEntity = userService.getUserInfo(userId);
             map.put("userDto",userEntity);
+            log.info("user정보 조회 성공");
         }
         catch(Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            log.error("user정보 조회 실패 : {}" , e);
         }
-        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
     @PutMapping("/user")
     @ApiOperation(value = "유저 정보(비밀번호,프로필제외)를 변경한다", response = Map.class)
-    public ResponseEntity<Map<String,Object>> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
         Map<String,Object> map = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.OK;
         UserEntity userEntity = null;
         try {
             userEntity = userService.updateUser(userUpdateDto);
             httpStatus = HttpStatus.CREATED;
-            map.put("userDto",userEntity);
+            log.info("user정보 변경 성공");
         }
         catch(Exception e) {
             httpStatus = HttpStatus.UNAUTHORIZED;
-
+            log.error("user정보 변경 실패 : {}", e);
         }
-        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
     @PutMapping("/password")
@@ -122,6 +124,7 @@ public class UserController {
             UserEntity userEntity = userService.getUserByEmail(email);
             if(passwordEncoder.matches(currentPassword,userEntity.getPassword())) {
                 userService.updatePassword(userEntity,newPassword);
+                log.info("비밀번호 변경 성공");
             }
             else {
                 httpStatus = HttpStatus.UNAUTHORIZED;
@@ -130,6 +133,7 @@ public class UserController {
         }
         catch(Exception e) {
             httpStatus = HttpStatus.UNAUTHORIZED;
+            log.error("비밀번호 변경 실패 : {}", e);
         }
 
         return new ResponseEntity<Void>(httpStatus);
@@ -141,8 +145,10 @@ public class UserController {
         HttpStatus httpStatus = HttpStatus.CREATED;
         try {
             UserEntity userEntity = userService.registUser(user);
+            log.info("사용자 회원가입 성공");
         } catch (Exception e) {
             httpStatus = HttpStatus.BAD_REQUEST;
+            log.error("사용자 회원가입 실패 : {}", e);
         }
         return new ResponseEntity<Void>(httpStatus);
     }
