@@ -47,8 +47,22 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     public void deleteTodo(Long todoId) {
-
-
+        TodoEntity todoEntity = todoRepository.findByTodoId(todoId);
+        todoRepository.delete(todoEntity);
 
     }
+
+    @Override
+    public void taskTodo(Long todoId) {
+    TodoEntity todoEntity = todoRepository.findByTodoId(todoId);
+    if(todoEntity.isDone() == false) {
+        todoEntity.setDone(true);
+    }
+    else {
+        todoEntity.setDone(false);
+    }
+
+    todoRepository.save(todoEntity);
+
+}
 }
