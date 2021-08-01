@@ -12,10 +12,13 @@ public interface UserService {
 
     UserEntity registUser(UserDto user);
 
-    UserEntity getUserByEmail(String email) ;
+    UserEntity getUserByEmail(String email);
 
     UserEntity getUserInfo(Long userId);
-    UserEntity updateUser(UserUpdateDto userUpdateDto);
-    void updatePassword(UserEntity userEntity,String password);
-}
 
+    UserEntity updateUser(UserUpdateDto userUpdateDto);
+
+    void updatePassword(UserEntity userEntity, String password);
+
+
+}

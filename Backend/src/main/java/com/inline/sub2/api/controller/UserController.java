@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/test")
-    @ApiOperation(value = "관리자와 사용자 권한에 따라 입력이 되는지 확인 위해 만들었습니다(신경쓰지 않으셔도 돼요)", response = Map.class)
+    @ApiOperation(value = "관리자와 사용자 권한에 따라 입력이 되는지 확인 위해 만들었습니다(신경쓰지 않으셔도 돼요)")
     public ResponseEntity<Void> test() {
         System.out.println("권한 있는지여부 확인중");
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -85,6 +85,8 @@ public class UserController {
 
 
     @GetMapping("/user/{userId}")
+    @ApiOperation(value = "유저 아이티(userId)로 부터 회원 정보를 조회(반환)한다", response = Map.class)
+
     public ResponseEntity<Map<String,Object>> getUserInfo(@PathVariable("userId") Long userId) {
         HttpStatus httpStatus = HttpStatus.OK;
         Map<String,Object> map = new HashMap<>();
@@ -105,21 +107,25 @@ public class UserController {
 
 
     @PutMapping("/user")
-    public ResponseEntity<UserEntity> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+    @ApiOperation(value = "유저 정보(비밀번호,프로필제외)를 변경한다", response = Map.class)
+    public ResponseEntity<Map<String,Object>> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+        Map<String,Object> map = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.OK;
         UserEntity userEntity = null;
         try {
             userEntity = userService.updateUser(userUpdateDto);
             httpStatus = HttpStatus.CREATED;
+            map.put("userDto",userEntity);
         }
         catch(Exception e) {
             httpStatus = HttpStatus.UNAUTHORIZED;
 
         }
-        return new ResponseEntity<UserEntity>(userEntity,httpStatus);
+        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
     }
 
     @PutMapping("/password")
+    @ApiOperation(value = "유저 비밀번호를 변경한다", response = Map.class)
     public ResponseEntity<Void> updateUserPassword(@RequestHeader Map<String,String> requestHeader, @RequestBody PasswordDto passwordDto) {
 
         String currentPassword = passwordDto.getCurrentPassword();
