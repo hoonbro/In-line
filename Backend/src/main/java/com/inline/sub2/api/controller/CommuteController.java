@@ -22,43 +22,34 @@ public class CommuteController {
     CommuteService commuteService;
 
     @PostMapping("/in")
-    @ApiOperation(value = "출근 버튼 클릭 시 출근 처리한다")
-    public ResponseEntity<Map<String,Object>> in(@RequestBody CommuteDto commuteDto) {
+    @ApiOperation(value = "출근 버튼 클릭 시 출근 처리한다", response = CommuteEntity.class)
+    public ResponseEntity<CommuteEntity> in(@RequestBody CommuteDto commuteDto) {
         HttpStatus httpStatus = HttpStatus.OK;
         CommuteEntity commuteEntity = null;
-        Map<String,Object> map = new HashMap<String,Object>();
-
         try{
-             commuteEntity = commuteService.commuteIn(commuteDto);
-            System.out.println(commuteEntity.getCommuteId()+"@#@@@@@@@@@@@@@@");
+            commuteEntity = commuteService.commuteIn(commuteDto);
             httpStatus = HttpStatus.CREATED;
-            map.put("commuteId",commuteEntity.getCommuteId());
-            map.put("comeIn",commuteEntity.getComeIn());
         }
         catch(Exception e) {
            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        return new ResponseEntity<CommuteEntity>(commuteEntity,httpStatus);
     }
 
 
     @PatchMapping("/out/{commuteId}")
-    @ApiOperation(value = "퇴근 버튼 클릭 시 퇴근 처리한다")
-    public ResponseEntity<Map<String,Object>> out(@PathVariable("commuteId") Long commuteId) {
-        System.out.println(commuteId);
-
+    @ApiOperation(value = "퇴근 버튼 클릭 시 퇴근 처리한다", response = CommuteEntity.class)
+    public ResponseEntity<CommuteEntity> out(@PathVariable("commuteId") Long commuteId) {
         HttpStatus httpStatus = HttpStatus.OK;
-        Map<String,Object> map = new HashMap<String,Object> ();
+        CommuteEntity commuteEntity = null;
         try {
-            CommuteEntity commuteEntity = commuteService.commuteOut(commuteId);
-            map.put("commuteId",commuteEntity.getCommuteId());
-            map.put("comeOut",commuteEntity.getComeOut());
+            commuteEntity = commuteService.commuteOut(commuteId);
             httpStatus = HttpStatus.CREATED;
         }
         catch(Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        return new ResponseEntity<CommuteEntity>(commuteEntity,httpStatus);
     }
 
 

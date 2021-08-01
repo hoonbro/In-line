@@ -24,7 +24,7 @@ public class OnBoardController {
     }
 
     @GetMapping("/user/{email}")
-    @ApiOperation(value = "구성원이 초대 메일을 클릭했을 시 Data를 넘겨준다.")
+    @ApiOperation(value = "구성원이 초대 메일을 클릭했을 시 Data를 넘겨준다.", response = UserRegistDto.class)
     public ResponseEntity<UserRegistDto> clickEmail(@PathVariable("email") String email) {
         UserRegistDto userRegistDto = new UserRegistDto();
         HttpStatus httpStatus = HttpStatus.OK;
@@ -49,6 +49,4 @@ public class OnBoardController {
         }
         return new ResponseEntity<Void>(httpStatus);
     }
-
-
 }
