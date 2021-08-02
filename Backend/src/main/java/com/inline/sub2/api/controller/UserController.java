@@ -1,13 +1,8 @@
 package com.inline.sub2.api.controller;
 
-import com.inline.sub2.api.dto.PasswordDto;
-import com.inline.sub2.api.dto.UserDto;
-import com.inline.sub2.api.dto.UserRegistDto;
-import com.inline.sub2.api.dto.UserUpdateDto;
-import com.inline.sub2.api.service.DeptService;
-import com.inline.sub2.api.service.JobService;
-import com.inline.sub2.api.service.OfficeService;
-import com.inline.sub2.api.service.UserService;
+import com.inline.sub2.api.dto.*;
+import com.inline.sub2.api.service.*;
+import com.inline.sub2.db.entity.CommuteEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
@@ -40,16 +35,35 @@ public class UserController {
     JobService jobService;
 
     @Autowired
+    CommuteService commuteService;
+
+    @Autowired
+    EmailService emailService;
+    @Autowired
     JwtUtil jwtUtil;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @PostMapping
+    @ApiOperation(value = "회원가입 동작(onBoard에 있는 정보와 사용자가 입력한 password를 User 테이블에 저장한다.)")
+    public ResponseEntity<Void> registUser(@RequestBody UserRegistDto user) {
+        HttpStatus httpStatus = HttpStatus.CREATED;
+        try {
+            UserEntity userEntity = userService.registUser(user);
+            log.info("사용자 회원가입 성공");
+        } catch (Exception e) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            log.error("사용자 회원가입 실패 : {}", e);
+        }
+        return new ResponseEntity<Void>(httpStatus);
+    }
+
     @PostMapping("/login")
     @ApiOperation(value = "로그인 성공 여부에 따라 토큰과 사용자의 데이터를 반환한다.", response = Map.class)
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto) {
         Map<String, Object> map = new HashMap<String, Object>();
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status = HttpStatus.NOT_FOUND;
 
         try {
             UserEntity loginUser = userService.getUserByEmail(userDto.getEmail());
@@ -59,32 +73,34 @@ public class UserController {
                     log.debug("로그인 토큰 정보 : {}", token);
                     map.put("accessToken", token);
                     map.put("userDto", loginUser);
+                    CommuteDto commuteDto = new CommuteDto();
+                    commuteDto.setUserId(loginUser.getUserId());
+                    commuteDto.setOfficeId(loginUser.getOfficeId());
+
+                    CommuteEntity commuteEntity = commuteService.commuteLogin(commuteDto);
+                    map.put("commuteId" , commuteEntity.getCommuteId());
                     status = HttpStatus.OK;
+                }else{
+                    log.error("비밀번호가 일치하지 않습니다.");
+                    status = HttpStatus.UNAUTHORIZED;
                 }
+            }else{
+                log.error("일치하는 이메일이 없습니다.");
             }
         } catch (Exception e) {
-            log.error("로그인 실패 : {}", e);
-            status = HttpStatus.NOT_FOUND;
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return new ResponseEntity<Map<String, Object>>(map, status);
         }
         return new ResponseEntity<Map<String, Object>>(map, status);
     }
 
-    @GetMapping("/test")
-    @ApiOperation(value = "관리자와 사용자 권한에 따라 입력이 되는지 확인 위해 만들었습니다(신경쓰지 않으셔도 돼요)")
-    public ResponseEntity<Void> test() {
-        System.out.println("권한 있는지여부 확인중");
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
-
-    @GetMapping("/user/{userId}")
-    @ApiOperation(value = "유저 아이티(userId)로 부터 회원 정보를 조회(반환)한다", response = Map.class)
+    @GetMapping("/{userId}")
+    @ApiOperation(value = "유저 아이티(userId)로 부터 회원 정보를 조회(반환)한다", response = UserEntity.class)
     public ResponseEntity<UserEntity> getUserInfo(@PathVariable("userId") Long userId) {
         HttpStatus httpStatus = HttpStatus.OK;
-        Map<String,Object> map = new HashMap<>();
         UserEntity userEntity = null;
         try {
             userEntity = userService.getUserInfo(userId);
-            map.put("userDto",userEntity);
             log.info("user정보 조회 성공");
         }
         catch(Exception e) {
@@ -94,11 +110,11 @@ public class UserController {
         return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
-    @PutMapping("/user")
-    @ApiOperation(value = "유저 정보(비밀번호,프로필제외)를 변경한다", response = Map.class)
-    public ResponseEntity<UserEntity> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
-        Map<String,Object> map = new HashMap<>();
+    @PutMapping("/{userId}")
+    @ApiOperation(value = "유저 정보(비밀번호,프로필제외)를 수정한다", response = Map.class)
+    public ResponseEntity<UserEntity> updateUser(@PathVariable("userId") Long userId, @RequestBody UserUpdateDto userUpdateDto) {
         HttpStatus httpStatus = HttpStatus.OK;
+        userUpdateDto.setUserId(userId);
         UserEntity userEntity = null;
         try {
             userEntity = userService.updateUser(userUpdateDto);
@@ -112,7 +128,19 @@ public class UserController {
         return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
-    @PutMapping("/password")
+    @PutMapping("/reset-password")
+    @ApiOperation(value = "메일로 임시 비밀번호를 보내고 사용자의 비밀번호를 임시로 변경한다.")
+    public ResponseEntity<Void> resetUserPassword(@RequestBody EmailDto emailDto){
+        HttpStatus httpStatus = HttpStatus.OK;
+        try {
+            emailService.sendPassword(emailDto.getEmail());
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    @PutMapping("/change-password")
     @ApiOperation(value = "유저 비밀번호를 변경한다", response = Map.class)
     public ResponseEntity<Void> updateUserPassword(@RequestHeader Map<String,String> requestHeader, @RequestBody PasswordDto passwordDto) {
         String currentPassword = passwordDto.getCurrentPassword();
@@ -139,18 +167,6 @@ public class UserController {
         return new ResponseEntity<Void>(httpStatus);
     }
 
-    @PostMapping("/user")
-    @ApiOperation(value = "회원가입 동작(onBoard에 있는 정보와 사용자가 입력한 password를 User 테이블에 저장한다.)")
-    public ResponseEntity<Void> registUser(@RequestBody UserRegistDto user) {
-        HttpStatus httpStatus = HttpStatus.CREATED;
-        try {
-            UserEntity userEntity = userService.registUser(user);
-            log.info("사용자 회원가입 성공");
-        } catch (Exception e) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            log.error("사용자 회원가입 실패 : {}", e);
-        }
-        return new ResponseEntity<Void>(httpStatus);
-    }
+
 
 }

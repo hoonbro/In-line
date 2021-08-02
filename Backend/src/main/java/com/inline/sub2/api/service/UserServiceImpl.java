@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Slf4j
@@ -34,13 +35,22 @@ public class UserServiceImpl implements UserService {
     @Autowired
     OfficeService officeService;
 
+    @Autowired
+    roomService roomService;
+
     @Override
+    @Transactional
     public UserEntity registAdmin(UserRegistDto admin) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
         try {
             OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
             log.info("회사 등록 완료");
+
+            roomService.createtRoom("기본회의실-1", officeEntity.getOfficeId()); //기본 회의실 생성
+            roomService.createtRoom("기본회의실-2", officeEntity.getOfficeId());
+            log.info("기본 회의실 생성 완료");
+
             DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), 1l); //부서 번호 조회
             JobEntity jobEntity = jobService.getJobId(admin.getJobName(), 1l); //직책 번호 조회
 
@@ -54,13 +64,15 @@ public class UserServiceImpl implements UserService {
             userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
             userEntity.setOfficeId(officeEntity.getOfficeId());
-
-            log.info("user 정보{}", userEntity.toString());
         } catch (Exception e) {
-            log.error("회사 등록 실패 : {}", e);
+            log.error("회사명 중복 : {}", e);
         }
-
-        return userRepository.save(userEntity);
+        try {
+            userEntity = userRepository.save(userEntity);
+        }catch(Exception e){
+            log.error("이메일 중복 : {}", e);
+        }
+        return userEntity;
     }
 
     @Override
