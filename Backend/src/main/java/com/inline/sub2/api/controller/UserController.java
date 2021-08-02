@@ -2,6 +2,7 @@ package com.inline.sub2.api.controller;
 
 import com.inline.sub2.api.dto.*;
 import com.inline.sub2.api.service.*;
+import com.inline.sub2.db.entity.CommuteEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
@@ -34,8 +35,7 @@ public class UserController {
     JobService jobService;
 
     @Autowired
-    EmailService emailService;
-
+    CommuteService commuteService;
     @Autowired
     JwtUtil jwtUtil;
 
@@ -70,6 +70,12 @@ public class UserController {
                     log.debug("로그인 토큰 정보 : {}", token);
                     map.put("accessToken", token);
                     map.put("userDto", loginUser);
+                    CommuteDto commuteDto = new CommuteDto();
+                    commuteDto.setUserId(loginUser.getUserId());
+                    commuteDto.setOfficeId(loginUser.getOfficeId());
+
+                    CommuteEntity commuteEntity = commuteService.commuteLogin(commuteDto);
+                    map.put("commuteId" , commuteEntity.getCommuteId());
                     status = HttpStatus.OK;
                 }else{
                     log.error("비밀번호가 일치하지 않습니다.");
