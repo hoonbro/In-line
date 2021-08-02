@@ -36,6 +36,9 @@ public class UserController {
 
     @Autowired
     CommuteService commuteService;
+
+    @Autowired
+    EmailService emailService;
     @Autowired
     JwtUtil jwtUtil;
 
@@ -128,11 +131,11 @@ public class UserController {
     @PutMapping("/reset-password")
     @ApiOperation(value = "메일로 임시 비밀번호를 보내고 사용자의 비밀번호를 임시로 변경한다.")
     public ResponseEntity<Void> resetUserPassword(@RequestBody EmailDto emailDto){
-        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus httpStatus = HttpStatus.OK;
         try {
             emailService.sendPassword(emailDto.getEmail());
         }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(httpStatus);
     }
