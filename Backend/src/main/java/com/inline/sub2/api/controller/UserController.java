@@ -131,11 +131,15 @@ public class UserController {
     @PutMapping("/reset-password")
     @ApiOperation(value = "메일로 임시 비밀번호를 보내고 사용자의 비밀번호를 임시로 변경한다.")
     public ResponseEntity<Void> resetUserPassword(@RequestBody EmailDto emailDto){
-        HttpStatus httpStatus = HttpStatus.OK;
+        HttpStatus httpStatus = HttpStatus.CREATED;
         try {
-            emailService.sendPassword(emailDto.getEmail());
+            UserEntity userEntity = userService.getUserByEmail(emailDto.getEmail());
+            String password = emailService.sendPassword(emailDto.getEmail());
+            userService.updatePassword(userEntity, password);
+            log.info("비밀번호 변경 및 메일 전송 성공");
         }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("등록된 이메일이 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(httpStatus);
     }
