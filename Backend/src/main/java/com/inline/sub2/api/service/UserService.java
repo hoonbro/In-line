@@ -6,6 +6,8 @@ import com.inline.sub2.api.dto.UserUpdateDto;
 import com.inline.sub2.db.entity.UserEntity;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface UserService {
     @Transactional
     UserEntity registAdmin(UserRegistDto admin);
@@ -15,6 +17,8 @@ public interface UserService {
     UserEntity getUserByEmail(String email);
 
     UserEntity getUserInfo(Long userId);
+
+    List<UserEntity> getUserList(Long officeId);
 
     UserEntity updateUser(UserUpdateDto userUpdateDto);
 

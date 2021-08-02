@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -116,6 +117,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity getUserInfo(Long userId) {
         return userRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<UserEntity> getUserList(Long officeId){
+        return userRepository.findByOfficeId(officeId);
     }
 
 

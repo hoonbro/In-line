@@ -33,6 +33,7 @@ public class OnBoardController {
         }
         catch(Exception e){
             httpStatus = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<UserRegistDto>(userRegistDto, httpStatus);
         }
         return new ResponseEntity<UserRegistDto>(userRegistDto, httpStatus);
     }
