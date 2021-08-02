@@ -6,4 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface OfficeService {
     @Transactional(rollbackFor = Exception.class)
     OfficeEntity registOffice(String officeName);
+
+    Boolean duplicateOfficeName(String officeName);
 }

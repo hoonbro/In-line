@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/login").permitAll()
                 .antMatchers("/users/user").permitAll()
                 .antMatchers("/office").permitAll()
+                .antMatchers("/office/duplicate/{officeName}").permitAll()
                 .antMatchers(
                         "/v2/api-docs",
                         "/swagger-resources/**",
