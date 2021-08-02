@@ -1,9 +1,6 @@
 <template>
   <div class="h-screen bg-gray-100 flex items-center justify-center">
-    <div
-      class="bg-white shadow-lg p-8 grid gap-8 rounded-lg"
-      style="width: 480px;"
-    >
+    <div class="bg-white shadow-lg p-8 grid gap-8 rounded-lg w-96">
       <h1 class="text-3xl font-bold">비밀번호 변경</h1>
       <div>
         <p>
@@ -32,7 +29,11 @@
 <script>
 import { reactive } from "vue"
 import TextInput from "@/components/TextInput.vue"
-import { requiredValidator, confirmPasswordValidator } from "@/lib/validator"
+import {
+  requiredValidator,
+  confirmPasswordValidator,
+  passwordSecurityValidator,
+} from "@/lib/validator"
 
 export default {
   name: "ChangePassword",
@@ -48,11 +49,11 @@ export default {
         validators: [requiredValidator],
         errors: {},
       },
-      newPassword: {
+      password: {
         label: "새 비밀번호",
         type: "password",
         value: "",
-        validators: [requiredValidator],
+        validators: [requiredValidator, passwordSecurityValidator],
         errors: {},
       },
       confirmPassword: {
