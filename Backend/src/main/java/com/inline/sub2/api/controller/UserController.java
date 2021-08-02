@@ -1,13 +1,7 @@
 package com.inline.sub2.api.controller;
 
-import com.inline.sub2.api.dto.PasswordDto;
-import com.inline.sub2.api.dto.UserDto;
-import com.inline.sub2.api.dto.UserRegistDto;
-import com.inline.sub2.api.dto.UserUpdateDto;
-import com.inline.sub2.api.service.DeptService;
-import com.inline.sub2.api.service.JobService;
-import com.inline.sub2.api.service.OfficeService;
-import com.inline.sub2.api.service.UserService;
+import com.inline.sub2.api.dto.*;
+import com.inline.sub2.api.service.*;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +32,9 @@ public class UserController {
 
     @Autowired
     JobService jobService;
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -122,7 +119,19 @@ public class UserController {
         return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
-    @PutMapping("/password")
+    @PutMapping("/reset-password")
+    @ApiOperation(value = "메일로 임시 비밀번호를 보내고 사용자의 비밀번호를 임시로 변경한다.")
+    public ResponseEntity<Void> resetUserPassword(@RequestBody EmailDto emailDto){
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        try {
+            emailService.sendPassword(emailDto.getEmail());
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    @PutMapping("/change-password")
     @ApiOperation(value = "유저 비밀번호를 변경한다", response = Map.class)
     public ResponseEntity<Void> updateUserPassword(@RequestHeader Map<String,String> requestHeader, @RequestBody PasswordDto passwordDto) {
         String currentPassword = passwordDto.getCurrentPassword();
