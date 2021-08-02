@@ -23,5 +23,5 @@ public class JobEntity {
     private String jobName;
 
     @Column(name = "office_id")
-    private Long office_id;
+    private Long officeId;
 }

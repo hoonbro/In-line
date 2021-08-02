@@ -13,7 +13,14 @@ public class JobServiceImpl implements JobService{
     JobRepository jobRepository;
 
     @Override
-    public JobEntity getJobId(String jobName) {
-        return jobRepository.findByJobName(jobName);
+    public JobEntity getJobId(String jobName, Long officeId) {
+        return jobRepository.findByJobNameAndOfficeId(jobName,officeId);
     }
+
+    @Override
+    public JobEntity getJobName(Long jobId) {
+        return jobRepository.findByJobId(jobId);
+    }
+
+
 }
