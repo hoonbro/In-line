@@ -39,12 +39,19 @@
             <button class="search-btn">
               <span class="material-icons">search</span>
             </button>
-            <input type="text" placeholder="이름을 검색할 수 있어요." />
+            <input
+              v-model="searchTerm"
+              type="text"
+              placeholder="이름을 검색할 수 있어요."
+            />
           </div>
           <div class="users-container">
-            <ul class="user-list" v-if="members && members.length">
+            <ul
+              class="user-list"
+              v-if="searchedMembers && searchedMembers.length"
+            >
               <MemberListItem
-                v-for="member in members"
+                v-for="member in searchedMembers"
                 :key="member.id"
                 :member="member"
                 @click="openProfileModal(member.id)"
@@ -67,8 +74,8 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue"
-import axios from "axios"
+import { computed, onMounted, ref } from "vue"
+import { useStore } from "vuex"
 import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 import AddMemberModal from "@/components/Members/AddMemberModal.vue"
@@ -83,26 +90,33 @@ export default {
     ProfileModal,
   },
   setup() {
-    const members = ref([])
+    const store = useStore()
+    const searchTerm = ref("")
     const addMemberModalOpen = ref(false)
     const profileModalOpen = ref(false)
     const profileUserId = ref(null)
+    const searchedMembers = computed(() => {
+      return store.state.office.members.filter(member => {
+        if (searchTerm.value.trim()) {
+          return member.name.includes(searchTerm.value)
+        } else {
+          return true
+        }
+      })
+    })
 
     const openProfileModal = userId => {
       profileUserId.value = userId
       profileModalOpen.value = true
     }
 
-    onMounted(async () => {
-      const res = await axios({
-        url: `http://localhost:3000/users`,
-        // url: `/api/v1/users`,
-      })
-      members.value = res.data
+    onMounted(() => {
+      store.dispatch("office/getMembers")
     })
 
     return {
-      members,
+      searchTerm,
+      searchedMembers,
       addMemberModalOpen,
       profileModalOpen,
       openProfileModal,
@@ -161,7 +175,7 @@ export default {
         @apply flex flex-col col-span-8 bg-white rounded-lg shadow overflow-hidden;
 
         .search-container {
-          @apply flex-shrink-0 p-4 border-b flex items-center;
+          @apply flex-shrink-0 p-4 border-b flex items-center relative;
 
           .search-btn {
             @apply p-2 w-10 h-10 bg-gray-100 rounded mr-4;

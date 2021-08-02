@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/office")
@@ -31,20 +34,21 @@ public class OfficeController {
     @Autowired
     JobService jobService;
 
-    @PostMapping()
+    @PostMapping
     @ApiOperation(value = "회사 정보와 관리자 정보를 DB에 저장한다.")
-    public ResponseEntity<Void> registAdmin(@RequestBody UserRegistDto admin) {
+    public ResponseEntity<String> registAdmin(@RequestBody UserRegistDto admin) {
+        Map<String, Object> map = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.OK;
 
-            //임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
-            UserEntity userEntity = userService.registAdmin(admin);
-            if (userEntity != null) {
-                httpStatus = HttpStatus.CREATED;
-            }else{
-                log.error("회원 등록 실패");
-                httpStatus = HttpStatus.BAD_REQUEST;
-            }
+        log.info("gdgd");
+        String result = userService.registAdmin(admin);
+        log.info("gd");
+        if (result == "등록 성공") {
+            httpStatus = HttpStatus.CREATED;
+        } else {
+            httpStatus = HttpStatus.CONFLICT;
+        }
 
-        return new ResponseEntity<Void>(httpStatus);
+        return new ResponseEntity<String>(result, httpStatus);
     }
 }

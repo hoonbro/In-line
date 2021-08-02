@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import axios from "axios"
-import { reactive, ref, onMounted } from "vue"
+import { reactive, ref, onMounted, computed } from "vue"
 import TodoListItem from "@/components/RightAsidebar/TodoListItem.vue"
+import { useStore } from "vuex"
 
 export default {
   name: "Todo",
@@ -43,7 +43,11 @@ export default {
     TodoListItem,
   },
   setup() {
-    const todos = ref([])
+    // const todos = ref([])
+    const store = useStore()
+    const todos = computed(() => {
+      return store.state.office.todos
+    })
     const formData = reactive({
       title: "",
       content: "",
@@ -51,9 +55,8 @@ export default {
     })
     const editMode = ref(false)
 
-    const getTodos = async () => {
-      const res = await axios.get("http://localhost:3000/todos")
-      todos.value = res.data
+    const getTodos = () => {
+      store.dispatch("office/getTodos")
     }
 
     const createTodos = async () => {
@@ -63,18 +66,13 @@ export default {
       }
 
       try {
-        const res = await axios({
-          // url: "/api/v1/todos",
-          url: "http://localhost:3000/todos",
-          method: "POST",
-          data: {
-            title: formData.title,
-            content: formData.content,
-            day: formData.day,
-            done: false,
-          },
-        })
-        todos.value.push(res.data)
+        const todo = {
+          title: formData.title,
+          content: formData.content,
+          day: formData.day,
+          done: false,
+        }
+        store.dispatch("office/createTodo", todo)
         Object.keys(formData).forEach(key => {
           formData[key] = ""
         })
@@ -92,30 +90,11 @@ export default {
     }
 
     const handleToggleComplete = async (todoId, currentDone) => {
-      const res = await axios({
-        // url: `/api/v1/todos/${todoId}`,
-        url: `http://localhost:3000/todos/${todoId}`,
-        method: "PATCH",
-        data: {
-          done: !currentDone,
-        },
-      })
-      todos.value.forEach(todo => {
-        if (todo.id === todoId) {
-          todo.done = !todo.done
-        }
-      })
-      console.log(res)
+      store.dispatch("office/toggleTodoDone", { todoId, currentDone })
     }
 
-    const deleteTodo = async todoId => {
-      const res = await axios({
-        // url: `/api/v1/todos/${todoId}`,
-        url: `http://localhost:3000/todos/${todoId}`,
-        method: "DELETE",
-      })
-      console.log(res)
-      todos.value = todos.value.filter(todo => todo.id !== todoId)
+    const deleteTodo = todoId => {
+      store.dispatch("office/deleteTodo", todoId)
     }
 
     onMounted(() => {
