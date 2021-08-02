@@ -19,6 +19,10 @@ public class OfficeServiceImpl implements OfficeService{
         return officeRepository.save(officeEntity);
     }
 
+    public OfficeEntity getOfficeName(Long officeId){
+        return officeRepository.findByOfficeId(officeId);
+    }
+
     public Boolean duplicateOfficeName(String officeName){
         OfficeEntity officeEntity = officeRepository.findByOfficeName(officeName);
         boolean isDuplicate = false;

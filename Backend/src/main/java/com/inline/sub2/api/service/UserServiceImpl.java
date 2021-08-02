@@ -38,6 +38,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     roomService roomService;
 
+    @Autowired
+    OnBoardService onBoardService;
+
     @Override
     @Transactional
     public UserEntity registAdmin(UserRegistDto admin) {
@@ -95,6 +98,13 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userEntity.setAuth("ROLE_USER");
         userEntity.setJoinDate(now);
+        try {
+            onBoardService.deleteUserOnboard(user.getEmail());
+            log.info("onboard 테이블내 유저 삭제 성공");
+        }catch(Exception e){
+            log.error("onboard 테이블내 유저 삭제 실패:{}",e);
+        }
+
         return userRepository.save(userEntity);
     }
 
@@ -129,7 +139,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(UserEntity userEntity,String password) {
         userEntity.setPassword(passwordEncoder.encode(password));
-         userRepository.save(userEntity);
+        userRepository.save(userEntity);
     }
 
 
