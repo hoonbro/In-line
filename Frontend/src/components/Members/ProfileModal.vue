@@ -8,11 +8,19 @@
       </header>
     </template>
     <template v-slot:modal-body>
-      <div class="modal-body">
+      <div class="profile-img-container">
         <div class="profile-img-wrapper">
-          <span>
-            {{ profile.name.value }}
-          </span>
+          <img :src="profileImg" alt="프로필 이미지" />
+          <input
+            type="file"
+            accept="image/*"
+            v-show="false"
+            ref="fileInputEl"
+            @change="onFileChange"
+          />
+          <button class="edit-btn" v-if="true" @click="clickInputEl">
+            <span class="material-icons ">edit</span>
+          </button>
         </div>
       </div>
       <div>
@@ -37,11 +45,11 @@
 </template>
 
 <script>
-import { reactive } from "@vue/reactivity"
+import { reactive, ref } from "@vue/reactivity"
 import { onMounted } from "@vue/runtime-core"
-import axios from "axios"
 
 import Modal from "@/components/Common/Modal.vue"
+import { useStore } from "vuex"
 
 export default {
   name: "ProfileModal",
@@ -52,6 +60,7 @@ export default {
     userId: Number,
   },
   setup(props) {
+    const store = useStore()
     const profile = reactive({
       department: {
         label: "부서",
@@ -78,19 +87,39 @@ export default {
         value: "",
       },
     })
+    const profileImg = ref(null)
+    const fileInputEl = ref(null)
+
+    const clickInputEl = () => {
+      fileInputEl.value.click()
+    }
+
+    const onFileChange = () => {
+      const image = fileInputEl.value.files[0]
+
+      profileImg.value = URL.createObjectURL(image)
+    }
 
     onMounted(async () => {
-      const res = await axios.get(`http://localhost:3000/users/${props.userId}`)
-      console.log(res)
-      if (res.status === 200) {
-        Object.keys(profile).forEach(key => {
-          profile[key].value = res.data[key]
-        })
+      try {
+        const res = await store.dispatch("office/getMember", props.userId)
+        console.log(res)
+        if (res.status === 200) {
+          Object.keys(profile).forEach(key => {
+            profile[key].value = res.data[key]
+          })
+        }
+      } catch (error) {
+        console.log(error)
       }
     })
 
     return {
       profile,
+      profileImg,
+      fileInputEl,
+      clickInputEl,
+      onFileChange,
     }
   },
 }
@@ -105,49 +134,61 @@ header {
   }
 }
 
-.modal-body {
+.profile-img-container {
   @apply mb-10 flex justify-center;
 
   .profile-img-wrapper {
-    @apply bg-green-200 rounded-full w-32 h-32 flex items-center justify-center;
+    @apply bg-green-200 w-32 h-32 flex items-center justify-center relative;
 
-    span {
-      @apply text-gray-600 font-medium;
+    img {
+      @apply w-full h-full object-cover rounded-full;
     }
-  }
-
-  .header {
-    @apply flex items-center justify-between mb-4;
-
-    h3 {
-      @apply text-xl font-bold;
-
-      .edit-btn {
-        @apply p-1 w-8 h-8;
-
-        .material-icons {
-          @apply text-gray-500;
-        }
-      }
-    }
-  }
-  .info-list {
-    @apply grid;
-
-    .info-list-item {
-      @apply flex items-center py-4 border-b;
-
-      .label {
-        @apply font-medium text-gray-400 w-40;
-      }
-    }
-  }
-  .change-pwd-btn-container {
-    @apply mt-4 flex justify-end;
 
     button {
-      @apply font-medium text-sm text-gray-600;
+      @apply p-1 w-8 h-8 bg-white rounded-full shadow-sm border border-gray-100 absolute right-0 bottom-0 transition-colors;
+
+      &:hover {
+        @apply bg-blue-100;
+      }
+
+      .material-icons {
+        @apply text-gray-500;
+      }
     }
+  }
+}
+
+.header {
+  @apply flex items-center justify-between mb-4;
+
+  h3 {
+    @apply text-xl font-bold;
+
+    .edit-btn {
+      @apply p-1 w-8 h-8;
+
+      .material-icons {
+        @apply text-gray-500;
+      }
+    }
+  }
+}
+.info-list {
+  @apply grid;
+
+  .info-list-item {
+    @apply flex items-center py-4 border-b;
+
+    .label {
+      @apply font-medium text-gray-400 w-40;
+    }
+  }
+}
+.change-pwd-btn-container {
+  @apply mt-4 flex justify-end;
+
+  button {
+    @apply font-medium text-sm text-gray-600;
   }
 }
 </style>

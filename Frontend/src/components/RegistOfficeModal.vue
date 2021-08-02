@@ -1,13 +1,8 @@
 <template>
   <Modal>
     <template v-slot:modal-body>
-      <div class="flex justify-between mb-10">
+      <div class="flex mb-10">
         <h1 class="text-3xl font-bold">회사 등록</h1>
-        <button @click="$emit('close')">
-          <span class="material-icons-outlined">
-            close
-          </span>
-        </button>
       </div>
       <div class="input-list">
         <TextInput
@@ -65,56 +60,56 @@ export default {
       officeName: {
         label: "회사 이름",
         type: "text",
-        value: "",
+        value: "asdf",
         validators: [requiredValidator],
         errors: {},
       },
       email: {
-        label: "이메일",
+        label: "담당자 이메일",
         type: "email",
-        value: "",
+        value: "asdf@asdf.asdf",
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
       deptName: {
-        label: "소속",
+        label: "담당자 소속",
         type: "text",
-        value: "",
+        value: "인사",
         validators: [requiredValidator],
         errors: {},
       },
       jobName: {
-        label: "직무",
+        label: "담당자 직무",
         type: "text",
-        value: "",
+        value: "팀원",
         validators: [requiredValidator],
         errors: {},
       },
       name: {
-        label: "이름",
+        label: "담당자 이름",
         type: "text",
-        value: "",
+        value: "테스터",
         validators: [requiredValidator],
         errors: {},
       },
       phone: {
-        label: "휴대전화",
+        label: "담당자 휴대전화",
         type: "text",
-        value: "",
+        value: "00",
         validators: [requiredValidator],
         errors: {},
       },
       password: {
-        label: "비밀번호",
+        label: "담당자 비밀번호",
         type: "password",
-        value: "",
+        value: "q1w2e3r4!@",
         validators: [requiredValidator, passwordSecurityValidator],
         errors: {},
       },
       confirmPassword: {
-        label: "비밀번호 확인",
+        label: "담당자 비밀번호 확인",
         type: "password",
-        value: "",
+        value: "q1w2e3r4!@",
         validators: [requiredValidator, confirmPasswordValidator],
         errors: {},
       },
@@ -143,8 +138,13 @@ export default {
       Object.keys(formData).forEach(
         key => (submitData[key] = formData[key].value)
       )
-      await store.dispatch("landing/registerOffice", submitData)
-      emit("close")
+      try {
+        await store.dispatch("landing/registerOffice", submitData)
+        emit("close")
+      } catch (error) {
+        console.log(error)
+        alert(error)
+      }
     }
 
     return {
