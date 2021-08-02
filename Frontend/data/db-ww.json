@@ -1,4 +1,26 @@
 {
+  "rooms": [
+    {
+      "id": 1,
+      "roomName": "마케팅-1"
+    },
+    {
+      "id": 2,
+      "roomName": "마케팅-2"
+    },
+    {
+      "id": 3,
+      "roomName": "영업-1"
+    },
+    {
+      "id": 4,
+      "roomName": "개발-1"
+    },
+    {
+      "id": 5,
+      "roomName": "잡담-1"
+    }
+  ],
   "users": [
     {
       "id": 1,
