@@ -69,7 +69,7 @@
           <div class="grid gap-1">
             <button
               class="regist-btn"
-              :class="{ disabled: !formIsValid }"
+              :class="{ disabled: !formIsValid, error: managerFormError }"
               :disabled="!formIsValid"
               @click="registerOffice"
             >
@@ -133,7 +133,7 @@ export default {
         errors: {},
       },
       jobName: {
-        label: "담당자 직무",
+        label: "담당자 역할",
         type: "text",
         // value: "",
         value: "팀원",
@@ -230,14 +230,13 @@ export default {
       )
       try {
         await store.dispatch("office/registerOffice", submitData)
-        // await axios.post("/api/v1/office", submitData)
-        // emit("close")
       } catch (error) {
         if (error.response.status === 409) {
           managerFormError.value = "이미 존재하는 이메일이에요!"
+        } else {
+          console.log(error)
+          alert(error)
         }
-        console.log(error)
-        alert(error)
       }
     }
 
