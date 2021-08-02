@@ -29,7 +29,6 @@ export default {
 
     onMounted(() => {
       window.addEventListener("scroll", () => {
-        console.log(window.scrollY)
         isNavTop.value = window.scrollY === 0 ? true : false
       })
     })

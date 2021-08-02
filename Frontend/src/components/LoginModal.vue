@@ -51,14 +51,20 @@
       </div>
       <hr class="my-6" />
       <div class="sns-container">
-        <h2 class="text-xl font-bold text-center">SNS 로그인</h2>
-        <button class="common-btn sns-btn bg-yellow-400">
+        <h2 class="text-xl font-bold">SNS 로그인</h2>
+        <button
+          class="common-btn sns-btn bg-yellow-400 text-yellow-900 font-medium"
+        >
           카카오로 시작하기
         </button>
-        <button class="common-btn sns-btn bg-gray-100">
+        <button
+          class="common-btn sns-btn bg-gray-100 text-gray-600 font-medium"
+        >
           구글로 시작하기
         </button>
-        <button class="common-btn sns-btn bg-green-500">
+        <button
+          class="common-btn sns-btn bg-green-500 text-green-900 font-medium"
+        >
           네이버로 시작하기
         </button>
       </div>

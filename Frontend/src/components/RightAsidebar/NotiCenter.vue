@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue"
-import axios from "axios"
+import { onMounted, computed } from "vue"
 import NotiListItem from "@/components/RightAsidebar/NotiListItem.vue"
+import { useStore } from "vuex"
 
 export default {
   name: "NotiCenter",
@@ -22,29 +22,18 @@ export default {
     NotiListItem,
   },
   setup() {
-    const notifications = ref([])
+    const store = useStore()
 
-    const getNotifications = async () => {
-      const res = await axios({
-        url: "http://localhost:3000/notifications",
-        // url: "/api/v1/notifications",
-      })
-      notifications.value = res.data
-    }
+    const notifications = computed(() => {
+      return store.state.office.notifications
+    })
 
-    const deleteNotification = async notiId => {
-      const res = await axios({
-        url: `http://localhost:3000/notifications/${notiId}`,
-        // url: `/api/v1/notifications/${notiId}`,
-        method: "DELETE",
-      })
-      notifications.value = notifications.value.filter(
-        noti => noti.id !== notiId
-      )
+    const deleteNotification = notiId => {
+      store.dispatch("office/deleteNotification", notiId)
     }
 
     onMounted(() => {
-      getNotifications()
+      store.dispatch("office/getNotifications")
     })
     return {
       notifications,
