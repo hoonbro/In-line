@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -44,6 +46,21 @@ public class UserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @GetMapping
+    @ApiOperation(value = "office별 전체 회원 리스트를 반환한다.", response = List.class)
+    public ResponseEntity<List<UserEntity>> userList(@RequestParam("officeId") Long officeId){
+        HttpStatus httpStatus = HttpStatus.OK;
+        List<UserEntity> list = new ArrayList<>();
+        try {
+            list = userService.getUserList(officeId);
+            log.info("유저 리스트 조회 성공");
+        }catch (Exception e){
+            log.error("해당하는 officeId가 없습니다.:{}", e);
+            return new ResponseEntity<List<UserEntity>>(list, httpStatus);
+        }
+        return new ResponseEntity<List<UserEntity>>(list, httpStatus);
+    }
 
     @PostMapping
     @ApiOperation(value = "회원가입 동작(onBoard에 있는 정보와 사용자가 입력한 password를 User 테이블에 저장한다.)")
