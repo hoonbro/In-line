@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Slf4j
@@ -35,9 +36,11 @@ public class UserServiceImpl implements UserService {
     OfficeService officeService;
 
     @Override
-    public UserEntity registAdmin(UserRegistDto admin) {
+    @Transactional
+    public String registAdmin(UserRegistDto admin) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
+        String result = "등록 성공";
         try {
             OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
             log.info("회사 등록 완료");
@@ -54,13 +57,17 @@ public class UserServiceImpl implements UserService {
             userEntity.setAuth("ROLE_ADMIN");
             userEntity.setJoinDate(now);
             userEntity.setOfficeId(officeEntity.getOfficeId());
-
-            log.info("user 정보{}", userEntity.toString());
         } catch (Exception e) {
             log.error("회사 등록 실패 : {}", e);
+            return "회사 등록 실패";
         }
-
-        return userRepository.save(userEntity);
+        try {
+            userRepository.save(userEntity);
+        }catch(Exception e){
+            log.error("회원 등록 실패 : {}", e);
+            return "회원 등록 실패";
+        }
+        return result;
     }
 
     @Override
