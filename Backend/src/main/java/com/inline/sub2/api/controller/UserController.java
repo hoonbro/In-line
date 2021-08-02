@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,10 @@ public class UserController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    FileService fileService;
+
     @Autowired
     JwtUtil jwtUtil;
 
@@ -188,6 +194,13 @@ public class UserController {
         return new ResponseEntity<Void>(httpStatus);
     }
 
-
+    @PostMapping("/profile")
+    @ApiOperation(value = "사용자의 프로필 사진을 등록/수정합니다.")
+    public ResponseEntity<Void> updateProfile(@RequestBody ProfileImageDto profile) throws IOException {
+//        HttpStatus httpStatus = HttpStatus.CREATED;
+//        fileService.fileUpload(profile);
+        log.info("들어옴");
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
 }

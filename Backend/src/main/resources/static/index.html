@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>파일 보내기 예제</title>
+    <script src="src= https //code.jquery.com/jquery-latest.js"></script>
+
+    <script>
+        function upload(){
+            const FileElement = document.querySelector('#File');
+            alert(FileElement);
+            $.ajax(
+                {
+                    type:"POST",
+                    url : "users/profile",
+                    data: {
+                        "userId" : 1,
+                        "file" : FileElement,
+                    },
+                    success: function(){
+                        alert("성공");
+                    },
+                    error : function(XMLHttpRequest, textStatus, errorThrown){ // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+                        alert("통신 실패.")
+                    }
+                }
+            );
+        }
+    </script>
+</head>
+<body>
+<input type="file" id="File" name="files"/>
+<button id="Button" onclick="upload()">전송</button>
+</body>
+</html>
