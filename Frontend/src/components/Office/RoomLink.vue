@@ -34,7 +34,11 @@ export default {
 <style scoped lang="scss">
 .room {
   height: 160px;
-  @apply p-6 rounded-lg bg-white flex flex-col justify-between shadow relative;
+  @apply p-6 rounded-lg bg-white flex flex-col justify-between shadow relative transition-colors;
+
+  &:hover {
+    @apply bg-blue-50;
+  }
 
   .title {
     @apply text-xl font-bold;
