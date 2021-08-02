@@ -13,7 +13,12 @@ public class DeptServiceImpl implements DeptService{
     DeptRepository deptRepository;
 
     @Override
-    public DeptEntity getDeptId(String detpName) {
-        return deptRepository.findByDeptName(detpName);
+    public DeptEntity getDeptId(String deptName, Long officeId) {
+        return deptRepository.findByDeptNameAndOfficeId(deptName,officeId);
+    }
+
+    @Override
+    public DeptEntity getDeptName(Long deptId) {
+        return deptRepository.findByDeptId(deptId);
     }
 }

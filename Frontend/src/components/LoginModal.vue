@@ -13,7 +13,10 @@
           :field="field"
           :formData="formData"
         />
-        <router-link to="#" class="text-sm inline-block mr-auto">
+        <router-link
+          :to="{ name: 'ResetPassword' }"
+          class="text-sm inline-block mr-auto"
+        >
           😅비밀번호를 잊으셨나요?
         </router-link>
 

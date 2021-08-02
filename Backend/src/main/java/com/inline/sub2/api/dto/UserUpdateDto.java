@@ -5,15 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AdminRegistDto {
-    private String officeName;
-    private String email;
+public class UserUpdateDto {
+    private Long userId;
     private String deptName;
     private String jobName;
     private String name;
+    private String nickName;
     private String phone;
-    private String password;
-    private Long deptId;
-    private Long jobId;
-    private Long officeId;
+    private String profileImage;
 }
