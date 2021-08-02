@@ -35,15 +35,22 @@ public class UserServiceImpl implements UserService {
     @Autowired
     OfficeService officeService;
 
+    @Autowired
+    roomService roomService;
+
     @Override
     @Transactional
-    public String registAdmin(UserRegistDto admin) {
+    public UserEntity registAdmin(UserRegistDto admin) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
-        String result = "등록 성공";
         try {
             OfficeEntity officeEntity = officeService.registOffice(admin.getOfficeName()); //회사 등록
             log.info("회사 등록 완료");
+
+            roomService.createtRoom("기본회의실-1", officeEntity.getOfficeId()); //기본 회의실 생성
+            roomService.createtRoom("기본회의실-2", officeEntity.getOfficeId());
+            log.info("기본 회의실 생성 완료");
+
             DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), 1l); //부서 번호 조회
             JobEntity jobEntity = jobService.getJobId(admin.getJobName(), 1l); //직책 번호 조회
 
@@ -58,16 +65,14 @@ public class UserServiceImpl implements UserService {
             userEntity.setJoinDate(now);
             userEntity.setOfficeId(officeEntity.getOfficeId());
         } catch (Exception e) {
-            log.error("회사 등록 실패 : {}", e);
-            return "회사 등록 실패";
+            log.error("회사명 중복 : {}", e);
         }
         try {
-            userRepository.save(userEntity);
+            userEntity = userRepository.save(userEntity);
         }catch(Exception e){
-            log.error("회원 등록 실패 : {}", e);
-            return "회원 등록 실패";
+            log.error("이메일 중복 : {}", e);
         }
-        return result;
+        return userEntity;
     }
 
     @Override

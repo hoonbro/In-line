@@ -125,7 +125,19 @@ public class UserController {
         return new ResponseEntity<UserEntity>(userEntity,httpStatus);
     }
 
-    @PutMapping("/password")
+    @PutMapping("/reset-password")
+    @ApiOperation(value = "메일로 임시 비밀번호를 보내고 사용자의 비밀번호를 임시로 변경한다.")
+    public ResponseEntity<Void> resetUserPassword(@RequestBody EmailDto emailDto){
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        try {
+            emailService.sendPassword(emailDto.getEmail());
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    @PutMapping("/change-password")
     @ApiOperation(value = "유저 비밀번호를 변경한다", response = Map.class)
     public ResponseEntity<Void> updateUserPassword(@RequestHeader Map<String,String> requestHeader, @RequestBody PasswordDto passwordDto) {
         String currentPassword = passwordDto.getCurrentPassword();

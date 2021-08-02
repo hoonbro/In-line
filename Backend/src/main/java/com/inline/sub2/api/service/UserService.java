@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface UserService {
     @Transactional
-    String registAdmin(UserRegistDto admin);
+    UserEntity registAdmin(UserRegistDto admin);
 
     UserEntity registUser(UserRegistDto user);
 

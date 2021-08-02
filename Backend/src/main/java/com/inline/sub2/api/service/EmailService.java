@@ -4,4 +4,6 @@ import com.inline.sub2.api.dto.EmailDto;
 
 public interface EmailService {
     public void sendEmail(String email);
+
+    public void sendPassword(String email);
 }

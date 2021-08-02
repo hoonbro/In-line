@@ -36,19 +36,29 @@ public class OfficeController {
 
     @PostMapping
     @ApiOperation(value = "회사 정보와 관리자 정보를 DB에 저장한다.")
-    public ResponseEntity<String> registAdmin(@RequestBody UserRegistDto admin) {
-        Map<String, Object> map = new HashMap<>();
-        HttpStatus httpStatus = HttpStatus.OK;
-
-        log.info("gdgd");
-        String result = userService.registAdmin(admin);
-        log.info("gd");
-        if (result == "등록 성공") {
-            httpStatus = HttpStatus.CREATED;
-        } else {
+    public ResponseEntity<Void> registAdmin(@RequestBody UserRegistDto admin) {
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        UserEntity userEntity = null;
+        try{
+            userEntity = userService.registAdmin(admin);
+            if (userEntity != null) {
+                httpStatus = HttpStatus.CREATED;
+            }
+        }catch(Exception e){
             httpStatus = HttpStatus.CONFLICT;
+            return new ResponseEntity<Void>(httpStatus);
         }
+        return new ResponseEntity<Void>(httpStatus);
+    }
 
-        return new ResponseEntity<String>(result, httpStatus);
+    @GetMapping("/duplicate/{officeName}")
+    @ApiOperation(value = "회사 이름의 중복을 확인한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> duplicateOfficeName(@PathVariable("officeName") String officeName){
+        HttpStatus httpStatus = HttpStatus.OK;
+        boolean isDuplicate = officeService.duplicateOfficeName(officeName);
+        if(isDuplicate)
+            httpStatus = HttpStatus.CONFLICT;
+
+        return new ResponseEntity<Boolean>(isDuplicate, httpStatus);
     }
 }
