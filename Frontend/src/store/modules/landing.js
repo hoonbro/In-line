@@ -13,18 +13,8 @@ export const landing = {
         url: "/api/v1/office",
         data: formData,
       })
-      // try {
-      //   const res = await axios({
-      //     method: "post",
-      //     url: "/api/v1/office",
-      //     data: formData,
-      //   })
-      //   return new Promise((resolve, reject) => resolve(res))
-      // } catch (error) {
-      //   console.error(error)
-      // }
     },
-    login: async (context, formData) => {
+    login: async ({ commit }, formData) => {
       try {
         const res = await axios({
           method: "post",
@@ -32,7 +22,7 @@ export const landing = {
           data: formData,
         })
         localStorage.setItem("jwt", res.data.accessToken)
-        localStorage.setItem("auth", res.data.userDto.auth)
+        localStorage.setItem("user", res.data.userDto)
         return new Promise(resolve => resolve(res))
       } catch (error) {
         console.log(error)
