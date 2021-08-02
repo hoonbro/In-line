@@ -1,21 +1,21 @@
 import axios from "axios"
 
 const notiAPI = axios.create({
-  baseURL: "http://localhost:3000/notifications",
+  baseURL: `${process.env.VUE_APP_API_BASE_URL}/notifications`,
   headers: {
     Authorization: `Bearer jwt`,
   },
 })
 
 const todoAPI = axios.create({
-  baseURL: "http://localhost:3000/todos",
+  baseURL: `${process.env.VUE_APP_API_BASE_URL}/todos`,
   headers: {
     Authorization: `Bearer jwt`,
   },
 })
 
 const userAPI = axios.create({
-  baseURL: "http://localhost:3000/users",
+  baseURL: `${process.env.VUE_APP_API_BASE_URL}/users`,
   headers: {
     Authorization: `Bearer jwt`,
   },
