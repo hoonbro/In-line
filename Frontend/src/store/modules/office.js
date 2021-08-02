@@ -1,47 +1,36 @@
 import axios from "axios"
+import { auth } from "./auth"
 
 const notiAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/notifications`,
   headers: {
-    Authorization: `Bearer jwt`,
+    Authorization: `Bearer ${auth.state.token}`,
   },
 })
 
 const todoAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/todos`,
   headers: {
-    Authorization: `Bearer jwt`,
+    Authorization: `Bearer ${auth.state.token}`,
   },
 })
 
 const userAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/users`,
   headers: {
-    Authorization: `Bearer jwt`,
+    Authorization: `Bearer ${auth.state.token}`,
   },
+})
+
+const officeAPI = axios.create({
+  baseURL: `/api/v1/office`,
 })
 
 // 병훈
 export const office = {
   namespaced: true,
   state: {
-    user: {
-      address: null,
-      auth: "ROLE_ADMIN",
-      deptId: 102,
-      email: "asdf@asdf.asdf",
-      jobId: 1008,
-      joinDate: "2021-07-29T04:53:56.000+00:00",
-      login: false,
-      name: "김병훈",
-      nickName: null,
-      officeId: 16,
-      password: "$2a$10$aZSj5sCJIZjUbsIy69AbauBPGuuDrvN2TGGoTmS4kSeNxloshm5Be",
-      phone: "1231231234",
-      profileImage: null,
-      roomId: 1,
-      userId: 5,
-    },
+    user: {},
     notifications: [],
     todos: [],
     members: [],
@@ -63,6 +52,11 @@ export const office = {
     },
   },
   actions: {
+    async registerOffice(context, formData) {
+      return officeAPI.post("", {
+        data: formData,
+      })
+    },
     async getNotifications({ commit }) {
       try {
         const res = await notiAPI()
