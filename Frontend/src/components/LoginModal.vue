@@ -13,46 +13,38 @@
           :field="field"
           :formData="formData"
         />
-        <router-link
-          :to="{ name: 'ResetPassword' }"
-          class="text-sm inline-block mr-auto"
-        >
-          😅비밀번호를 잊으셨나요?
-        </router-link>
+        <div>
+          <input
+            class="mr-1"
+            type="checkbox"
+            id="willRememberEamil"
+            v-model="willRememberEamil"
+          />
+          <label
+            class="text-sm font-medium text-gray-700"
+            for="willRememberEamil"
+          >
+            이메일 기억하기
+          </label>
+        </div>
 
-        <button class="common-btn login-btn" @click="login">
+        <button
+          class="common-btn login-btn"
+          :class="{ disabled: !formDataIsValid }"
+          :disabled="!formDataIsValid"
+          @click="login"
+        >
           로그인하기
         </button>
-        <div class="flex justify-between">
-          <div>
-            <input
-              class="mr-1"
-              type="checkbox"
-              name="willStayLogin"
-              id="willStayLogin"
-              v-model="willStayLogin"
-            />
-            <label class="text-sm font-medium text-gray-700" for="willStayLogin"
-              >로그인 상태 유지</label
-            >
-          </div>
-          <div>
-            <input
-              class="mr-1"
-              type="checkbox"
-              name="willRememberEamil"
-              id="willRememberEamil"
-              v-model="willRememberEamil"
-            />
-            <label
-              class="text-sm font-medium text-gray-700"
-              for="willRememberEamil"
-              >이메일 기억하기</label
-            >
-          </div>
-        </div>
+
+        <router-link
+          :to="{ name: 'ResetPassword' }"
+          class="text-sm inline-block mx-auto text-gray-400"
+        >
+          비밀번호를 잊으셨나요?
+        </router-link>
       </div>
-      <hr class="my-6" />
+      <!-- <hr class="my-6" />
       <div class="sns-container">
         <h2 class="text-xl font-bold">SNS 로그인</h2>
         <button
@@ -70,13 +62,13 @@
         >
           네이버로 시작하기
         </button>
-      </div>
+      </div> -->
     </template>
   </Modal>
 </template>
 
 <script>
-import { reactive, ref } from "vue"
+import { computed, reactive, ref } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import { loginRequiredValidator, emailValidator } from "@/lib/validator"
@@ -90,14 +82,13 @@ export default {
     const store = useStore()
     const router = useRouter()
 
-    const willStayLogin = ref(false)
-    const willRememberEamil = ref(false)
+    const willRememberEamil = ref(localStorage.getItem("email") ? true : false)
 
     const formData = reactive({
       email: {
         label: "이메일",
         type: "email",
-        value: "",
+        value: localStorage.getItem("email") || "",
         validators: [loginRequiredValidator, emailValidator],
         errors: {},
       },
@@ -110,17 +101,34 @@ export default {
       },
     })
 
+    const formDataIsValid = computed(() => {
+      const keys = Object.keys(formData)
+      return keys.every(key => {
+        const errors = Object.keys(formData[key].errors)
+        return formData[key].value && !errors.length
+      })
+    })
+
     const login = async () => {
       const submitData = {}
       Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
       })
-      await store.dispatch("landing/login", submitData)
-      emit("close")
-      router.push({ name: "Office" })
+      try {
+        await store.dispatch("auth/login", submitData)
+        if (willRememberEamil.value) {
+          localStorage.setItem("email", formData.email.value)
+        } else {
+          localStorage.removeItem("email")
+        }
+        emit("close")
+        router.push({ name: "Office" })
+      } catch (error) {
+        alert(error.message)
+      }
     }
 
-    return { formData, willStayLogin, willRememberEamil, login }
+    return { formData, formDataIsValid, willRememberEamil, login }
   },
 }
 </script>
@@ -135,6 +143,10 @@ export default {
 
 .login-btn {
   @apply rounded-xl  py-4 bg-indigo-900 text-white font-bold;
+
+  &.disabled {
+    @apply bg-gray-400;
+  }
 }
 
 .sns-container {

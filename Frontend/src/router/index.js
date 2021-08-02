@@ -19,7 +19,7 @@ const routes = [
     component: LandingLayout,
     // localStorage에 jwt가 있으면 Office로 라우팅
     beforeEnter: (to, from, next) => {
-      if (localStorage.getItem("jwt")) next({ name: "Office" })
+      if (localStorage.getItem("accessToken")) next({ name: "Office" })
       else next()
     },
     children: [
@@ -107,7 +107,7 @@ router.beforeEach((to, from, next) => {
   // const isLoginRequired = to.matched.some(
   //   routeInfo => routeInfo.meta.loginRequired
   // )
-  if (to.meta.loginRequired && !localStorage.getItem("jwt")) {
+  if (to.meta.loginRequired && !localStorage.getItem("accessToken")) {
     next({ name: "Home", params: { shouldLogin: true } })
   } else next()
 })

@@ -23,8 +23,8 @@ export default {
     const logout = () => {
       const yes = confirm("로그아웃 하시겠습니까?")
       if (yes) {
-        localStorage.removeItem("jwt")
-        localStorage.removeItem("auth")
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("user")
         router.push({ name: "Home" })
       }
     }
