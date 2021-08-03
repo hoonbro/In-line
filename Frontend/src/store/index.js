@@ -1,10 +1,11 @@
 import { createStore } from "vuex"
+import { auth } from "@/store/modules/auth"
 import { landing } from "@/store/modules/landing"
 import { office } from "@/store/modules/office"
 import { room } from "@/store/modules/room"
 
 export default createStore({
-  modules: { landing, office, room },
+  modules: { auth, landing, office, room },
   state: {
     user: {
       address: null,
