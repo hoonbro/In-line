@@ -11,11 +11,11 @@ public class roomServiceImpl implements  roomService{
     @Autowired
     RoomRepository RoomRepository;
 
-    public void createtRoom(String roomName, Long officeId){
+    public RoomEntity createtRoom(String roomName, Long officeId){
         RoomEntity roomEntity = new RoomEntity();
 
         roomEntity.setRoomName(roomName);
         roomEntity.setOfficeId(officeId);
-        RoomRepository.save(roomEntity);
+        return RoomRepository.save(roomEntity);
     }
 }

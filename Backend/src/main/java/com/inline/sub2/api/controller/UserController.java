@@ -54,6 +54,9 @@ public class UserController {
         List<UserEntity> list = new ArrayList<>();
         try {
             list = userService.getUserList(officeId);
+            for(UserEntity u : list){
+                log.info(u.toString());
+            }
             log.info("유저 리스트 조회 성공");
         }catch (Exception e){
             log.error("해당하는 officeId가 없습니다.:{}", e);
