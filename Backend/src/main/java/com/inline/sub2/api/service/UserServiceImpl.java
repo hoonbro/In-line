@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -37,6 +38,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     roomService roomService;
+
+    @Autowired
+    OnBoardService onBoardService;
 
     @Override
     @Transactional
@@ -95,6 +99,13 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userEntity.setAuth("ROLE_USER");
         userEntity.setJoinDate(now);
+        try {
+            onBoardService.deleteUserOnboard(user.getEmail());
+            log.info("onboard 테이블내 유저 삭제 성공");
+        }catch(Exception e){
+            log.error("onboard 테이블내 유저 삭제 실패:{}",e);
+        }
+
         return userRepository.save(userEntity);
     }
 
@@ -106,6 +117,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity getUserInfo(Long userId) {
         return userRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<UserEntity> getUserList(Long officeId){
+        return userRepository.findByOfficeId(officeId);
     }
 
 
@@ -129,7 +145,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(UserEntity userEntity,String password) {
         userEntity.setPassword(passwordEncoder.encode(password));
-         userRepository.save(userEntity);
+        userRepository.save(userEntity);
     }
 
 

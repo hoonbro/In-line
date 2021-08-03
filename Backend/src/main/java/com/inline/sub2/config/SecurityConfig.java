@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //antMatchers()는 특정한 경로를 지정합니다.
                 .antMatchers(
                         "/users/login",
-                        "/users/user",
+                        "/users",
                         "/users/reset-password").permitAll()
                 .antMatchers(
                         "/office",

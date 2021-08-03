@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -44,6 +46,21 @@ public class UserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @GetMapping
+    @ApiOperation(value = "office별 전체 회원 리스트를 반환한다.", response = List.class)
+    public ResponseEntity<List<UserEntity>> userList(@RequestParam("officeId") Long officeId){
+        HttpStatus httpStatus = HttpStatus.OK;
+        List<UserEntity> list = new ArrayList<>();
+        try {
+            list = userService.getUserList(officeId);
+            log.info("유저 리스트 조회 성공");
+        }catch (Exception e){
+            log.error("해당하는 officeId가 없습니다.:{}", e);
+            return new ResponseEntity<List<UserEntity>>(list, httpStatus);
+        }
+        return new ResponseEntity<List<UserEntity>>(list, httpStatus);
+    }
 
     @PostMapping
     @ApiOperation(value = "회원가입 동작(onBoard에 있는 정보와 사용자가 입력한 password를 User 테이블에 저장한다.)")
@@ -131,11 +148,15 @@ public class UserController {
     @PutMapping("/reset-password")
     @ApiOperation(value = "메일로 임시 비밀번호를 보내고 사용자의 비밀번호를 임시로 변경한다.")
     public ResponseEntity<Void> resetUserPassword(@RequestBody EmailDto emailDto){
-        HttpStatus httpStatus = HttpStatus.OK;
+        HttpStatus httpStatus = HttpStatus.CREATED;
         try {
-            emailService.sendPassword(emailDto.getEmail());
+            UserEntity userEntity = userService.getUserByEmail(emailDto.getEmail());
+            String password = emailService.sendPassword(emailDto.getEmail());
+            userService.updatePassword(userEntity, password);
+            log.info("비밀번호 변경 및 메일 전송 성공");
         }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("등록된 이메일이 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(httpStatus);
     }
