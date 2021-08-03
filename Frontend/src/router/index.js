@@ -12,6 +12,7 @@ import Admin from "@/views/Admin.vue"
 import Room2 from "@/views/Room2.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
+import InputTest from "@/views/InputTest.vue"
 
 const routes = [
   {
@@ -83,6 +84,11 @@ const routes = [
         path: "change-password",
         name: "ChangePassword",
         component: ChangePassword,
+      },
+      {
+        path: "test",
+        name: "InputTest",
+        component: InputTest,
       },
     ],
   },

@@ -5,8 +5,8 @@
     </div>
     <div class="infos">
       <p class="name">{{ member.name }}</p>
-      <p>{{ member.department }}</p>
-      <p>{{ member.position }}</p>
+      <p>{{ member.deptName }}</p>
+      <p>{{ member.jobName }}</p>
     </div>
   </li>
 </template>

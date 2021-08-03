@@ -30,11 +30,11 @@
 
         <button
           class="common-btn login-btn"
-          :class="{ disabled: !formDataIsValid }"
+          :class="{ disabled: !formDataIsValid, loading: loading }"
           :disabled="!formDataIsValid"
           @click="login"
         >
-          로그인하기
+          {{ loading ? "로그인 중..." : "로그인하기" }}
         </button>
 
         <router-link
@@ -83,6 +83,7 @@ export default {
     const router = useRouter()
 
     const willRememberEamil = ref(localStorage.getItem("email") ? true : false)
+    const loading = ref(false)
 
     const formData = reactive({
       email: {
@@ -110,6 +111,7 @@ export default {
     })
 
     const login = async () => {
+      loading.value = true
       const submitData = {}
       Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
@@ -126,9 +128,10 @@ export default {
       } catch (error) {
         alert(error.message)
       }
+      loading.value = false
     }
 
-    return { formData, formDataIsValid, willRememberEamil, login }
+    return { formData, formDataIsValid, willRememberEamil, login, loading }
   },
 }
 </script>
@@ -142,10 +145,16 @@ export default {
 }
 
 .login-btn {
-  @apply rounded-xl  py-4 bg-indigo-900 text-white font-bold;
+  @apply rounded-xl py-4 bg-indigo-600 text-white font-bold;
 
   &.disabled {
     @apply bg-gray-400;
+  }
+
+  &.loading {
+    background: linear-gradient(to left, #818cf8 0%, #a5b4fc 50%, #f9a8d4 100%);
+    background-size: 300% 300%;
+    animation: gradient-animation 6s linear infinite;
   }
 }
 
@@ -154,6 +163,24 @@ export default {
 
   .sns-btn {
     @apply py-3;
+  }
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position-x: 0%;
+  }
+  25% {
+    background-position-x: 200%;
+  }
+  50% {
+    background-position-x: 400%;
+  }
+  75% {
+    background-position-x: 200%;
+  }
+  100% {
+    background-position-x: 0%;
   }
 }
 </style>

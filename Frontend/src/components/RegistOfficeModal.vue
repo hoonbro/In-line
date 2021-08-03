@@ -108,9 +108,9 @@ export default {
       officeName: {
         label: "회사 이름",
         type: "text",
-        // value: "",
-        value: "asdf",
-        validators: [requiredValidator],
+        value: "",
+        // value: "asdf",
+        validators: [requiredValidator, emailValidator],
         errors: {},
       },
     })
