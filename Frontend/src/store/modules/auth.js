@@ -1,3 +1,5 @@
+import axios from "axios"
+
 export const auth = {
   namespaced: true,
   state: {
@@ -6,5 +8,14 @@ export const auth = {
   },
   getters: {},
   mutations: {},
-  actions: {},
+  actions: {
+    resetPassword(context, email) {
+      console.log(email)
+      return axios({
+        method: "put",
+        url: "/api/v1/users/reset-password",
+        data: email,
+      })
+    },
+  },
 }
