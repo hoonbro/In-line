@@ -11,7 +11,6 @@
   <LoginModal
     v-if="isLoginModalActivation"
     @close="isLoginModalActivation = false"
-    :shouldChangePassword="shouldChangePassword"
   />
 </template>
 
@@ -31,14 +30,11 @@ export default {
     const isRegistOfficeModalActivation = ref(false)
     const isLoginModalActivation = ref(false)
 
-    const shouldChangePassword = ref(Boolean(route.params.shouldChangePassword))
-
     if (route.params.shouldLogin) isLoginModalActivation.value = true
 
     return {
       isRegistOfficeModalActivation,
       isLoginModalActivation,
-      shouldChangePassword,
     }
   },
 }

@@ -86,9 +86,6 @@ import Modal from "@/components/Common/Modal.vue"
 export default {
   name: "LoginModal",
   components: { Modal, TextInput },
-  props: {
-    shouldChangePassword: { Boolean },
-  },
   setup(props, { emit }) {
     const store = useStore()
     const router = useRouter()
@@ -118,15 +115,24 @@ export default {
       Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
       })
-      await store.dispatch("landing/login", submitData)
-      emit("close")
-      if (props.shouldChangePassword) {
-        // alert("Members로 라우팅!!")
-        // members로 가서 바로 비밀번호 바꾸는 곳으로 가보자
-        router.push({ name: "Members", params: { shouldChangePassword: true } })
-      } else {
-        // alert("Office로 라우팅!!")
-        router.push({ name: "Office" })
+      const res = await store.dispatch("auth/login", submitData)
+      // 로그인 성공
+      if (res) {
+        emit("close")
+        console.log(
+          "shouldChangePassword: " + store.state.auth.shouldChangePassword
+        )
+        if (store.state.auth.shouldChangePassword) {
+          console.log("라우팅 : ChangePasssword.vue")
+          router.push({ name: "ChangePassword" })
+        } else {
+          console.log("라우팅 : Office.vue")
+          router.push({ name: "Office" })
+        }
+      }
+      // 로그인 실패
+      else {
+        alert("로그인 실패")
       }
     }
 

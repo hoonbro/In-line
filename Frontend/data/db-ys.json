@@ -25,5 +25,127 @@
       "apiId": "v1",
       "id": 2
     }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 2,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 3,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 4,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 5,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 6,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 7,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 8,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 9,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 10,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 11,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    },
+    {
+      "id": 12,
+      "email": "figma@kakao.com",
+      "name": "김병훈",
+      "nickname": "향긋",
+      "phone": "01032943270",
+      "address": "경기도 군포시",
+      "department": "FE",
+      "position": "Developer"
+    }
   ]
 }

@@ -52,21 +52,28 @@ export default {
     const isInputFill = computed(() => {
       // input이 바뀔 때 마다 검사
       // 1. input에 내용물이 있는지 검사
-      // formData.email.value
       // 2. emailValidator 통과하는지 검사
-      // console.log(emailValidator(formData, "email"))
     })
 
-    const sendTempPassword = () => {
-      console.log(formData.email)
-      store.dispatch("auth/resetPassword", { email: formData.email.value })
-      alert(
-        "이메일을 발송했습니다. \n임시비밀번호로 로그인 후 비밀번호를 꼭 바꿔주세요!"
-      )
-      router.push({
-        name: "Home",
-        params: { shouldLogin: true, shouldChangePassword: true },
+    const sendTempPassword = async () => {
+      // api 요청
+      const res = await store.dispatch("auth/resetPassword", {
+        email: formData.email.value,
       })
+      // 요청 성공
+      if (res) {
+        alert(
+          "이메일을 발송했습니다.\n임시비밀번호로 로그인 후 비밀번호를 꼭 바꿔주세요!"
+        )
+        router.push({
+          name: "Home",
+          params: { shouldLogin: true },
+        })
+      }
+      // 요청 실패
+      else {
+        alert("이메일 전송에 실패했습니다.")
+      }
     }
 
     return {
