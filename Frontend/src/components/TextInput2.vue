@@ -15,6 +15,8 @@
         @blur="handleBlur"
         autocomplete="off"
         :maxlength="maxlength"
+        :disabled="disabled"
+        :class="{ 'select-none': disabled }"
       />
       <label class="label" :class="{ active: labelActive }">
         {{ field.label }}
@@ -48,6 +50,10 @@ export default {
       type: Number,
       default: 200,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["update:modelValue", "update:validate"],
   setup(props, { emit }) {
@@ -56,7 +62,6 @@ export default {
 
     const validate = () => {
       props.field.validators.forEach(validator => {
-        console.log("validate")
         const res = validator(props.formData, props.name, input.value.value)
         emit("update:validate", res)
       })

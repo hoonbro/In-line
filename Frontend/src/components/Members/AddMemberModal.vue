@@ -113,6 +113,7 @@ export default {
           data: submitData,
         })
         alert("전송 성공")
+        emit("close")
       } catch (error) {
         alert("전송 실패")
         console.log(error)
