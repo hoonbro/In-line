@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/on-board")
+@CrossOrigin("*")
 public class OnBoardController {
 
     @Autowired
