@@ -53,9 +53,7 @@ export const office = {
   },
   actions: {
     async registerOffice(context, formData) {
-      return officeAPI.post("", {
-        data: formData,
-      })
+      return officeAPI.post("", formData)
     },
     async getNotifications({ commit }) {
       try {
