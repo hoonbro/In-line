@@ -11,7 +11,8 @@
           :name="key"
           v-model="field.value"
           :field="field"
-          :formData="formData"
+          :maxlength="field.maxlength"
+          @update:validate="handleUpdateValidate"
         />
         <div>
           <input
@@ -71,8 +72,8 @@
 import { computed, reactive, ref } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
-import { loginRequiredValidator, emailValidator } from "@/lib/validator"
-import TextInput from "@/components/TextInput.vue"
+import { loginRequiredValidator, emailValidator } from "@/lib/validator2"
+import TextInput from "@/components/TextInput2.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
@@ -92,6 +93,7 @@ export default {
         value: localStorage.getItem("email") || "",
         validators: [loginRequiredValidator, emailValidator],
         errors: {},
+        maxlength: 100,
       },
       password: {
         label: "비밀번호",
@@ -109,6 +111,15 @@ export default {
         return formData[key].value && !errors.length
       })
     })
+
+    const handleUpdateValidate = data => {
+      const { key, type, status, message } = data
+      if (status) {
+        delete formData[key].errors[type]
+      } else {
+        formData[key].errors[type] = message
+      }
+    }
 
     const login = async () => {
       loading.value = true
@@ -131,7 +142,14 @@ export default {
       loading.value = false
     }
 
-    return { formData, formDataIsValid, willRememberEamil, login, loading }
+    return {
+      formData,
+      formDataIsValid,
+      willRememberEamil,
+      login,
+      loading,
+      handleUpdateValidate,
+    }
   },
 }
 </script>

@@ -4,6 +4,7 @@
     :formData="formData"
     v-model="formData.officeName.value"
     :name="'officeName'"
+    :maxlength="20"
     @update:validate="handleUpdateValidate"
   />
 </template>
@@ -23,7 +24,7 @@ export default {
         type: "text",
         value: "",
         // value: "asdf",
-        validators: [requiredValidator],
+        validators: [emailValidator],
         errors: {},
       },
     })

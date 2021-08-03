@@ -19,9 +19,10 @@
             :key="key"
             :name="key"
             v-model="field.value"
-            :formData="officeFormData"
             :field="field"
+            :maxlength="field.maxlength"
             @update:modelValue="officeFormError = ''"
+            @update:validate="handleUpdateValidate"
           />
 
           <div class="grid gap-1">
@@ -94,8 +95,9 @@ import {
   emailValidator,
   confirmPasswordValidator,
   passwordSecurityValidator,
-} from "@/lib/validator"
-import TextInput from "@/components/TextInput.vue"
+  handleUpdateValidate,
+} from "@/lib/validator2"
+import TextInput from "@/components/TextInput2.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
@@ -109,9 +111,9 @@ export default {
         label: "회사 이름",
         type: "text",
         value: "",
-        // value: "asdf",
         validators: [requiredValidator, emailValidator],
         errors: {},
+        maxlength: 20,
       },
     })
     const officeFormError = ref("")
@@ -251,6 +253,7 @@ export default {
       formIsValid,
       term,
       registerOffice,
+      handleUpdateValidate,
     }
   },
 }

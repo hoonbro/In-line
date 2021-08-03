@@ -9,10 +9,12 @@
       <input
         :type="field.type"
         :value="modelValue"
+        ref="input"
         @input="handleInput"
         @focus="labelActive = true"
         @blur="handleBlur"
         autocomplete="off"
+        :maxlength="maxlength"
       />
       <label class="label" :class="{ active: labelActive }">
         {{ field.label }}
@@ -41,15 +43,19 @@ export default {
       type: String,
     },
     field: Object,
-    formData: Object,
+    maxlength: {
+      type: Number,
+      default: 200,
+    },
   },
   emits: ["update:modelValue", "update:validate"],
   setup(props, { emit }) {
     const labelActive = ref(Boolean(props.modelValue))
+    const input = ref(null)
 
     const validate = () => {
       props.field.validators.forEach(validator => {
-        const res = validator(props.modelValue, props.name)
+        const res = validator(props.name, input.value.value)
         emit("update:validate", res)
       })
     }
@@ -64,12 +70,12 @@ export default {
       emit("update:modelValue", event.target.value)
       // Error가 있는 경우, Input Event 발생 시 매번 검사
       if (props.field.errors && Object.keys(props.field.errors).length) {
-        console.log("input")
         validate()
       }
     }
 
     return {
+      input,
       labelActive,
       handleBlur,
       handleInput,
