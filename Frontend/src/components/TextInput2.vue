@@ -42,6 +42,7 @@ export default {
     name: {
       type: String,
     },
+    formData: Object,
     field: Object,
     maxlength: {
       type: Number,
@@ -55,7 +56,8 @@ export default {
 
     const validate = () => {
       props.field.validators.forEach(validator => {
-        const res = validator(props.name, input.value.value)
+        console.log("validate")
+        const res = validator(props.formData, props.name, input.value.value)
         emit("update:validate", res)
       })
     }

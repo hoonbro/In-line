@@ -17,12 +17,13 @@
           <TextInput
             v-for="(field, key) in officeFormData"
             :key="key"
-            :name="key"
             v-model="field.value"
+            :name="key"
+            :formData="officeFormData"
             :field="field"
             :maxlength="field.maxlength"
             @update:modelValue="officeFormError = ''"
-            @update:validate="handleUpdateValidate"
+            @update:validate="handleUpdateValidate(officeFormData, $event)"
           />
 
           <div class="grid gap-1">
@@ -49,11 +50,12 @@
           <TextInput
             v-for="(field, key) in managerFormData"
             :key="key"
-            :name="key"
             v-model="field.value"
+            :name="key"
             :formData="managerFormData"
             :field="field"
             @update:modelValue="managerFormError = ''"
+            @update:validate="handleUpdateValidate(managerFormData, $event)"
           />
           <div>
             <input

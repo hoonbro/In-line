@@ -1,5 +1,6 @@
-export const requiredValidator = (key, value) => {
+export const requiredValidator = (form, key, value) => {
   if (value.length < 1) {
+    console.log("requiredValidator")
     return {
       key,
       type: "required",
@@ -10,7 +11,7 @@ export const requiredValidator = (key, value) => {
   return { key, type: "required", status: true }
 }
 
-export const loginRequiredValidator = (key, value) => {
+export const loginRequiredValidator = (form, key, value) => {
   if (value.length < 1) {
     return {
       key,
@@ -23,7 +24,7 @@ export const loginRequiredValidator = (key, value) => {
   return { key, type: "required", status: true }
 }
 
-export const emailValidator = (key, value) => {
+export const emailValidator = (form, key, value) => {
   console.log(value)
   // https://www.w3resource.com/javascript/form/email-validation.php
   if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
@@ -41,8 +42,9 @@ export const emailValidator = (key, value) => {
   }
 }
 
-export const confirmPasswordValidator = (key, value, confirmValue) => {
-  if (value !== confirmValue) {
+export const confirmPasswordValidator = (form, key, value) => {
+  console.log(form[key])
+  if (value !== form.password.value) {
     return {
       key,
       type: "notMatch",
@@ -57,7 +59,7 @@ export const confirmPasswordValidator = (key, value, confirmValue) => {
   }
 }
 
-export const passwordSecurityValidator = (key, value) => {
+export const passwordSecurityValidator = (form, key, value) => {
   if (
     !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
       value
@@ -77,7 +79,7 @@ export const passwordSecurityValidator = (key, value) => {
   }
 }
 
-export const handleUpdateValidate = data => {
+export const handleUpdateValidate = (formData, data) => {
   const { key, type, status, message } = data
   if (status) {
     delete formData[key].errors[type]

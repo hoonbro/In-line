@@ -8,11 +8,12 @@
         <TextInput
           v-for="(field, key) in formData"
           :key="key"
-          :name="key"
           v-model="field.value"
+          :name="key"
+          :formData="formData"
           :field="field"
           :maxlength="field.maxlength"
-          @update:validate="handleUpdateValidate"
+          @update:validate="handleUpdateValidate(formData, $event)"
         />
         <div>
           <input
@@ -72,7 +73,11 @@
 import { computed, reactive, ref } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
-import { loginRequiredValidator, emailValidator } from "@/lib/validator2"
+import {
+  loginRequiredValidator,
+  emailValidator,
+  handleUpdateValidate,
+} from "@/lib/validator2"
 import TextInput from "@/components/TextInput2.vue"
 import Modal from "@/components/Common/Modal.vue"
 
@@ -111,15 +116,6 @@ export default {
         return formData[key].value && !errors.length
       })
     })
-
-    const handleUpdateValidate = data => {
-      const { key, type, status, message } = data
-      if (status) {
-        delete formData[key].errors[type]
-      } else {
-        formData[key].errors[type] = message
-      }
-    }
 
     const login = async () => {
       loading.value = true
