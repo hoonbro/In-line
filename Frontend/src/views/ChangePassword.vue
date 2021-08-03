@@ -34,6 +34,8 @@ import {
   confirmPasswordValidator,
   passwordSecurityValidator,
 } from "@/lib/validator"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
 export default {
   name: "ChangePassword",
@@ -41,11 +43,14 @@ export default {
     TextInput,
   },
   setup() {
+    const store = useStore()
+    const router = useRouter()
+
     const formData = reactive({
       oldPassword: {
         label: "이전 비밀번호",
         type: "password",
-        value: "",
+        value: store.state.auth.shouldChangePassword ? "asd" : "",
         validators: [requiredValidator],
         errors: {},
       },
@@ -65,8 +70,12 @@ export default {
       },
     })
 
-    const changePassword = () => {
-      console.log(formData)
+    const changePassword = async () => {
+      const res = await store.dispatch("auth/changePassword", {
+        currentPassword: formData.oldPassword.value,
+        newPassword: formData.password.value,
+      })
+      router.push({ name: "Office" })
     }
 
     return {
