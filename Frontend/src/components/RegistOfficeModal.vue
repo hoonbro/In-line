@@ -17,11 +17,13 @@
           <TextInput
             v-for="(field, key) in officeFormData"
             :key="key"
-            :name="key"
             v-model="field.value"
+            :name="key"
             :formData="officeFormData"
             :field="field"
+            :maxlength="field.maxlength"
             @update:modelValue="officeFormError = ''"
+            @update:validate="handleUpdateValidate(officeFormData, $event)"
           />
 
           <div class="grid gap-1">
@@ -48,11 +50,12 @@
           <TextInput
             v-for="(field, key) in managerFormData"
             :key="key"
-            :name="key"
             v-model="field.value"
+            :name="key"
             :formData="managerFormData"
             :field="field"
             @update:modelValue="managerFormError = ''"
+            @update:validate="handleUpdateValidate(managerFormData, $event)"
           />
           <div>
             <input
@@ -94,14 +97,15 @@ import {
   emailValidator,
   confirmPasswordValidator,
   passwordSecurityValidator,
-} from "@/lib/validator"
-import TextInput from "@/components/TextInput.vue"
+  handleUpdateValidate,
+} from "@/lib/validator2"
+import TextInput from "@/components/TextInput2.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
   name: "RegistOfficeModal",
   components: { TextInput, Modal },
-  setup(props, { emit }) {
+  setup() {
     const store = useStore()
     const step = ref(1)
     const officeFormData = reactive({
@@ -111,6 +115,7 @@ export default {
         value: "",
         validators: [requiredValidator],
         errors: {},
+        maxlength: 20,
       },
     })
     const officeFormError = ref("")
@@ -245,6 +250,7 @@ export default {
       formIsValid,
       term,
       registerOffice,
+      handleUpdateValidate,
     }
   },
 }

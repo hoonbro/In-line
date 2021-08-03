@@ -57,11 +57,10 @@ export default {
 
     const sendTempPassword = async () => {
       // api 요청
-      const res = await store.dispatch("auth/resetPassword", {
-        email: formData.email.value,
-      })
-      // 요청 성공
-      if (res) {
+      try {
+        await store.dispatch("auth/resetPassword", {
+          email: formData.email.value,
+        })
         alert(
           "이메일을 발송했습니다.\n임시비밀번호로 로그인 후 비밀번호를 꼭 바꿔주세요!"
         )
@@ -69,10 +68,8 @@ export default {
           name: "Home",
           params: { shouldLogin: true },
         })
-      }
-      // 요청 실패
-      else {
-        alert("이메일 전송에 실패했습니다.")
+      } catch (error) {
+        alert(error.message)
       }
     }
 

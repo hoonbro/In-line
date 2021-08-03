@@ -2,21 +2,21 @@ import axios from "axios"
 import { auth } from "./auth"
 
 const notiAPI = axios.create({
-  baseURL: `${process.env.VUE_APP_API_BASE_URL}/notifications`,
+  baseURL: `/api/v1/notifications`,
   headers: {
     Authorization: auth.state.token,
   },
 })
 
 const todoAPI = axios.create({
-  baseURL: `${process.env.VUE_APP_API_BASE_URL}/todos`,
+  baseURL: `/api/v1/todos`,
   headers: {
     Authorization: auth.state.token,
   },
 })
 
 const userAPI = axios.create({
-  baseURL: `${process.env.VUE_APP_API_BASE_URL}/users`,
+  baseURL: `/api/v1/users`,
   headers: {
     Authorization: auth.state.token,
   },
@@ -37,7 +37,6 @@ const officeAPI = axios.create({
 export const office = {
   namespaced: true,
   state: {
-    user: {},
     notifications: [],
     todos: [],
     members: [],
@@ -88,7 +87,11 @@ export const office = {
     },
     async getTodos({ commit }) {
       try {
-        const res = await todoAPI()
+        const res = await todoAPI({
+          params: {
+            userId: auth.state.user.userId,
+          },
+        })
         commit("setTodos", res.data)
       } catch (error) {
         console.log(error)
@@ -135,9 +138,14 @@ export const office = {
       })
       commit("setTodos", todos)
     },
-    async getMembers({ commit }) {
+    async getMembers({ commit, state }) {
+      console.log(state)
       try {
-        const res = await userAPI()
+        const res = await userAPI({
+          params: {
+            officeId: 1,
+          },
+        })
         commit("setMembers", res.data)
       } catch (error) {
         console.log(error)

@@ -12,6 +12,7 @@ import Admin from "@/views/Admin.vue"
 import Room2 from "@/views/Room2.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
+import InputTest from "@/views/InputTest.vue"
 
 const routes = [
   {
@@ -19,7 +20,7 @@ const routes = [
     component: LandingLayout,
     // localStorage에 jwt가 있으면 Office로 라우팅
     beforeEnter: (to, from, next) => {
-      if (localStorage.getItem("jwt")) next({ name: "Office" })
+      if (localStorage.getItem("accessToken")) next({ name: "Office" })
       else next()
     },
     children: [
@@ -85,6 +86,11 @@ const routes = [
         component: ChangePassword,
         meta: { loginRequired: true },
       },
+      {
+        path: "test",
+        name: "InputTest",
+        component: InputTest,
+      },
     ],
   },
   {
@@ -108,7 +114,7 @@ router.beforeEach((to, from, next) => {
   // const isLoginRequired = to.matched.some(
   //   routeInfo => routeInfo.meta.loginRequired
   // )
-  if (to.meta.loginRequired && !localStorage.getItem("jwt")) {
+  if (to.meta.loginRequired && !localStorage.getItem("accessToken")) {
     next({ name: "Home", params: { shouldLogin: true } })
   } else next()
 })

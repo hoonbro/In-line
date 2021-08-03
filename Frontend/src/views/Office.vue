@@ -1,24 +1,19 @@
 <template>
   <div class="office">
     <div class="rooms-row">
-      <div class="rooms-container">
+      <div class="rooms-container basic">
         <RoomLink :title="'전체회의'" :roomId="1" :large="true" />
+        <RoomLink :title="'전체회의'" :roomId="2" :large="true" />
       </div>
     </div>
     <div class="rooms-row">
-      <h1 class="rooms-title">팀별 미팅룸</h1>
       <div class="rooms-container">
-        <RoomLink :title="'Developer'" :roomId="2" :large="true" />
-        <RoomLink :title="'Marketing'" :roomId="3" :large="true" />
-      </div>
-    </div>
-    <div class="rooms-row">
-      <h1 class="rooms-title">소규모 회의실</h1>
-      <div class="rooms-container mini">
-        <RoomLink :title="'Developer'" :roomId="4" />
-        <RoomLink :title="'Marketing'" :roomId="5" />
-        <RoomLink :title="'MiniRoom'" :roomId="6" />
-        <RoomLink :title="'Marketing'" :roomId="7" />
+        <RoomLink :title="'Developer'" :roomId="3" />
+        <RoomLink :title="'Marketing'" :roomId="4" />
+        <RoomLink :title="'Developer'" :roomId="5" />
+        <RoomLink :title="'Marketing'" :roomId="6" />
+        <RoomLink :title="'MiniRoom'" :roomId="7" />
+        <RoomLink :title="'Marketing'" :roomId="8" />
       </div>
     </div>
     <div class="button-group">
@@ -76,10 +71,10 @@ export default {
     }
 
     .rooms-container {
-      @apply w-full grid grid-cols-1 gap-8 md:grid-cols-2;
+      @apply w-full grid grid-cols-2 gap-8 lg:grid-cols-3;
 
-      &.mini {
-        @apply grid-cols-3;
+      &.basic {
+        @apply grid-cols-2;
       }
     }
   }
