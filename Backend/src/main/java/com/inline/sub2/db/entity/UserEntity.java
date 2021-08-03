@@ -28,7 +28,6 @@ public class UserEntity {
     @Column(name = "name")
     private String name;
 
-    @Transient
     @Column(name = "password")
     private String password;
 

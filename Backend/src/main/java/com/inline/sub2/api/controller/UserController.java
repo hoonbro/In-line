@@ -87,6 +87,7 @@ public class UserController {
 
         try {
             UserEntity loginUser = userService.getUserByEmail(userDto.getEmail());
+            log.info(loginUser.toString());
             if (loginUser != null) {
                 if (passwordEncoder.matches(userDto.getPassword(), loginUser.getPassword())) {
                     String token = jwtUtil.createToken(loginUser.getEmail(), loginUser.getEmail());
