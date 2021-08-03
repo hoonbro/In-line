@@ -4,21 +4,28 @@ import { auth } from "./auth"
 const notiAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/notifications`,
   headers: {
-    Authorization: `Bearer ${auth.state.token}`,
+    Authorization: auth.state.token,
   },
 })
 
 const todoAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/todos`,
   headers: {
-    Authorization: `Bearer ${auth.state.token}`,
+    Authorization: auth.state.token,
   },
 })
 
 const userAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/users`,
   headers: {
-    Authorization: `Bearer ${auth.state.token}`,
+    Authorization: auth.state.token,
+  },
+})
+
+const roomAPI = axios.create({
+  baseURL: `${process.env.VUE_APP_API_BASE_URL}/rooms`,
+  headers: {
+    Authorization: `Bearer jwt`,
   },
 })
 
@@ -34,6 +41,7 @@ export const office = {
     notifications: [],
     todos: [],
     members: [],
+    rooms: [],
   },
   mutations: {
     setNotifications(state, notis) {
@@ -44,6 +52,9 @@ export const office = {
     },
     setMembers(state, members) {
       state.members = members
+    },
+    setRooms(state, rooms) {
+      state.rooms = rooms
     },
   },
   getters: {
@@ -136,6 +147,59 @@ export const office = {
       return userAPI({
         url: `/${userId}`,
       })
+    },
+    // Rooms
+    async getRooms({ commit }) {
+      try {
+        const res = await roomAPI()
+        commit("setRooms", res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async createRoom({ commit, state }, roomData) {
+      try {
+        const res = await roomAPI({
+          method: "POST",
+          data: roomData,
+        })
+        const rooms = [...state.rooms]
+        rooms.push(res.data)
+        commit("setRooms", rooms)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async editRoom({ commit, state }, { room, roomId }) {
+      try {
+        const res = await roomAPI({
+          url: `/${roomId}`,
+          method: "PUT",
+          data: { name: room.name.value },
+        })
+        const rooms = state.rooms
+        commit("setRooms", rooms)
+        // alert("회의실 수정이 완료됐습니다.")
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async deleteRoom({ commit, state }, roomId) {
+      try {
+        await roomAPI({
+          url: `/${roomId}`,
+          method: "DELETE",
+        })
+        // DB에서는 삭제됐으나 front에서는 삭제가 안된 상태로 렌더링 되므로
+        // filter를 이용해서 렌더링에서 제외시켜버린다
+        console.log(`${roomId}번 회의실이 삭제됨니덩`)
+        const rooms = state.rooms.filter(room => room.id !== roomId)
+        commit("setRooms", rooms)
+      } catch (error) {
+        console.log(error)
+      }
     },
   },
 }
