@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router"
 import LandingLayout from "@/layouts/LandingLayout.vue"
 import OfficeLayout from "@/layouts/OfficeLayout.vue"
 import RoomLayout from "@/layouts/RoomLayout.vue"
+import AuthLayout from "@/layouts/AuthLayout.vue"
 
 import Home from "@/views/Home.vue"
 import RegistOffice from "@/views/RegistOffice.vue"
@@ -9,6 +10,8 @@ import Office from "@/views/Office.vue"
 import Members from "@/views/Members.vue"
 import Admin from "@/views/Admin.vue"
 import Room2 from "@/views/Room2.vue"
+import ResetPassword from "@/views/ResetPassword.vue"
+import ChangePassword from "@/views/ChangePassword.vue"
 
 const routes = [
   {
@@ -64,6 +67,22 @@ const routes = [
         name: "Room",
         component: Room2,
         props: true,
+      },
+    ],
+  },
+  {
+    path: "/auth/",
+    component: AuthLayout,
+    children: [
+      {
+        path: "reset-password",
+        name: "ResetPassword",
+        component: ResetPassword,
+      },
+      {
+        path: "change-password",
+        name: "ChangePassword",
+        component: ChangePassword,
       },
     ],
   },
