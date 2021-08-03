@@ -52,8 +52,14 @@ public class JwtUtil{
 
     //Jwt Token을 복호화해 이름을 return
     public String getUserNameFromJwt(String jwt){
-        return getClaims(jwt).getBody().getId();
+        System.out.println("!!!!!!!!!!!!!!!"+jwt);
+//        return getClaims(jwt).getBody().getId(); //얘아님 ㅡ
+        return getClaims(jwt).getBody().getSubject();
     }
+
+
+
+
 
     public static boolean validateToken(String jwt){
         return getClaims(jwt) != null;

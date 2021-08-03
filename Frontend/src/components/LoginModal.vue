@@ -13,7 +13,10 @@
           :field="field"
           :formData="formData"
         />
-        <router-link to="#" class="text-sm inline-block mr-auto">
+        <router-link
+          :to="{ name: 'ResetPassword' }"
+          class="text-sm inline-block mr-auto"
+        >
           😅비밀번호를 잊으셨나요?
         </router-link>
 
@@ -112,9 +115,25 @@ export default {
       Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
       })
-      await store.dispatch("landing/login", submitData)
-      emit("close")
-      router.push({ name: "Office" })
+      const res = await store.dispatch("auth/login", submitData)
+      // 로그인 성공
+      if (res) {
+        emit("close")
+        console.log(
+          "shouldChangePassword: " + store.state.auth.shouldChangePassword
+        )
+        if (store.state.auth.shouldChangePassword) {
+          console.log("라우팅 : ChangePasssword.vue")
+          router.push({ name: "ChangePassword" })
+        } else {
+          console.log("라우팅 : Office.vue")
+          router.push({ name: "Office" })
+        }
+      }
+      // 로그인 실패
+      else {
+        alert("로그인 실패")
+      }
     }
 
     return { formData, willStayLogin, willRememberEamil, login }

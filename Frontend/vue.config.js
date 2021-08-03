@@ -5,7 +5,7 @@ module.exports = {
     port: 8083,
     proxy: {
       "/api/v1": {
-        target: "http://13.124.47.223:8080",
+        target: "http://i5d207.p.ssafy.io:8080",
       },
       // "/groupcall": {
       //   target: "https://13.124.47.223:8995",
