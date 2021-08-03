@@ -20,11 +20,6 @@ public class GroupcallTestApplication implements WebSocketConfigurer {
     }
 
     @Bean
-    public RoomManager roomManager() {
-        return new RoomManager();
-    }
-
-    @Bean
     public CallHandler groupCallHandler() {
         return new CallHandler();
     }

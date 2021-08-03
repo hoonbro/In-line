@@ -45,7 +45,7 @@ public class CallHandler extends TextWebSocketHandler {
         }
 
         switch (jsonMessage.get("id").getAsString()) {
-            case "joinRoom":
+                case "joinRoom":
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
@@ -74,21 +74,22 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomName()).leave(user);
+        roomManager.getRoom(user.getRoomName(), user.getRoomId()).leave(user);
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
         final String roomName = params.get("room").getAsString();
         final String name = params.get("name").getAsString();
-        log.info("PARTICIPANT {}: trying to join room {}", name, roomName);
+        final Long roomId = params.get("roomId").getAsLong();
+        log.info(" {}님의 {} 접근 요청", name, roomName);
 
-        Room room = roomManager.getRoom(roomName);
+        Room room = roomManager.getRoom(roomName, roomId);
         final UserSession user = room.join(name, session);
         registry.register(user);
     }
 
     private void leaveRoom(UserSession user) throws IOException {
-        final Room room = roomManager.getRoom(user.getRoomName());
+        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId());
         room.leave(user);
         if (room.getParticipants().isEmpty()) {
             roomManager.removeRoom(room);
