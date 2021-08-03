@@ -111,7 +111,7 @@ export default {
         label: "회사 이름",
         type: "text",
         value: "",
-        validators: [requiredValidator, emailValidator],
+        validators: [requiredValidator],
         errors: {},
         maxlength: 20,
       },
@@ -121,56 +121,49 @@ export default {
       email: {
         label: "담당자 이메일",
         type: "email",
-        // value: "",
-        value: "asdf@asdf.asdf",
+        value: "",
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
       deptName: {
         label: "담당자 소속",
         type: "text",
-        // value: "",
-        value: "인사",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       jobName: {
         label: "담당자 역할",
         type: "text",
-        // value: "",
-        value: "팀원",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       name: {
         label: "담당자 이름",
         type: "text",
-        // value: "",
-        value: "테스터",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       phone: {
         label: "담당자 휴대전화",
         type: "text",
-        // value: "",
-        value: "00",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       password: {
         label: "담당자 비밀번호",
         type: "password",
-        // value: "",
-        value: "q1w2e3r4!@",
+        value: "",
         validators: [requiredValidator, passwordSecurityValidator],
         errors: {},
       },
       confirmPassword: {
         label: "담당자 비밀번호 확인",
         type: "password",
-        // value: "",
-        value: "q1w2e3r4!@",
+        value: "",
         validators: [requiredValidator, confirmPasswordValidator],
         errors: {},
       },
@@ -232,6 +225,8 @@ export default {
       )
       try {
         await store.dispatch("office/registerOffice", submitData)
+        alert("회사 등록을 완료했어요!")
+        emit("close")
       } catch (error) {
         if (error.response.status === 409) {
           managerFormError.value = "이미 존재하는 이메일이에요!"
