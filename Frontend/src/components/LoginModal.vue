@@ -131,7 +131,11 @@ export default {
           localStorage.removeItem("email")
         }
         emit("close")
-        router.push({ name: "Office" })
+        if (store.state.auth.shouldChangePassword) {
+          router.push({ name: "ChangePassword" })
+        } else {
+          router.push({ name: "Office" })
+        }
       } catch (error) {
         alert(error.message)
       }

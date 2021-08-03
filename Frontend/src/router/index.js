@@ -84,6 +84,7 @@ const routes = [
         path: "change-password",
         name: "ChangePassword",
         component: ChangePassword,
+        meta: { loginRequired: true },
       },
       {
         path: "test",
