@@ -105,7 +105,7 @@ import Modal from "@/components/Common/Modal.vue"
 export default {
   name: "RegistOfficeModal",
   components: { TextInput, Modal },
-  setup() {
+  setup(props, { emit }) {
     const store = useStore()
     const step = ref(1)
     const officeFormData = reactive({
@@ -233,7 +233,6 @@ export default {
         if (error.response.status === 409) {
           managerFormError.value = "이미 존재하는 이메일이에요!"
         } else {
-          console.log(error)
           alert(error)
         }
       }
