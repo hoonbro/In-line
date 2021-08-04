@@ -79,7 +79,7 @@ export default {
           currentPassword: formData.oldPassword.value,
           newPassword: formData.password.value,
         })
-        // router.push({ name: "Office" })
+        router.push({ name: "Office" })
       } catch (error) {
         console.log(error)
         console.log(error.message)
@@ -119,12 +119,12 @@ export default {
   .inner {
     @apply bg-white shadow-lg p-8 grid gap-4 rounded-lg w-96;
 
-    .send-btn {
+    .change-btn {
       @apply bg-blue-400 text-white rounded-lg py-3;
     }
+    .disabled {
+      @apply bg-gray-400;
+    }
   }
-}
-.disabled {
-  @apply bg-gray-400;
 }
 </style>

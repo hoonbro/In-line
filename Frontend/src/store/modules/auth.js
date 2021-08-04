@@ -79,7 +79,7 @@ export const auth = {
       } catch (error) {
         console.log(error)
         console.log(error.response.status)
-        throw Error("이메일 전송에 실패했습니다")
+        throw Error("비밀번호 변경에 실패했습니다")
       }
     },
   },
