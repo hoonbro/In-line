@@ -41,13 +41,13 @@ public class Room implements Closeable {
         this.roomName = roomName;
         this.pipeline = pipeline;
         this.roomId = roomId;
-        log.info("ROOM {} has been created", roomName);
+        log.info("ROOM {} 생성 성공", roomName);
     }
 
     public Room(String roomName, Long roomId) {
         this.roomName = roomName;
         this.roomId = roomId;
-        log.info("ROOM {} has been created", roomName);
+        log.info("ROOM {} 생성 성공", roomName);
     }
 
     @PreDestroy
@@ -65,7 +65,7 @@ public class Room implements Closeable {
     }
 
     public void leave(UserSession user) throws IOException {
-        log.debug("PARTICIPANT {}: Leaving room {}", user.getName(), this.roomName);
+        log.info("{}님이 {}에서 나가셨습니다.", user.getName(), this.roomName);
         this.removeParticipant(user.getName());
         user.close();
     }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,17 +52,45 @@ public class RoomController {
 
     @PutMapping("/{roomId}")
     public ResponseEntity<RoomEntity> updateRoom(@PathVariable("roomId") Long roomId, @RequestBody RoomDto roomDto){
-        roomDto.setRoomId(roomId);
         HttpStatus status = HttpStatus.CREATED;
         RoomEntity roomEntity = null;
+
         try{
-            roomEntity = roomManager.updateRoom(roomDto);
-            log.info("방 정보 수정 성공");
-        }catch (Exception e){
-            log.error("방 정보 수정 실패 : {}", e);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            roomEntity = roomManager.getRoom(roomId);
+            try{
+                roomEntity = roomManager.updateRoom(roomDto.getRoomName(), roomEntity);
+                log.info("방 정보 수정 성공");
+            }catch (Exception e){
+                log.error("방 정보 수정 실패 : {}", e);
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }catch (EntityNotFoundException e){
+            log.error("해당하는 방이 없습니다. : {}", e);
+            status = HttpStatus.BAD_REQUEST;
         }
 
+
         return new ResponseEntity<RoomEntity>(roomEntity, status);
+    }
+
+    @DeleteMapping("/{roomId}")
+    public ResponseEntity<RoomEntity> deleteRoom(@PathVariable("roomId") Long roomId){
+        HttpStatus status = HttpStatus.NO_CONTENT;
+        RoomEntity roomEntity = null;
+        try{
+            roomEntity = roomManager.getRoom(roomId);
+            try{
+                roomManager.deleteRoom(roomId);
+                log.info("방 삭제 성공");
+            }catch (Exception e){
+                log.error("방 정보 삭제 실패 : {}", e);
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }catch (EntityNotFoundException e){
+            log.error("해당하는 방이 없습니다. : {}", e);
+            status = HttpStatus.BAD_REQUEST;
+        }
+
+        return new ResponseEntity<>(status);
     }
 }

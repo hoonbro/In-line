@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 /**
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
@@ -29,6 +31,11 @@ public class RoomManager {
     RoomRepository roomRepository;
 
     private final ConcurrentMap<Long, Room> rooms = new ConcurrentHashMap<>();
+
+    public RoomEntity getRoom(Long roomId){
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException());
+    }
 
     public List<RoomEntity> getRooms(Long OfficeId){
         List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
@@ -52,14 +59,13 @@ public class RoomManager {
         return roomRepository.save(roomEntity);
     }
 
-    public RoomEntity getRoom(Long roomId){
-        return roomRepository.findByRoomId(roomId);
+    public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
+        roomEntity.setRoomName(roomName);
+        return roomRepository.save(roomEntity);
     }
 
-    public RoomEntity updateRoom(RoomDto roomDto){
-        RoomEntity entity = getRoom(roomDto.getRoomId());
-        entity.setRoomName(roomDto.getRoomName());
-        return roomRepository.save(entity);
+    public void deleteRoom(Long roomId){
+        roomRepository.deleteById(roomId);
     }
 
     public Room getRoom(String roomName, Long roomId) {
