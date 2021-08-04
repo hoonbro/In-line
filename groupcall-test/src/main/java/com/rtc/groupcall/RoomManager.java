@@ -44,7 +44,7 @@ public class RoomManager {
             if(rooms.get(r.getRoomId()) != null)
                 continue;
 
-            rooms.put(r.getRoomId(),  new Room(r.getRoomName(), r.getRoomId()));
+            rooms.put(r.getRoomId(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), r.getRoomId()));
         }
 
         return roomRepository.findAllByOfficeId(OfficeId);
@@ -61,11 +61,22 @@ public class RoomManager {
 
     public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
         roomEntity.setRoomName(roomName);
+        //map내용 수정
+        log.info(roomEntity.toString());
+        Room room = rooms.get(roomEntity.getRoomId());
+        room.setRoomName(roomName);
+        log.info(room.toString());
+        rooms.put(roomEntity.getRoomId(), room);
         return roomRepository.save(roomEntity);
     }
 
     public void deleteRoom(Long roomId){
         roomRepository.deleteById(roomId);
+
+        Room room = rooms.get(roomId);
+        this.rooms.remove(roomId);
+        room.close();
+        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
     }
 
     public Room getRoom(String roomName, Long roomId) {
@@ -91,10 +102,10 @@ public class RoomManager {
      * @param room
      *          the room to be removed
      */
-    public void removeRoom(Room room) {
-        this.rooms.remove(room.getRoomId());
-        room.close();
-        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
-    }
+//    public void removeRoom(Room room) {
+//        this.rooms.remove(room.getRoomId());
+//        room.close();
+//        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
+//    }
 
 }
