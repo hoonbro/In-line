@@ -88,10 +88,10 @@ export default {
   setup() {
     const store = useStore()
 
-    // const state = reactive({
-    //   room: "",
-    //   name: store.state.auth.user.name,
-    // })
+    const state = reactive({
+      room: "",
+      name: store.state.auth.user.name,
+    })
 
     // const register = () => {
     //   const message = {
@@ -104,9 +104,30 @@ export default {
     // }
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
+
     ws.onopen = function(event) {
-      ws.send("TEST!")
+      var message = {
+        id: "joinRoom",
+        name: "Kim",
+        room: "전체 회의방",
+        roomId: 2,
+      }
+
+      sendMessage(message)
+      // ws.send("TEST!")
     }
+
+    function sendMessage(message) {
+      const jsonMessage = JSON.stringify(message)
+      console.log("Sending message: " + jsonMessage)
+      ws.send(jsonMessage)
+      console.log("Sending message: " + jsonMessage)
+    }
+
+    onMounted(() => {
+      // register()
+    })
+
     // const participants = {}
 
     // window.onbeforeunload = function() {
@@ -249,13 +270,6 @@ export default {
     //   delete participants[request.name]
     // }
 
-    // function sendMessage(message) {
-    //   const jsonMessage = JSON.stringify(message)
-    //   console.log("Sending message: " + jsonMessage)
-    //   ws.send(jsonMessage)
-    //   console.log("Sending message: " + jsonMessage)
-    // }
-
     // -------------------------------------------------------------------------------
     const videoList = 6
 
@@ -272,10 +286,6 @@ export default {
       console.log(switchCam.value)
     }
     // 여기까지 마이크, 캠 껐다 켰다하기
-
-    onMounted(() => {
-      // register()
-    })
 
     return {
       videoList,
