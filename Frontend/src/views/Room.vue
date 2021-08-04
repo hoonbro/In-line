@@ -88,10 +88,10 @@ export default {
   setup() {
     const store = useStore()
 
-    const state = reactive({
-      room: "",
-      name: store.state.auth.user.name,
-    })
+    // const state = reactive({
+    //   room: "",
+    //   name: store.state.auth.user.name,
+    // })
 
     // const register = () => {
     //   const message = {
