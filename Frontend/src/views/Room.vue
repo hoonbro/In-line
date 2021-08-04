@@ -97,9 +97,12 @@ export default {
 
     const register = () => {
       const message = {
-        id: "JoinRoom",
-        name: "전체회의방",
-        room: 2,
+        id: "joinRoom",
+        // 얘가 닉네임
+        name: "내가 김두환이다",
+        //
+        room: "전체 회의방",
+        roomId: 2,
       }
 
       sendMessage(message)
@@ -124,7 +127,6 @@ export default {
       const jsonMessage = JSON.stringify(message)
       console.log("Sending message: " + jsonMessage)
       ws.send(jsonMessage)
-      console.log("Sending message: " + jsonMessage)
     }
 
     // onMounted(() => {
