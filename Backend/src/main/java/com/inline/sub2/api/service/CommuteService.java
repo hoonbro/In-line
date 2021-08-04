@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CommuteService {
     @Transactional(rollbackFor = Exception.class)
-    CommuteEntity commuteIn(CommuteDto commuteDto);
+    CommuteEntity commuteLogin(CommuteDto commuteDto);
+    CommuteEntity commuteIn(Long commuteId);
     CommuteEntity commuteOut(Long commuteId);
 }

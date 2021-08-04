@@ -16,23 +16,26 @@ public class CommuteServiceImpl implements CommuteService {
 
 
     @Override
-    public CommuteEntity commuteIn(CommuteDto commuteDto) {
-        Date now = new Date();
+    public CommuteEntity commuteLogin(CommuteDto commuteDto) {
         CommuteEntity commuteEntity = new CommuteEntity();
         commuteEntity.setUserId(commuteDto.getUserId());
         commuteEntity.setOfficeId(commuteDto.getOfficeId());
-        commuteEntity.setYmd(now); // 출근 할 때 년,월,일
-        commuteEntity.setComeIn(now); // 출근 시분초
-//        commuteEntity.setComeOut(now); // 퇴근 시분초
+        commuteEntity.setYmd(new Date());
+        return commuteRepository.save(commuteEntity);
+    }
+
+    @Override
+    public CommuteEntity commuteIn(Long commuteId) {
+
+        CommuteEntity commuteEntity = commuteRepository.findByCommuteId(commuteId);
+        commuteEntity.setComeIn(new Date()); // 출근 시분초
         return commuteRepository.save(commuteEntity);
     }
 
     @Override
     public CommuteEntity commuteOut(Long commuteId) {
-        System.out.println("여기1");
         Date now = new Date();
         CommuteEntity commuteEntity = commuteRepository.findByCommuteId(commuteId);
-        System.out.println("여기2");
         System.out.println(commuteEntity.getComeIn());
         commuteEntity.setComeOut(now);
         return commuteRepository.save(commuteEntity);
