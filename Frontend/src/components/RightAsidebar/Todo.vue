@@ -135,13 +135,13 @@ export default {
     }
 
     .button-container {
-      @apply flex;
+      @apply flex gap-1;
 
       .form-btn {
         @apply text-sm font-medium text-white flex-1 py-2 flex items-center justify-center rounded-lg;
 
         &.add {
-          @apply bg-blue-800 mr-1;
+          @apply bg-blue-800;
         }
 
         &.cancel {
