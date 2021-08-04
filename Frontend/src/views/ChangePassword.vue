@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen bg-gray-100 flex items-center justify-center">
-    <div class="bg-white shadow-lg p-8 grid gap-8 rounded-lg w-96">
+    <div class="bg-white shadow-lg p-8 grid gap-4 rounded-lg w-96">
       <h1 class="text-3xl font-bold">비밀번호 변경</h1>
       <div>
         <p>
@@ -11,13 +11,15 @@
       <TextInput
         v-for="(field, key) in formData"
         :key="key"
-        :name="key"
         v-model="field.value"
+        :name="key"
         :field="field"
         :formData="formData"
+        @update:validate="handleUpdateValidate(formData, $event)"
       />
       <button
-        class="bg-gray-400 text-white rounded-lg py-3"
+        class="bg-blue-400 text-white rounded-lg py-3"
+        :class="{ disabled: !formIsValid }"
         @click="changePassword"
       >
         비밀번호 변경 완료
@@ -27,12 +29,13 @@
 </template>
 
 <script>
-import { reactive } from "vue"
+import { computed, reactive } from "vue"
 import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
   confirmPasswordValidator,
   passwordSecurityValidator,
+  handleUpdateValidate,
 } from "@/lib/validator"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
@@ -78,12 +81,34 @@ export default {
       router.push({ name: "Office" })
     }
 
+    const formIsFilled = computed(() => {
+      return Object.keys(formData).every((key) => {
+        return formData[key].value
+      })
+    })
+
+    const formNoError = computed(() => {
+      return Object.keys(formData).every((key) => {
+        return !Object.keys(formData[key].errors).length
+      })
+    })
+
+    const formIsValid = computed(() => {
+      return formIsFilled.value && formNoError.value
+    })
+
     return {
       formData,
+      formIsValid,
       changePassword,
+      handleUpdateValidate,
     }
   },
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.disabled {
+  @apply bg-gray-400;
+}
+</style>

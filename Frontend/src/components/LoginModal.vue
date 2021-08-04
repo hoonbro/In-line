@@ -77,8 +77,8 @@ import {
   loginRequiredValidator,
   emailValidator,
   handleUpdateValidate,
-} from "@/lib/validator2"
-import TextInput from "@/components/TextInput2.vue"
+} from "@/lib/validator"
+import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
@@ -111,7 +111,7 @@ export default {
 
     const formDataIsValid = computed(() => {
       const keys = Object.keys(formData)
-      return keys.every(key => {
+      return keys.every((key) => {
         const errors = Object.keys(formData[key].errors)
         return formData[key].value && !errors.length
       })
@@ -120,7 +120,7 @@ export default {
     const login = async () => {
       loading.value = true
       const submitData = {}
-      Object.keys(formData).forEach(key => {
+      Object.keys(formData).forEach((key) => {
         submitData[key] = formData[key].value
       })
       try {

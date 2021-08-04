@@ -4,28 +4,28 @@ import { auth } from "./auth"
 const notiAPI = axios.create({
   baseURL: `/api/v1/notifications`,
   headers: {
-    Authorization: auth.state.token,
+    accessToken: auth.state.accessToken,
   },
 })
 
 const todoAPI = axios.create({
   baseURL: `/api/v1/todos`,
   headers: {
-    Authorization: auth.state.token,
+    accessToken: auth.state.accessToken,
   },
 })
 
 const userAPI = axios.create({
   baseURL: `/api/v1/users`,
   headers: {
-    Authorization: auth.state.token,
+    accessToken: auth.state.accessToken,
   },
 })
 
 const roomAPI = axios.create({
   baseURL: `${process.env.VUE_APP_API_BASE_URL}/rooms`,
   headers: {
-    Authorization: `Bearer jwt`,
+    accessToken: `Bearer jwt`,
   },
 })
 
@@ -138,14 +138,15 @@ export const office = {
       })
       commit("setTodos", todos)
     },
-    async getMembers({ commit, state }) {
-      console.log(state)
+    async getMembers({ commit, rootState }) {
+      console.log(rootState)
       try {
         const res = await userAPI({
           params: {
-            officeId: 1,
+            officeId: rootState.auth.user.officeId,
           },
         })
+        console.log(res)
         commit("setMembers", res.data)
       } catch (error) {
         console.log(error)

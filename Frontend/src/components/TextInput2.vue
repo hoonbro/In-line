@@ -15,6 +15,8 @@
         @blur="handleBlur"
         autocomplete="off"
         :maxlength="maxlength"
+        :disabled="disabled"
+        :class="{ 'select-none': disabled }"
       />
       <label class="label" :class="{ active: labelActive }">
         {{ field.label }}
@@ -48,6 +50,10 @@ export default {
       type: Number,
       default: 200,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["update:modelValue", "update:validate"],
   setup(props, { emit }) {
@@ -55,8 +61,7 @@ export default {
     const input = ref(null)
 
     const validate = () => {
-      props.field.validators.forEach(validator => {
-        console.log("validate")
+      props.field.validators.forEach((validator) => {
         const res = validator(props.formData, props.name, input.value.value)
         emit("update:validate", res)
       })
@@ -67,7 +72,7 @@ export default {
       labelActive.value = props.modelValue ? true : false
     }
 
-    const handleInput = event => {
+    const handleInput = (event) => {
       // emit 이벤트를 먼저 발생시키지 않으면, 한 타이밍 늦게 error 관련 이벤트가 처리된다.
       emit("update:modelValue", event.target.value)
       // Error가 있는 경우, Input Event 발생 시 매번 검사

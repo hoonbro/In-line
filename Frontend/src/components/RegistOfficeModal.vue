@@ -98,8 +98,8 @@ import {
   confirmPasswordValidator,
   passwordSecurityValidator,
   handleUpdateValidate,
-} from "@/lib/validator2"
-import TextInput from "@/components/TextInput2.vue"
+} from "@/lib/validator"
+import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
@@ -199,12 +199,12 @@ export default {
 
     const managerFormIsFilled = computed(() => {
       return Object.keys(managerFormData).every(
-        key => managerFormData[key].value
+        (key) => managerFormData[key].value
       )
     })
 
     const managerFormNoError = computed(() => {
-      return Object.keys(managerFormData).every(key => {
+      return Object.keys(managerFormData).every((key) => {
         return !Object.keys(managerFormData[key].errors).length
       })
     })
@@ -223,7 +223,7 @@ export default {
     const registerOffice = async () => {
       const submitData = { term: term.value }
       Object.keys(formData.value).forEach(
-        key => (submitData[key] = formData.value[key].value)
+        (key) => (submitData[key] = formData.value[key].value)
       )
       try {
         await store.dispatch("office/registerOffice", submitData)

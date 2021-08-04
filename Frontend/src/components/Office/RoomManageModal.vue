@@ -65,15 +65,18 @@
       </div>
       <div class="modal-footer my-3">
         <div class="create-room">
-          <TextInput
-            v-if="activeCreate"
-            v-for="(field, key) in formData"
-            :key="key"
-            :name="key"
-            v-model="field.value"
-            :field="field"
-            :formData="formData"
-          />
+          <template v-if="activeCreate">
+            <TextInput
+              v-for="(field, key) in formData"
+              :key="key"
+              :name="key"
+              v-model="field.value"
+              :field="field"
+              :formData="formData"
+              :maxlength="field.maxlength"
+              @update:validate="handleUpdateValidate(formData, $event)"
+            />
+          </template>
         </div>
         <!-- 얘도 버튼화 시켜야함 -->
         <div class="text-center" v-if="activeCreate === false">
@@ -94,7 +97,7 @@
 
 <script>
 import { onMounted, ref, reactive, computed } from "vue"
-import { requiredValidator } from "@/lib/validator"
+import { requiredValidator, handleUpdateValidate } from "@/lib/validator"
 import { useStore } from "vuex"
 
 import Modal from "@/components/Common/Modal.vue"
@@ -124,6 +127,7 @@ export default {
         // 유효성과 에러,,필요할까?
         validators: [requiredValidator],
         errors: {},
+        maxlength: 20,
       },
     })
 
@@ -173,7 +177,7 @@ export default {
 
     const newName = ref("")
 
-    const editRoom = roomId => {
+    const editRoom = (roomId) => {
       if (!newName.value) {
         alert("회의실 이름은 공백으로 할 수 없습니다.")
         return
@@ -190,7 +194,7 @@ export default {
       activeEdit.value = ""
     }
 
-    const deleteRoom = roomId => {
+    const deleteRoom = (roomId) => {
       store.dispatch("office/deleteRoom", roomId)
     }
 
@@ -209,6 +213,7 @@ export default {
       createRoom,
       editRoom,
       deleteRoom,
+      handleUpdateValidate,
     }
   },
 }

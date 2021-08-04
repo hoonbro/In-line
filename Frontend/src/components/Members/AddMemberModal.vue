@@ -39,8 +39,8 @@ import {
   requiredValidator,
   emailValidator,
   handleUpdateValidate,
-} from "@/lib/validator2"
-import TextInput from "@/components/TextInput2.vue"
+} from "@/lib/validator"
+import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
@@ -83,12 +83,12 @@ export default {
     })
 
     const allFieldIsFilled = computed(() => {
-      return Object.keys(formData).every(key => formData[key].value)
+      return Object.keys(formData).every((key) => formData[key].value)
     })
 
     const allFieldDoesNotHaveError = computed(() => {
       return Object.keys(formData).every(
-        key => !Object.keys(formData[key].errors).length
+        (key) => !Object.keys(formData[key].errors).length
       )
     })
 
@@ -100,7 +100,7 @@ export default {
       const submitData = {
         officeId: store.state.auth.user.officeId,
       }
-      Object.keys(formData).forEach(key => {
+      Object.keys(formData).forEach((key) => {
         submitData[key] = formData[key].value
       })
       try {
@@ -113,6 +113,7 @@ export default {
           data: submitData,
         })
         alert("전송 성공")
+        emit("close")
       } catch (error) {
         alert("전송 실패")
         console.log(error)

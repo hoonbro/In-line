@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import TextInput2 from "@/components/TextInput2.vue"
-import { requiredValidator, emailValidator } from "@/lib/validator2"
+import TextInput2 from "@/components/TextInput.vue"
+import { requiredValidator, emailValidator } from "@/lib/validator"
 import { reactive } from "@vue/reactivity"
 
 export default {
@@ -29,7 +29,7 @@ export default {
       },
     })
 
-    const handleUpdateValidate = data => {
+    const handleUpdateValidate = (data) => {
       const { key, type, status, message } = data
       if (status) {
         delete formData[key].errors[type]

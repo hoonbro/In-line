@@ -7,14 +7,18 @@
         <p>이메일을 통해 임시 비밀번호를 보내드릴게요!</p>
       </div>
       <TextInput
+        v-for="(field, key) in formData"
+        :key="key"
         v-model="formData.email.value"
-        :name="Object.keys(formData)[0]"
+        :name="key"
         :field="formData.email"
         :formData="formData"
+        @update:modelValue="handleInput"
+        @update:validate="handleUpdateValidate(formData, $event)"
       />
       <button
         class="send-btn"
-        :class="{ disabled: !isInputFill }"
+        :class="{ disabled: !formIsValid }"
         @click="sendTempPassword"
       >
         임시 비밀번호 발송
@@ -24,9 +28,13 @@
 </template>
 
 <script>
-import { computed, reactive } from "vue"
+import { computed, reactive, ref } from "vue"
 import TextInput from "@/components/TextInput.vue"
-import { requiredValidator, emailValidator } from "@/lib/validator"
+import {
+  requiredValidator,
+  emailValidator,
+  handleUpdateValidate,
+} from "@/lib/validator"
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
 
@@ -49,11 +57,13 @@ export default {
       },
     })
 
-    const isInputFill = computed(() => {
-      // input이 바뀔 때 마다 검사
-      // 1. input에 내용물이 있는지 검사
-      // 2. emailValidator 통과하는지 검사
-    })
+    const formIsValid = ref(false)
+
+    const handleInput = (value) => {
+      formIsValid.value = formData.email.validators.every((validator) => {
+        return validator(formData, "email", value).status
+      })
+    }
 
     const sendTempPassword = async () => {
       // api 요청
@@ -75,8 +85,10 @@ export default {
 
     return {
       formData,
-      isInputFill,
+      formIsValid,
+      handleInput,
       sendTempPassword,
+      handleUpdateValidate,
     }
   },
 }
