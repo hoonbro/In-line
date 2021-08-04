@@ -78,6 +78,7 @@ import Video from "@/components/Room/Video.vue"
 import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import Participant from "@/lib/participant.js"
+import kurentoUtils from "kurento-utils"
 
 export default {
   name: "Room",
