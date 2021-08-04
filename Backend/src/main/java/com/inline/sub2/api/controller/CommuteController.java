@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/commute")
+@RequestMapping("/api/v1/commute")
 public class CommuteController {
 
     @Autowired

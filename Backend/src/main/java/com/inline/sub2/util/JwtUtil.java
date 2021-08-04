@@ -50,6 +50,21 @@ public class JwtUtil{
         return builder.compact();
     }
 
+    public <T> String createToken(String email) {
+        Date now = new Date();
+        //HS256 방식으로 암호화 방식 설정
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+        JwtBuilder builder = Jwts.builder()
+                .setSubject(email) // user를 구분할 수 있는 값
+                .setExpiration(new Date(now.getTime() + EXPIRE_TIME))
+                .signWith(SignatureAlgorithm.HS256, signingKey); //암호화 알고리즘
+        return builder.compact();
+    }
+
+
+
     //Jwt Token을 복호화해 이름을 return
     public String getUserNameFromJwt(String jwt){
         System.out.println("!!!!!!!!!!!!!!!"+jwt);

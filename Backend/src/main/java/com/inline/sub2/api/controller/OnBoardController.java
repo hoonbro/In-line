@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/on-board")
+@RequestMapping("/api/v1/on-board")
 public class OnBoardController {
 
     @Autowired
