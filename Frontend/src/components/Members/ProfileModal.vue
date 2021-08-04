@@ -82,9 +82,9 @@ import {
   requiredValidator,
   emailValidator,
   handleUpdateValidate,
-} from "@/lib/validator2"
+} from "@/lib/validator"
 import Modal from "@/components/Common/Modal.vue"
-import TextInput from "@/components/TextInput2.vue"
+import TextInput from "@/components/TextInput.vue"
 
 export default {
   name: "ProfileModal",

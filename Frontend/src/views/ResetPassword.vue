@@ -29,12 +29,12 @@
 
 <script>
 import { computed, reactive, ref } from "vue"
-import TextInput from "@/components/TextInput2.vue"
+import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
   emailValidator,
   handleUpdateValidate,
-} from "@/lib/validator2"
+} from "@/lib/validator"
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
 
@@ -59,8 +59,8 @@ export default {
 
     const formIsValid = ref(false)
 
-    const handleInput = value => {
-      formIsValid.value = formData.email.validators.every(validator => {
+    const handleInput = (value) => {
+      formIsValid.value = formData.email.validators.every((validator) => {
         return validator(formData, "email", value).status
       })
     }

@@ -30,13 +30,13 @@
 
 <script>
 import { computed, reactive } from "vue"
-import TextInput from "@/components/TextInput2.vue"
+import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
   confirmPasswordValidator,
   passwordSecurityValidator,
   handleUpdateValidate,
-} from "@/lib/validator2"
+} from "@/lib/validator"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 
@@ -82,13 +82,13 @@ export default {
     }
 
     const formIsFilled = computed(() => {
-      return Object.keys(formData).every(key => {
+      return Object.keys(formData).every((key) => {
         return formData[key].value
       })
     })
 
     const formNoError = computed(() => {
-      return Object.keys(formData).every(key => {
+      return Object.keys(formData).every((key) => {
         return !Object.keys(formData[key].errors).length
       })
     })
