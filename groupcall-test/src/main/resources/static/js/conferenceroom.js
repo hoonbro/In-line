@@ -25,7 +25,7 @@ window.onbeforeunload = function () {
 }
 
 ws.onmessage = function (message) {
-  var parsedMessage = JSON.parse(message.data)
+  var parsedMessage = JSON.parse(message.#data)
   console.info("Received message: " + message.data)
 
   switch (parsedMessage.id) {
@@ -169,6 +169,8 @@ function leaveRoom() {
 }
 
 function receiveVideo(sender) {
+  console.log("새로운 사용자의 영상 받음")
+  console.log(sender);
   var participant = new Participant(sender)
   participants[sender] = participant
   var video = participant.getVideoElement()

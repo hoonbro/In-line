@@ -34,7 +34,7 @@ public class Room implements Closeable {
 
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
     private MediaPipeline pipeline;
-    private final String roomName;
+    private String roomName;
     private final Long roomId;
 
     public Room(String roomName, MediaPipeline pipeline, Long roomId) {
