@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/on-board")
+@CrossOrigin("*")
 public class OnBoardController {
 
     @Autowired
@@ -33,6 +34,7 @@ public class OnBoardController {
         }
         catch(Exception e){
             httpStatus = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<UserRegistDto>(userRegistDto, httpStatus);
         }
         return new ResponseEntity<UserRegistDto>(userRegistDto, httpStatus);
     }

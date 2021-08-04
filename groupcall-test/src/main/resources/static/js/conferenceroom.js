@@ -17,9 +17,10 @@
 
 var ws = new WebSocket("wss://" + location.host + "/groupcall")
 var participants = {}
-var name, nickName, room, temp
+var name, nickName, room, temp, roomId
 
 window.onbeforeunload = function () {
+  console.log("ws.close");
   ws.close()
 }
 
@@ -63,13 +64,16 @@ function nickRegister() {
 }
 
 function roomclick1() {
-  temp = "room1"
+  roomId = 2
+  temp = "전체 회의방"
 }
 function roomclick2() {
-  temp = "room2"
+  roomId = 3
+  temp = "소회의실"
 }
 function roomclick3() {
-  temp = "room3"
+  roomId = 4
+  temp = "발표장"
 }
 
 function register() {
@@ -84,6 +88,7 @@ function register() {
     id: "joinRoom",
     name: name,
     room: room,
+    roomId: roomId
   }
   sendMessage(message)
 }

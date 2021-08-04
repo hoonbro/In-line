@@ -2,10 +2,7 @@ package com.inline.sub2.api.service;
 
 import com.inline.sub2.api.dto.EmailDto;
 import com.inline.sub2.api.dto.UserRegistDto;
-import com.inline.sub2.db.entity.DeptEntity;
-import com.inline.sub2.db.entity.JobEntity;
-import com.inline.sub2.db.entity.OnBoardEntity;
-import com.inline.sub2.db.entity.UserEntity;
+import com.inline.sub2.db.entity.*;
 import com.inline.sub2.db.repository.JobRepository;
 import com.inline.sub2.db.repository.OnBoardRepository;
 import com.inline.sub2.db.repository.UserRepository;
@@ -37,14 +34,17 @@ public class OnBoardServiceImpl implements OnBoardService{
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    OfficeService officeService;
 
     @Override
     @Transactional
     public OnBoardEntity registUserOnboard(UserRegistDto user) {
-
+        OfficeEntity officeEntity = officeService.getOfficeName(user.getOfficeId());
         DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), 1l); //부서 번호 조회
         JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l); //직책 번호 조회
 
+        user.setOfficeName(officeEntity.getOfficeName());
         user.setDeptId(deptEntity.getDeptId());
         user.setJobId(jobEntity.getJobId());
 
@@ -57,7 +57,7 @@ public class OnBoardServiceImpl implements OnBoardService{
         onBoardEntity.setDeptId(user.getDeptId());
 
         //구성원에게 이메일 발송
-        emailService.sendEmail(user.getEmail());
+        emailService.sendEmail(user);
         log.info("구성원에게 이메일 발송 성공");
 
         return onBoardRepository.save(onBoardEntity);

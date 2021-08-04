@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/todo")
+@RequestMapping("/todos")
 public class TodoController {
     @Autowired
     TodoService todoService;
@@ -26,9 +26,9 @@ public class TodoController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/{userId}")
+    @GetMapping
     @ApiOperation(value = "사용자의 Todo List를 반환한다.", response = List.class)
-    public ResponseEntity<List<TodoEntity>> UserTodoList(@PathVariable Long userId) {
+    public ResponseEntity<List<TodoEntity>> UserTodoList(@RequestParam("userId") Long userId) {
         HttpStatus httpStatus = HttpStatus.OK;
         List<TodoEntity> list = new ArrayList<TodoEntity>();
 
@@ -59,11 +59,11 @@ public class TodoController {
         return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
     }
 
-    @PutMapping
+    @PutMapping("/{todoId}")
     @ApiOperation(value = "사용자의 할일(Todo)를 수정한다.", response = TodoEntity.class)
-    public ResponseEntity<TodoEntity> updateTodo(@RequestBody TodoEntity todoEntity) {
+    public ResponseEntity<TodoEntity> updateTodo(@PathVariable("todoId") Long todoId,@RequestBody TodoEntity todoEntity) {
         HttpStatus httpStatus = HttpStatus.CREATED;
-
+        todoEntity.setTodoId(todoId);
         try{
             todoEntity = todoService.updateTodo(todoEntity);
         }
@@ -75,24 +75,15 @@ public class TodoController {
         return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
     }
 
-    @DeleteMapping("/{userId}/{todoId}")
+    @DeleteMapping("/{todoId}")
     @ApiOperation(value = "사용자의 할일(Todo)를 삭제한다.")
-    public ResponseEntity<Void> deleteTodo(@PathVariable(value = "userId") Long userId,
-                                           @PathVariable(value = "todoId") Long todoId) {
+    public ResponseEntity<Void> deleteTodo(@PathVariable(value = "todoId") Long todoId) {
 
         HttpStatus httpStatus = HttpStatus.NO_CONTENT;
 
         try{
-            TodoEntity todoEntity = todoService.findUserIdByTodoId(todoId);
-
-            if(userId == todoEntity.getUserId()) {
-                //삭제 처리
-                todoService.deleteTodo(todoId);
-            }
-            else {
-                httpStatus = HttpStatus.UNAUTHORIZED;
-            }
-
+            //삭제 처리
+            todoService.deleteTodo(todoId);
         }
         catch(Exception e) {
             httpStatus = HttpStatus.UNAUTHORIZED;
