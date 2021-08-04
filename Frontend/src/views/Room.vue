@@ -107,17 +107,18 @@ export default {
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
 
-    // ws.onopen = function(event) {
-    //   var message = {
-    //     id: "joinRoom",
-    //     name: "Kim",
-    //     room: "전체 회의방",
-    //     roomId: 2,
-    //   }
+    ws.onopen = function(event) {
+      register()
+      //   var message = {
+      //     id: "joinRoom",
+      //     name: "Kim",
+      //     room: "전체 회의방",
+      //     roomId: 2,
+      //   }
 
-    //   sendMessage(message)
-    // ws.send("TEST!")
-    // }
+      //   sendMessage(message)
+      // ws.send("TEST!")
+    }
 
     function sendMessage(message) {
       const jsonMessage = JSON.stringify(message)
@@ -126,9 +127,9 @@ export default {
       console.log("Sending message: " + jsonMessage)
     }
 
-    onMounted(() => {
-      register()
-    })
+    // onMounted(() => {
+    //   register()
+    // })
 
     const participants = {}
 
