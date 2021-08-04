@@ -9,7 +9,7 @@ import RegistOffice from "@/views/RegistOffice.vue"
 import Office from "@/views/Office.vue"
 import Members from "@/views/Members.vue"
 import Admin from "@/views/Admin.vue"
-import Room2 from "@/views/Room2.vue"
+import Room from "@/views/Room.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
 import InputTest from "@/views/InputTest.vue"
@@ -66,7 +66,7 @@ const routes = [
       {
         path: "/rooms/:roomId",
         name: "Room",
-        component: Room2,
+        component: Room,
         props: true,
       },
     ],

@@ -25,14 +25,14 @@
               :room="room"
             >
               <div class="info">
-                <span v-if="activeEdit !== room.id"
-                  >{{ room.name }}{{ room.id }}</span
-                >
+                <span v-if="activeEdit !== room.id">{{ room.name }}</span>
                 <!-- 여기에 value="" 느면 될거같은데..내일 작업해야지 -->
+                <!-- 아직도 value는..못했따.. -->
                 <input
                   v-if="activeEdit === room.id"
                   v-model="newName"
                   :placeholder="room.name"
+                  @keyup.enter="editRoom(room.id)"
                 />
               </div>
 
@@ -41,7 +41,7 @@
                 <span
                   v-if="activeEdit !== room.id"
                   class="material-icons text-gray-500"
-                  @click="check(room.id)"
+                  @click="editMode(room.id)"
                 >
                   edit </span
                 ><span
@@ -118,6 +118,16 @@ export default {
     const rooms = computed(() => {
       return store.state.office.rooms
     })
+    // 방 생성 Input (원래 안보임)
+    const activeCreate = ref(false)
+
+    const activeEdit = ref("")
+
+    const newName = ref("")
+    // 방 가져오기
+    const getRooms = () => {
+      store.dispatch("office/getRooms")
+    }
 
     const formData = reactive({
       name: {
@@ -127,7 +137,7 @@ export default {
         // 유효성과 에러,,필요할까?
         validators: [requiredValidator],
         errors: {},
-        maxlength: 20,
+        maxlength: 16,
       },
     })
 
@@ -141,15 +151,6 @@ export default {
         errors: {},
       },
     })
-
-    // 방 가져오기
-    const getRooms = () => {
-      store.dispatch("office/getRooms")
-    }
-    // 방 생성 Input (원래 안보임)
-    const activeCreate = ref(false)
-
-    const activeEdit = ref("")
 
     // 방 생성하기를 누르면 Input이 보이면서 해당 버튼은 없어지게
     const showCreateButton = () => {
@@ -175,16 +176,19 @@ export default {
       }
     }
 
-    const newName = ref("")
+    const editMode = roomId => {
+      activeEdit.value = roomId
+      newName.value = ""
+    }
 
-    const editRoom = (roomId) => {
+    const editRoom = roomId => {
       if (!newName.value) {
         alert("회의실 이름은 공백으로 할 수 없습니다.")
         return
       }
       try {
         const room = {
-          name: newName,
+          name: newName.value,
         }
         store.dispatch("office/editRoom", { room, roomId })
       } catch (error) {
@@ -194,7 +198,7 @@ export default {
       activeEdit.value = ""
     }
 
-    const deleteRoom = (roomId) => {
+    const deleteRoom = roomId => {
       store.dispatch("office/deleteRoom", roomId)
     }
 
@@ -203,6 +207,7 @@ export default {
     })
 
     return {
+      editMode,
       newName,
       formData,
       newFormData,
