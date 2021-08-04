@@ -32,6 +32,7 @@
             :videoList="videoList"
           />
         </div>
+        <div id="participants"></div>
         <!-- ------------------------------------------------------------------------- -->
 
         <div class="bar-part">
@@ -76,6 +77,7 @@
 import Video from "@/components/Room/Video.vue"
 import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
+import Participant from "@/lib/participant.js"
 
 export default {
   name: "Room",
@@ -93,27 +95,28 @@ export default {
       name: store.state.auth.user.name,
     })
 
-    // const register = () => {
-    //   const message = {
-    //     id: "JoinRoom",
-    //     name: state.name,
-    //     room: state.room,
-    //   }
+    const register = () => {
+      const message = {
+        id: "JoinRoom",
+        name: "전체회의방",
+        room: 2,
+      }
 
-    //   sendMessage(message)
-    // }
+      sendMessage(message)
+    }
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
 
     ws.onopen = function(event) {
-      var message = {
-        id: "joinRoom",
-        name: "Kim",
-        room: "전체 회의방",
-        roomId: 2,
-      }
+      register()
+      //   var message = {
+      //     id: "joinRoom",
+      //     name: "Kim",
+      //     room: "전체 회의방",
+      //     roomId: 2,
+      //   }
 
-      sendMessage(message)
+      //   sendMessage(message)
       // ws.send("TEST!")
     }
 
@@ -124,61 +127,61 @@ export default {
       console.log("Sending message: " + jsonMessage)
     }
 
-    onMounted(() => {
-      // register()
-    })
+    // onMounted(() => {
+    //   register()
+    // })
 
-    // const participants = {}
+    const participants = {}
 
     // window.onbeforeunload = function() {
     //   ws.close()
     // }
 
-    // ws.onmessage = function(message) {
-    //   let parsedMessage = JSON.parse(message.data)
-    //   console.info("Received message: " + message.data)
+    ws.onmessage = function(message) {
+      let parsedMessage = JSON.parse(message.data)
+      console.info("Received message: " + message.data)
 
-    //   switch (parsedMessage.id) {
-    //     case "existingParticipants":
-    //       onExistingParticipants(parsedMessage)
-    //       break
-    //     case "newParticipantArrived":
-    //       onNewParticipant(parsedMessage)
-    //       break
-    //     case "participantLeft":
-    //       onParticipantLeft(parsedMessage)
-    //       break
-    //     case "receiveVideoAnswer":
-    //       receiveVideoResponse(parsedMessage)
-    //       break
-    //     case "iceCandidate":
-    //       participants[parsedMessage.name].rtcPeer.addIceCandidate(
-    //         parsedMessage.candidate,
-    //         function(error) {
-    //           if (error) {
-    //             console.error("Error adding candidate: " + error)
-    //             return
-    //           }
-    //         }
-    //       )
-    //       break
-    //     default:
-    //       console.error("Unrecognized message", parsedMessage)
-    //   }
-    // }
+      switch (parsedMessage.id) {
+        case "existingParticipants":
+          onExistingParticipants(parsedMessage)
+          break
+        case "newParticipantArrived":
+          onNewParticipant(parsedMessage)
+          break
+        case "participantLeft":
+          onParticipantLeft(parsedMessage)
+          break
+        case "receiveVideoAnswer":
+          receiveVideoResponse(parsedMessage)
+          break
+        case "iceCandidate":
+          participants[parsedMessage.name].rtcPeer.addIceCandidate(
+            parsedMessage.candidate,
+            function(error) {
+              if (error) {
+                console.error("Error adding candidate: " + error)
+                return
+              }
+            }
+          )
+          break
+        default:
+          console.error("Unrecognized message", parsedMessage)
+      }
+    }
 
-    // function onNewParticipant(request) {
-    //   receiveVideo(request.name)
-    // }
+    function onNewParticipant(request) {
+      receiveVideo(request.name)
+    }
 
-    // function receiveVideoResponse(result) {
-    //   participants[result.name].rtcPeer.processAnswer(
-    //     result.sdpAnswer,
-    //     function(error) {
-    //       if (error) return console.error(error)
-    //     }
-    //   )
-    // }
+    function receiveVideoResponse(result) {
+      participants[result.name].rtcPeer.processAnswer(
+        result.sdpAnswer,
+        function(error) {
+          if (error) return console.error(error)
+        }
+      )
+    }
 
     // // 안씀...
     // function callResponse(message) {
@@ -192,40 +195,41 @@ export default {
     //   }
     // }
 
-    // function onExistingParticipants(msg) {
-    //   let constraints = {
-    //     audio: true,
-    //     video: {
-    //       mandatory: {
-    //         maxWidth: 320,
-    //         maxFrameRate: 15,
-    //         minFrameRate: 15,
-    //       },
-    //     },
-    //   }
-    //   console.log(state.name + " registered in room " + state.room)
-    //   let participant = new Participant(state.name)
-    //   participants[state.name] = participant
-    //   let video = participant.getVideoElement()
+    function onExistingParticipants(msg) {
+      let constraints = {
+        audio: true,
+        video: {
+          mandatory: {
+            maxWidth: 320,
+            maxFrameRate: 15,
+            minFrameRate: 15,
+          },
+        },
+      }
+      console.log(state.name + " registered in room " + state.room)
+      let participant = new Participant(state.name)
+      participants[state.name] = participant
+      let video = participant.getVideoElement()
 
-    //   let options = {
-    //     localVideo: video,
-    //     mediaConstraints: constraints,
-    //     onicecandidate: participant.onIceCandidate.bind(participant),
-    //   }
-    //   participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
-    //     options,
-    //     function(error) {
-    //       if (error) {
-    //         return console.error(error)
-    //       }
-    //       this.generateOffer(participant.offerToReceiveVideo.bind(participant))
-    //     }
-    //   )
+      let options = {
+        localVideo: video,
+        mediaConstraints: constraints,
+        onicecandidate: participant.onIceCandidate.bind(participant),
+      }
+      participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
+        options,
+        function(error) {
+          if (error) {
+            return console.error(error)
+          }
+          this.generateOffer(participant.offerToReceiveVideo.bind(participant))
+        }
+      )
 
-    //   msg.data.forEach(receiveVideo)
-    // }
+      msg.data.forEach(receiveVideo)
+    }
 
+    // 얘도 떠날때임
     // // RoomComponent
     // function leaveRoom() {
     //   sendMessage({
@@ -242,33 +246,33 @@ export default {
     //   // ws.close();
     // }
 
-    // function receiveVideo(sender) {
-    //   let participant = new Participant(sender)
-    //   participants[sender] = participant
-    //   let video = participant.getVideoElement()
+    function receiveVideo(sender) {
+      let participant = new Participant(sender)
+      participants[sender] = participant
+      let video = participant.getVideoElement()
 
-    //   let options = {
-    //     remoteVideo: video,
-    //     onicecandidate: participant.onIceCandidate.bind(participant),
-    //   }
+      let options = {
+        remoteVideo: video,
+        onicecandidate: participant.onIceCandidate.bind(participant),
+      }
 
-    //   participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
-    //     options,
-    //     function(error) {
-    //       if (error) {
-    //         return console.error(error)
-    //       }
-    //       this.generateOffer(participant.offerToReceiveVideo.bind(participant))
-    //     }
-    //   )
-    // }
-
-    // function onParticipantLeft(request) {
-    //   console.log("Participant " + request.name + " left")
-    //   let participant = participants[request.name]
-    //   participant.dispose()
-    //   delete participants[request.name]
-    // }
+      participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
+        options,
+        function(error) {
+          if (error) {
+            return console.error(error)
+          }
+          this.generateOffer(participant.offerToReceiveVideo.bind(participant))
+        }
+      )
+    }
+    //  떠날때임
+    function onParticipantLeft(request) {
+      console.log("Participant " + request.name + " left")
+      let participant = participants[request.name]
+      participant.dispose()
+      delete participants[request.name]
+    }
 
     // -------------------------------------------------------------------------------
     const videoList = 6
