@@ -88,10 +88,10 @@ export default {
   setup() {
     const store = useStore()
 
-    const state = reactive({
-      room: "",
-      name: store.state["user"].name,
-    })
+    // const state = reactive({
+    //   room: "",
+    //   name: store.state.auth.user.name,
+    // })
 
     // const register = () => {
     //   const message = {
@@ -104,6 +104,9 @@ export default {
     // }
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
+    ws.onopen = function(event) {
+      ws.send("TEST!")
+    }
     // const participants = {}
 
     // window.onbeforeunload = function() {
