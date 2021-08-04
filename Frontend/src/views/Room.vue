@@ -95,29 +95,29 @@ export default {
       name: store.state.auth.user.name,
     })
 
-    // const register = () => {
-    //   const message = {
-    //     id: "JoinRoom",
-    //     name: state.name,
-    //     room: state.room,
-    //   }
-
-    //   sendMessage(message)
-    // }
-
-    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
-
-    ws.onopen = function(event) {
-      var message = {
-        id: "joinRoom",
-        name: "Kim",
-        room: "전체 회의방",
-        roomId: 2,
+    const register = () => {
+      const message = {
+        id: "JoinRoom",
+        name: "전체회의방",
+        room: 2,
       }
 
       sendMessage(message)
-      // ws.send("TEST!")
     }
+
+    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
+
+    // ws.onopen = function(event) {
+    //   var message = {
+    //     id: "joinRoom",
+    //     name: "Kim",
+    //     room: "전체 회의방",
+    //     roomId: 2,
+    //   }
+
+    //   sendMessage(message)
+    // ws.send("TEST!")
+    // }
 
     function sendMessage(message) {
       const jsonMessage = JSON.stringify(message)
@@ -127,10 +127,10 @@ export default {
     }
 
     onMounted(() => {
-      // register()
+      register()
     })
 
-    // const participants = {}
+    const participants = {}
 
     // window.onbeforeunload = function() {
     //   ws.close()
