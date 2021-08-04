@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <div class="backdrop" @click.self="$emit('close')">
+    <div class="backdrop" @mousedown.self="$emit('close')">
       <div class="modal-container">
         <slot name="modal-header"></slot>
         <div class="modal-body">
