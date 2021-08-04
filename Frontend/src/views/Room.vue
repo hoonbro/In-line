@@ -103,8 +103,7 @@ export default {
     //   sendMessage(message)
     // }
 
-    let ws = new WebSocket(`wss://13.124.47.223:8995/groupcall`)
-    // let ws = new WebSocket(`wss://localhost:8083/groupcall`)
+    let ws = new WebSocket(`wss://http://i5d207.p.ssafy.io/:8995/groupcall`)
     // const participants = {}
 
     // window.onbeforeunload = function() {

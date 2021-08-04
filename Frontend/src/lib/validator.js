@@ -1,6 +1,5 @@
 export const requiredValidator = (form, key, value) => {
   if (value.length < 1) {
-    console.log("requiredValidator")
     return {
       key,
       type: "required",
@@ -25,7 +24,6 @@ export const loginRequiredValidator = (form, key, value) => {
 }
 
 export const emailValidator = (form, key, value) => {
-  console.log(value)
   // https://www.w3resource.com/javascript/form/email-validation.php
   if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
     return {
@@ -43,7 +41,6 @@ export const emailValidator = (form, key, value) => {
 }
 
 export const confirmPasswordValidator = (form, key, value) => {
-  console.log(form[key])
   if (value !== form.password.value) {
     return {
       key,
