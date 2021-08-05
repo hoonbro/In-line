@@ -12,6 +12,7 @@ public class UserRegistry {
     private final ConcurrentHashMap<String, UserSession> usersBySessionId = new ConcurrentHashMap<>();
 
     public void register(UserSession user) {
+        log.info("user register user name : {}", user.getName());
         usersByName.put(user.getName(), user);
         usersBySessionId.put(user.getSession().getId(), user);
         log.info("user register : {}",user.toString());

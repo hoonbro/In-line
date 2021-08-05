@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.kurento.client.Continuation;
 import org.kurento.client.EventListener;
 import org.kurento.client.IceCandidate;
@@ -24,6 +26,8 @@ import com.google.gson.JsonObject;
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
+@Getter
+@Setter
 public class UserSession implements Closeable {
 
     private static final Logger log = LoggerFactory.getLogger(UserSession.class);
