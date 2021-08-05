@@ -2,16 +2,20 @@ package com.rtc.groupcall;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
+@Slf4j
 public class UserRegistry {
 
     private final ConcurrentHashMap<String, UserSession> usersByName = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, UserSession> usersBySessionId = new ConcurrentHashMap<>();
 
     public void register(UserSession user) {
+        log.info("user register user name : {}", user.getName());
         usersByName.put(user.getName(), user);
         usersBySessionId.put(user.getSession().getId(), user);
+        log.info("user register : {}",user.toString());
     }
 
     public UserSession getByName(String name) {
