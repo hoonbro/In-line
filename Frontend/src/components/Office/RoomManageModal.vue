@@ -12,7 +12,7 @@
       <div class="modal-body">
         <div class="modal-explain">
           <span
-            >{Officename}의 회의실을 관리할 수 있습니다.<br />
+            >구미_2반_7팀의 회의실을 관리할 수 있습니다.<br />
             기본적으로 생성된 회의실은 수정할 수 없습니다.
           </span>
         </div>
@@ -20,19 +20,22 @@
           <ul class="room-list">
             <li
               class="room-list-item"
+              :class="{ edit: activeEdit === room.id }"
               v-for="room in rooms"
               :key="room.id"
               :room="room"
             >
               <div class="info">
-                <span v-if="activeEdit !== room.id"
-                  >{{ room.name }}{{ room.id }}</span
-                >
-                <!-- 여기에 value="" 느면 될거같은데..내일 작업해야지 -->
+                <span v-if="activeEdit !== room.id">{{ room.name }}</span>
+                <!-- 아직도 value는..못했따.. -->
+                <!-- editmode에 진입 시 테두리 -->
                 <input
+                  id="input-tag"
                   v-if="activeEdit === room.id"
                   v-model="newName"
                   :placeholder="room.name"
+                  @keyup.enter="editRoom(room.id)"
+                  @keyup.esc="editMode()"
                 />
               </div>
 
@@ -41,7 +44,7 @@
                 <span
                   v-if="activeEdit !== room.id"
                   class="material-icons text-gray-500"
-                  @click="check(room.id)"
+                  @click="editMode(room.id)"
                 >
                   edit </span
                 ><span
@@ -78,8 +81,7 @@
             />
           </template>
         </div>
-        <!-- 얘도 버튼화 시켜야함 -->
-        <div class="text-center" v-if="activeCreate === false">
+        <div class="text-center create-btn" v-if="activeCreate === false">
           <span class="cursor-pointer" @click="showCreateButton()"
             >회의실 추가</span
           >
@@ -118,6 +120,17 @@ export default {
     const rooms = computed(() => {
       return store.state.office.rooms
     })
+    // 방 생성 Input (원래 안보임)
+    const activeCreate = ref(false)
+
+    const activeEdit = ref("")
+
+    const newName = ref("")
+
+    // 방 가져오기
+    const getRooms = () => {
+      store.dispatch("office/getRooms")
+    }
 
     const formData = reactive({
       name: {
@@ -127,29 +140,9 @@ export default {
         // 유효성과 에러,,필요할까?
         validators: [requiredValidator],
         errors: {},
-        maxlength: 20,
+        maxlength: 16,
       },
     })
-
-    const newFormData = reactive({
-      name: {
-        label: "새 회의실 이름",
-        type: "text",
-        value: "",
-        // 유효성과 에러,,필요할까?
-        validators: [requiredValidator],
-        errors: {},
-      },
-    })
-
-    // 방 가져오기
-    const getRooms = () => {
-      store.dispatch("office/getRooms")
-    }
-    // 방 생성 Input (원래 안보임)
-    const activeCreate = ref(false)
-
-    const activeEdit = ref("")
 
     // 방 생성하기를 누르면 Input이 보이면서 해당 버튼은 없어지게
     const showCreateButton = () => {
@@ -175,16 +168,19 @@ export default {
       }
     }
 
-    const newName = ref("")
+    const editMode = roomId => {
+      activeEdit.value = roomId
+      newName.value = ""
+    }
 
-    const editRoom = (roomId) => {
+    const editRoom = roomId => {
       if (!newName.value) {
         alert("회의실 이름은 공백으로 할 수 없습니다.")
         return
       }
       try {
         const room = {
-          name: newName,
+          name: newName.value,
         }
         store.dispatch("office/editRoom", { room, roomId })
       } catch (error) {
@@ -194,7 +190,7 @@ export default {
       activeEdit.value = ""
     }
 
-    const deleteRoom = (roomId) => {
+    const deleteRoom = roomId => {
       store.dispatch("office/deleteRoom", roomId)
     }
 
@@ -203,12 +199,12 @@ export default {
     })
 
     return {
-      newName,
       formData,
-      newFormData,
       activeCreate,
       activeEdit,
       showCreateButton,
+      editMode,
+      newName,
       rooms,
       createRoom,
       editRoom,
@@ -233,9 +229,18 @@ header {
   .room-list {
     @apply flex flex-col overflow-y-auto h-48;
 
+    .edit {
+      @apply border-blue-600 border-2;
+      // border: 2px
+    }
+
     .room-list-item {
-      @apply bg-gray-50 w-full h-10 flex-shrink-0 rounded my-1 items-center px-4 flex justify-between;
       // flex 박스 안에 요소가 많아져도 크기를 유지하는 flex-shrink-0(0은 false, 1은 true)
+      @apply bg-gray-50 w-96 h-10 flex-shrink-0 rounded my-1 items-center px-4 flex justify-between;
+
+      input {
+        @apply outline-none bg-gray-50;
+      }
     }
 
     .room-list-item-add {

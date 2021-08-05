@@ -185,9 +185,16 @@ export const office = {
         const res = await roomAPI({
           url: `/${roomId}`,
           method: "PUT",
-          data: { name: room.name.value },
+          data: { name: room.name },
         })
-        const rooms = state.rooms
+        // 얕은 카피
+        const rooms = [...state.rooms]
+
+        rooms.forEach(item => {
+          if (item.id === roomId) {
+            item.name = room.name
+          }
+        })
         commit("setRooms", rooms)
         // alert("회의실 수정이 완료됐습니다.")
       } catch (error) {

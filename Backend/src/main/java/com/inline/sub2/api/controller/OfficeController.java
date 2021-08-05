@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/office")
@@ -31,20 +34,31 @@ public class OfficeController {
     @Autowired
     JobService jobService;
 
-    @PostMapping()
+    @PostMapping
     @ApiOperation(value = "회사 정보와 관리자 정보를 DB에 저장한다.")
     public ResponseEntity<Void> registAdmin(@RequestBody UserRegistDto admin) {
-        HttpStatus httpStatus = HttpStatus.OK;
-
-            //임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
-            UserEntity userEntity = userService.registAdmin(admin);
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        UserEntity userEntity = null;
+        try{
+            userEntity = userService.registAdmin(admin);
             if (userEntity != null) {
                 httpStatus = HttpStatus.CREATED;
-            }else{
-                log.error("회원 등록 실패");
-                httpStatus = HttpStatus.BAD_REQUEST;
             }
-
+        }catch(Exception e){
+            httpStatus = HttpStatus.CONFLICT;
+            return new ResponseEntity<Void>(httpStatus);
+        }
         return new ResponseEntity<Void>(httpStatus);
+    }
+
+    @GetMapping("/duplicate/{officeName}")
+    @ApiOperation(value = "회사 이름의 중복을 확인한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> duplicateOfficeName(@PathVariable("officeName") String officeName){
+        HttpStatus httpStatus = HttpStatus.OK;
+        boolean isDuplicate = officeService.duplicateOfficeName(officeName);
+        if(isDuplicate)
+            httpStatus = HttpStatus.CONFLICT;
+
+        return new ResponseEntity<Boolean>(isDuplicate, httpStatus);
     }
 }
