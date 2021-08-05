@@ -48,7 +48,13 @@
 
 <script>
 import Video from "@/components/Room/Video.vue"
-import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+} from "@vue/runtime-core"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 // import Participant from "@/lib/participant.js"
@@ -84,6 +90,8 @@ export default {
 
       sendMessage(message)
     }
+
+    onUnmounted(() => leaveRoom())
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
 
@@ -181,9 +189,9 @@ export default {
         video: {
           mandatory: {
             // minWidth: 1000,
-            maxWidth: 2000,
+            maxWidth: 5000,
             // minHeight: 1000,
-            maxHeight: 2000,
+            // maxHeight: 2000,
             maxFrameRate: 30,
             minFrameRate: 30,
           },
