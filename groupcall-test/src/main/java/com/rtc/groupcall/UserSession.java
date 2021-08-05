@@ -32,16 +32,17 @@ public class UserSession implements Closeable {
     private final WebSocketSession session;
 
     private final MediaPipeline pipeline;
-
+    private final Long roomId;
     private final String roomName;
     private final WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
-    public UserSession(final String name, String roomName, final WebSocketSession session,
+    public UserSession(final String name, String roomName, final Long roomId, final WebSocketSession session,
                        MediaPipeline pipeline) {
 
         this.pipeline = pipeline;
         this.name = name;
+        this.roomId = roomId;
         this.session = session;
         this.roomName = roomName;
         this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
@@ -85,9 +86,10 @@ public class UserSession implements Closeable {
     public String getRoomName() {
         return this.roomName;
     }
+    public Long getRoomId(){return this.roomId;}
 
     public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
-        log.info("USER {}: connecting with {} in room {}", this.name, sender.getName(), this.roomName);
+        log.info("USER {} : {}님이 {}에 연결되었습니다.", this.name, sender.getName(), this.roomName);
 
         log.trace("USER {}: SdpOffer for {} is {}", this.name, sender.getName(), sdpOffer);
 

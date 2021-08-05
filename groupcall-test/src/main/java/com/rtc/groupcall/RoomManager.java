@@ -4,17 +4,22 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-//import com.rtc.groupcall.db.entity.RoomEntity;
-//import com.rtc.groupcall.db.repository.RoomRepository;
+import com.rtc.groupcall.api.dto.RoomDto;
+import com.rtc.groupcall.db.entity.RoomEntity;
+import com.rtc.groupcall.db.repository.RoomRepository;
 import org.kurento.client.KurentoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 
 /**
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
+@Service
 public class RoomManager {
 
     private final Logger log = LoggerFactory.getLogger(RoomManager.class);
@@ -22,41 +27,61 @@ public class RoomManager {
     @Autowired
     private KurentoClient kurento;
 
-//    @Autowired
-//    RoomRepository roomRepository;
+    @Autowired
+    RoomRepository roomRepository;
 
-    private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Long, Room> rooms = new ConcurrentHashMap<>();
 
-    /**
-     * Looks for a room in the active room list.
-     *
-     * @param roomName
-     *          the name of the room
-     * @return the room if it was already created, or a new one if it is the first time this room is
-     *         accessed
-     */
-//    public List<RoomEntity> getAllRooms(Long OfficeId){
-//        List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
-//
-//        for(RoomEntity r: roomEntitys){
-//            rooms.put(r.getRoomName(),  new Room(r.getRoomName(), 1l));
-//        }
-//
-//        return roomRepository.findAllByOfficeId(OfficeId);
-//    }
+    public RoomEntity getRoom(Long roomId){
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException());
+    }
 
-    public Room getRoom(String roomName) {
-        log.debug("Searching for room {}", roomName);
-        Room room = rooms.get(roomName);
+    public List<RoomEntity> getRooms(Long OfficeId){
+        List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
+
+        for(RoomEntity r: roomEntitys){
+            if(rooms.get(r.getRoomId()) != null)
+                continue;
+
+            rooms.put(r.getRoomId(),  new Room(r.getRoomName(), r.getRoomId()));
+        }
+
+        return roomRepository.findAllByOfficeId(OfficeId);
+    }
+
+    public RoomEntity createRoom(RoomDto roomDto){
+        RoomEntity roomEntity = RoomEntity.builder()
+                .roomName(roomDto.getRoomName())
+                .officeId(roomDto.getOfficeId())
+                .userId(roomDto.getUserId())
+                .build();
+        return roomRepository.save(roomEntity);
+    }
+
+    public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
+        roomEntity.setRoomName(roomName);
+        return roomRepository.save(roomEntity);
+    }
+
+    public void deleteRoom(Long roomId){
+        roomRepository.deleteById(roomId);
+    }
+
+    public Room getRoom(String roomName, Long roomId) {
+        log.info("{}찾기 시도, roomId = {}", roomName, roomId);
+        Room room = rooms.get(roomId);
 
         if (room == null) {
-            log.debug("Room {} not existent. Will create now!", roomName);
-            room = new Room(roomName, kurento.createMediaPipeline(), 1l);
-            rooms.put(roomName, room);
+            log.info("{}이/가 없다, 새로 생성!", roomName);
+            room = new Room(roomName, kurento.createMediaPipeline(), roomId);
+            rooms.put(roomId, room);
         }else if(room.getPipeline() == null){
+            log.info("{}에 pipeline이 없다!. create pipeline!", roomName);
             room.setPipeline(kurento.createMediaPipeline());
         }
-        log.debug("Room {} found!", roomName);
+        log.info("{}을 찾음!, roomId = {}", roomName, roomId);
+        log.info(room.toString());
         return room;
     }
 
@@ -67,9 +92,9 @@ public class RoomManager {
      *          the room to be removed
      */
     public void removeRoom(Room room) {
-        this.rooms.remove(room.getRoomName());
+        this.rooms.remove(room.getRoomId());
         room.close();
-        log.info("Room {} removed and closed", room.getRoomName());
+        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
     }
 
 }

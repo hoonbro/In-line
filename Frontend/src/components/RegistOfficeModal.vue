@@ -17,11 +17,13 @@
           <TextInput
             v-for="(field, key) in officeFormData"
             :key="key"
-            :name="key"
             v-model="field.value"
+            :name="key"
             :formData="officeFormData"
             :field="field"
+            :maxlength="field.maxlength"
             @update:modelValue="officeFormError = ''"
+            @update:validate="handleUpdateValidate(officeFormData, $event)"
           />
 
           <div class="grid gap-1">
@@ -48,11 +50,12 @@
           <TextInput
             v-for="(field, key) in managerFormData"
             :key="key"
-            :name="key"
             v-model="field.value"
+            :name="key"
             :formData="managerFormData"
             :field="field"
             @update:modelValue="managerFormError = ''"
+            @update:validate="handleUpdateValidate(managerFormData, $event)"
           />
           <div>
             <input
@@ -94,6 +97,7 @@ import {
   emailValidator,
   confirmPasswordValidator,
   passwordSecurityValidator,
+  handleUpdateValidate,
 } from "@/lib/validator"
 import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
@@ -108,10 +112,10 @@ export default {
       officeName: {
         label: "회사 이름",
         type: "text",
-        // value: "",
-        value: "asdf",
+        value: "",
         validators: [requiredValidator],
         errors: {},
+        maxlength: 20,
       },
     })
     const officeFormError = ref("")
@@ -119,56 +123,49 @@ export default {
       email: {
         label: "담당자 이메일",
         type: "email",
-        // value: "",
-        value: "asdf@asdf.asdf",
+        value: "",
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
       deptName: {
         label: "담당자 소속",
         type: "text",
-        // value: "",
-        value: "인사",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       jobName: {
         label: "담당자 역할",
         type: "text",
-        // value: "",
-        value: "팀원",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       name: {
         label: "담당자 이름",
         type: "text",
-        // value: "",
-        value: "테스터",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       phone: {
         label: "담당자 휴대전화",
         type: "text",
-        // value: "",
-        value: "00",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       password: {
         label: "담당자 비밀번호",
         type: "password",
-        // value: "",
-        value: "q1w2e3r4!@",
+        value: "",
         validators: [requiredValidator, passwordSecurityValidator],
         errors: {},
       },
       confirmPassword: {
         label: "담당자 비밀번호 확인",
         type: "password",
-        // value: "",
-        value: "q1w2e3r4!@",
+        value: "",
         validators: [requiredValidator, confirmPasswordValidator],
         errors: {},
       },
@@ -202,12 +199,12 @@ export default {
 
     const managerFormIsFilled = computed(() => {
       return Object.keys(managerFormData).every(
-        key => managerFormData[key].value
+        (key) => managerFormData[key].value
       )
     })
 
     const managerFormNoError = computed(() => {
-      return Object.keys(managerFormData).every(key => {
+      return Object.keys(managerFormData).every((key) => {
         return !Object.keys(managerFormData[key].errors).length
       })
     })
@@ -226,15 +223,16 @@ export default {
     const registerOffice = async () => {
       const submitData = { term: term.value }
       Object.keys(formData.value).forEach(
-        key => (submitData[key] = formData.value[key].value)
+        (key) => (submitData[key] = formData.value[key].value)
       )
       try {
         await store.dispatch("office/registerOffice", submitData)
+        alert("회사 등록을 완료했어요!")
+        emit("close")
       } catch (error) {
         if (error.response.status === 409) {
           managerFormError.value = "이미 존재하는 이메일이에요!"
         } else {
-          console.log(error)
           alert(error)
         }
       }
@@ -251,6 +249,7 @@ export default {
       formIsValid,
       term,
       registerOffice,
+      handleUpdateValidate,
     }
   },
 }

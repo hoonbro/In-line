@@ -155,12 +155,17 @@ public class UserController {
         HttpStatus httpStatus = HttpStatus.CREATED;
         try {
             UserEntity userEntity = userService.getUserByEmail(emailDto.getEmail());
-            String password = emailService.sendPassword(emailDto.getEmail());
-            userService.updatePassword(userEntity, password);
-            log.info("비밀번호 변경 및 메일 전송 성공");
+            if(userEntity != null) {
+                String password = emailService.sendPassword(emailDto.getEmail());
+                userService.updatePassword(userEntity, password);
+                log.info("비밀번호 변경 및 메일 전송 성공");
+            }else{
+                log.error("등록된 이메일이 아닙니다.");
+                httpStatus = HttpStatus.BAD_REQUEST;
+            }
         }catch (Exception e){
-            log.error("등록된 이메일이 아닙니다.");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.error("서버 에러");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(httpStatus);
     }

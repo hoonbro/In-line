@@ -1,24 +1,43 @@
 {
-  "rooms": [
-    {
-      "id": 1,
-      "roomName": "마케팅-1"
-    },
+  "todos": [
     {
       "id": 2,
-      "roomName": "마케팅-2"
+      "title": "할 일 제목2",
+      "content": "할 일 내용입니다. 할 일 내용입니다. 할 일 내용입니다.",
+      "day": "2021-07-26",
+      "done": false
     },
     {
       "id": 3,
-      "roomName": "영업-1"
+      "title": "할 일 제목3",
+      "content": "할 일 내용입니다. 할 일 내용입니다. 할 일 내용입니다.",
+      "day": "2021-07-26",
+      "done": false
     },
     {
-      "id": 4,
-      "roomName": "개발-1"
+      "title": "ㅋㅌㅊㅋㅌㅊㅋㅌㅊ",
+      "content": "ㅋㅌㅊ",
+      "day": "",
+      "done": false,
+      "id": 5
+    }
+  ],
+  "rooms": [
+    {
+      "name": "dd",
+      "id": 1
     },
     {
-      "id": 5,
-      "roomName": "잡담-1"
+      "name": "ddddd",
+      "id": 2
+    },
+    {
+      "name": "ㅎㅇ",
+      "id": 4
+    },
+    {
+      "name": "수정했땅",
+      "id": 5
     }
   ],
   "users": [
