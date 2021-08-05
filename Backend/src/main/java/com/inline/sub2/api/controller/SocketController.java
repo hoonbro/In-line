@@ -18,7 +18,7 @@ public class SocketController {
     ChatService chatService;
 
 
-    // /receive를 메시지를 받을 endpoint로 설정합니다.
+    // /receive를 메시지를 받을 endpoint로 설정합니다. 
     @MessageMapping("/pub/{officeId}")
     // /send로 메시지를 반환합니다.
     @SendTo("/sub/{officeId}")
@@ -26,6 +26,7 @@ public class SocketController {
     public ChatEntity SocketHandler(ChatDto chatDto, @DestinationVariable("officeId") Long officeId) {
           chatDto.setOfficeId(officeId);
         ChatEntity chatEntity = chatService.insertMessage(chatDto);
+        System.out.println("내용 확인 : "+ chatEntity.getContent());
         return chatEntity;
     }
 }
