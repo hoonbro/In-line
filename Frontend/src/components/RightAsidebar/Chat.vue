@@ -2,7 +2,7 @@
   <div class="chat-container">
     <div class="chat-list-container">
       <div class="chat-list" ref="chatListEl">
-        <!-- <div class="chat-list-item" v-for="i in 4" :key="i">
+        <div class="chat-list-item" v-for="i in 4" :key="i">
           <p class="user-name">
             선명준
           </p>
@@ -10,10 +10,13 @@
             <p class="message">채팅 메세지채팅 메세지채팅 메세지채팅 메세지</p>
             <p class="created">11:10 AM</p>
           </div>
-        </div> -->
-        <!-- <div class="chat-list-item" v-for="chat in chatList" :key="chat">
-
-        </div> -->
+        </div>
+        <div class="chat-list-item" v-for="(chat, idx) in chatList" :key="idx">
+          <p class="user-">{{ chat.userName }}</p>
+          <div class="content">
+            <p class="message">{{ chat.content }}</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="chat-input-container">
@@ -30,7 +33,6 @@
 <script>
 import { computed, onMounted, ref } from "vue"
 import { useStore } from "vuex"
-// import { computed, onMounted } from "@vue/runtime-core"
 export default {
   name: "Chat",
   setup() {
@@ -57,6 +59,7 @@ export default {
           JSON.stringify(msg),
           {}
         )
+        content.value = ""
       }
     }
 
@@ -88,7 +91,7 @@ export default {
     @apply flex-1 overflow-hidden p-2;
 
     .chat-list {
-      @apply h-full overflow-auto grid gap-4;
+      @apply h-full overflow-auto grid gap-4 content-start;
 
       .chat-list-item {
         @apply grid gap-1;

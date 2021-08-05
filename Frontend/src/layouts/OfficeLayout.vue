@@ -30,21 +30,26 @@ export default {
     const officeId = computed(() => store.state.auth.user.officeId)
     const userId = computed(() => store.state.auth.user.userId)
     const userName = computed(() => store.state.auth.user.name)
-    const stompClient = computed(() => store.state.socket.stompClient)
+    // const stompClient = computed(() => store.state.socket.stompClient)
+    const stompClient = ref(null)
     // const officeChatList = computed(() => store.state.socket.officeChatList)
 
     const connectStomp = () => {
-      const serverURL = process.env.VUE_APP_SOCKJS_URL
+      // const serverURL = process.env.VUE_APP_SOCKJS_URL
+      const serverURL = "/api/v1/stomp"
       const socket = new SockJS(serverURL)
-      store.commit("socket/setStompClient", Stomp.over(socket))
-
+      stompClient.value = Stomp.over(socket)
+      // store.commit("socket/setStompClient", Stomp.over(socket))
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
       stompClient.value.connect(
         {},
         frame => {
-          store.commit("socket/setStompClient", {
-            ...stompClient.value,
-            connected: true,
-          })
+          // store.commit("socket/setStompClient", {
+          //   ...stompClient.value,
+          //   connected: true,
+          // })
+          stompClient.value.connected = true
+          store.commit("socket/setStompClient", stompClient.value)
           console.log("소켓 연결 성공", frame)
           console.log(stompClient.value)
           stompClient.value.subscribe(`/sub/${officeId.value}`, res => {
@@ -56,16 +61,19 @@ export default {
         error => {
           // 소켓 연결 실패
           console.log("소켓 연결 실패", error)
-          store.commit("socket/setStompClient", {
-            ...stompClient.value,
-            connected: false,
-          })
+          stompClient.value.connected = false
+
+          // store.commit("socket/setStompClient", {
+          //   ...stompClient.value,
+          //   connected: false,
+          // })
         }
       )
     }
 
     onMounted(() => {
       connectStomp()
+      store.dispatch("socket/getAllOfficeChat")
     })
 
     return { officeId, userId, userName }
