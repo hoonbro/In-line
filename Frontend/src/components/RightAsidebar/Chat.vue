@@ -2,18 +2,7 @@
   <div class="chat-container">
     <div class="chat-list-container">
       <div class="chat-list" ref="chatListEl">
-        <div
-          class="chat-list-item"
-          :class="{ 'my-chat': chat.userId === userId }"
-          v-for="(chat, idx) in chatList"
-          :key="idx"
-        >
-          <p class="user-name">{{ chat.userName }}</p>
-          <div class="content">
-            <p class="message">{{ chat.content }}</p>
-            <p class="created">{{ chat.sendTime }}</p>
-          </div>
-        </div>
+        <ChatListItem v-for="(chat, idx) in chatList" :key="idx" :chat="chat" />
       </div>
     </div>
     <div class="chat-input-container">
@@ -21,7 +10,9 @@
         v-model="content"
         placeholder="채팅하려면 여기에 내용을 입력하세요."
         type="text"
-        @keyup.enter="sendMessage"
+        @keydown.enter.exact.prevent="sendMessage"
+        @keyup.enter.exact.prevent
+        @keydown.enter.shift.exact="newLine"
       />
     </div>
   </div>
@@ -30,8 +21,10 @@
 <script>
 import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
+import ChatListItem from "@/components/RightAsidebar/ChatListItem.vue"
 export default {
   name: "Chat",
+  components: { ChatListItem },
   setup() {
     const store = useStore()
     const officeId = computed(() => store.state.auth.user.officeId)
@@ -40,17 +33,21 @@ export default {
     const chatList = computed(() => {
       return store.state.socket.officeChatList.map(chat => {
         const AMPM = +chat.sendTime.slice(0, 2) < 12 ? "AM" : "PM"
-        chat.sendTime = `${chat.sendTime.slice(0, 5)} ${AMPM}`
-        return chat
+        const formatedTime = `${chat.sendTime.slice(0, 5)} ${AMPM}`
+        return { ...chat, sendTime: formatedTime }
       })
     })
     const stompClient = computed(() => store.state.socket.stompClient)
     const chatListEl = ref(null)
     const content = ref("")
 
+    const newLine = () => {
+      content.value = `${content.value}\n`
+    }
+
     const sendMessage = event => {
-      console.log(`Send message: ${content.value}`)
-      if (stompClient.value && stompClient.value.connected) {
+      if (content.value && stompClient.value && stompClient.value.connected) {
+        console.log(`Send message: ${content.value}`)
         const msg = {
           officeId: officeId.value,
           userId: userId.value,
@@ -62,8 +59,8 @@ export default {
           JSON.stringify(msg),
           {}
         )
-        content.value = ""
       }
+      content.value = ""
     }
 
     onUpdated(() => {
@@ -101,37 +98,6 @@ export default {
 
     .chat-list {
       @apply h-full overflow-auto grid gap-4 content-start;
-
-      .chat-list-item {
-        @apply grid gap-1 px-4;
-
-        .content {
-          @apply flex items-end gap-2;
-
-          .message {
-            max-width: 224px;
-            @apply py-2 px-4 bg-gray-50 text-sm;
-          }
-
-          .created {
-            @apply text-xs text-gray-400;
-          }
-        }
-
-        &.my-chat {
-          .user-name {
-            @apply hidden;
-          }
-
-          .content {
-            @apply flex-row-reverse;
-
-            .message {
-              @apply bg-yellow-50;
-            }
-          }
-        }
-      }
     }
   }
 
