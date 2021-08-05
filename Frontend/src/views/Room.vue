@@ -38,7 +38,9 @@
             <span class="material-icons"> videocam_off </span> 카메라 켜기
           </div>
           <div class="close-button">
-            <span @click="leaveRoom()" class="cursor-pointer">✕</span>
+            <router-link :to="{ name: 'Office' }">
+              <span class="cursor-pointer">✕</span></router-link
+            >
           </div>
         </div>
       </div>
@@ -57,7 +59,6 @@ import {
 } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
-// import Participant from "@/lib/participant.js"
 import kurentoUtils from "kurento-utils"
 
 export default {
@@ -97,15 +98,6 @@ export default {
 
     ws.onopen = function(event) {
       register()
-      //   var message = {
-      //     id: "joinRoom",
-      //     name: "Kim",
-      //     room: "전체 회의방",
-      //     roomId: 2,
-      //   }
-
-      //   sendMessage(message)
-      // ws.send("TEST!")
     }
 
     function sendMessage(message) {
@@ -113,10 +105,6 @@ export default {
       console.log("Sending message: " + jsonMessage)
       ws.send(jsonMessage)
     }
-
-    // onMounted(() => {
-    //   register()
-    // })
 
     const participants = {}
 
@@ -408,7 +396,7 @@ export default {
 
   .video-chat {
     .video-part {
-      @apply grid grid-cols-5 m-12 bg-Teal-300;
+      @apply grid grid-cols-3 m-12 bg-Teal-300;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;
