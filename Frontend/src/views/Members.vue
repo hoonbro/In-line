@@ -19,18 +19,8 @@
           </div>
           <div class="departments-container">
             <ul class="department-list">
-              <DepartmentListItem
-                v-for="i in 2"
-                :key="i"
-                :name="'FE'"
-                :count="3"
-              />
-              <DepartmentListItem
-                v-for="i in 2"
-                :key="i"
-                :name="'BE'"
-                :count="3"
-              />
+              <DepartmentListItem :name="'FE'" :count="3" />
+              <DepartmentListItem :name="'BE'" :count="3" />
             </ul>
           </div>
         </div>
@@ -52,9 +42,9 @@
             >
               <MemberListItem
                 v-for="member in searchedMembers"
-                :key="member.id"
+                :key="member.userId"
                 :member="member"
-                @click="openProfileModal(member.id)"
+                @click="openProfileModal(member.userId)"
               />
             </ul>
           </div>

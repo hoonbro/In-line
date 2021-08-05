@@ -10,10 +10,11 @@
           <TextInput
             v-for="(field, key) in formData"
             :key="key"
-            :name="key"
             v-model="field.value"
-            :field="field"
+            :name="key"
             :formData="formData"
+            :field="field"
+            @update:validate="handleUpdateValidate(formData, $event)"
           />
         </div>
         <button
@@ -33,11 +34,11 @@
 import { reactive } from "@vue/reactivity"
 import { computed } from "@vue/runtime-core"
 import axios from "axios"
+import { useStore } from "vuex"
 import {
   requiredValidator,
   emailValidator,
-  confirmPasswordValidator,
-  passwordSecurityValidator,
+  handleUpdateValidate,
 } from "@/lib/validator"
 import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
@@ -49,56 +50,12 @@ export default {
     TextInput,
   },
   setup(_, { emit }) {
-    // const requiredValidator = key => {
-    //   if (formData[key].value < 1) {
-    //     formData[key].errors.required = "필수 입력 요소입니다."
-    //     return false
-    //   }
-    //   delete formData[key].errors.required
-    //   return true
-    // }
-
-    // const emailValidator = key => {
-    //   if (
-    //     !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
-    //       formData[key].value
-    //     )
-    //   ) {
-    //     formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
-    //     return false
-    //   }
-    //   delete formData[key].errors.invalidEmail
-    //   return true
-    // }
-
-    // const confirmPasswordValidator = key => {
-    //   if (formData[key].value !== formData.password.value) {
-    //     formData[key].errors.notMatch = "비밀번호가 일치하지 않습니다."
-    //     return false
-    //   }
-    //   delete formData[key].errors.notMatch
-    //   return true
-    // }
-
-    // const passwordSecurityValidator = key => {
-    //   if (
-    //     !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
-    //       formData[key].value
-    //     )
-    //   ) {
-    //     formData[key].errors.weekPassword =
-    //       "대소문자, 숫자, 특수문자 조합으로 8자리 이상으로 작성하세요."
-    //     return false
-    //   }
-    //   delete formData[key].errors.weekPassword
-    //   return true
-    // }
-
+    const store = useStore()
     const formData = reactive({
       name: {
         label: "이름",
         type: "text",
-        value: "",
+        value: "김병훈",
         validators: [requiredValidator],
         errors: {},
       },
@@ -109,43 +66,29 @@ export default {
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
-      department: {
+      deptName: {
         label: "소속",
         type: "text",
-        value: "",
+        value: "인사",
         validators: [requiredValidator],
         errors: {},
       },
-      position: {
-        label: "역할(직무)",
+      jobName: {
+        label: "역할",
         type: "text",
-        value: "",
+        value: "사원",
         validators: [requiredValidator],
-        errors: {},
-      },
-      password: {
-        label: "비밀번호",
-        type: "password",
-        value: "",
-        validators: [requiredValidator, passwordSecurityValidator],
-        errors: {},
-      },
-      confirmPassword: {
-        label: "비밀번호 확인",
-        type: "password",
-        value: "",
-        validators: [requiredValidator, confirmPasswordValidator],
         errors: {},
       },
     })
 
     const allFieldIsFilled = computed(() => {
-      return Object.keys(formData).every(key => formData[key].value)
+      return Object.keys(formData).every((key) => formData[key].value)
     })
 
     const allFieldDoesNotHaveError = computed(() => {
       return Object.keys(formData).every(
-        key => !Object.keys(formData[key].errors).length
+        (key) => !Object.keys(formData[key].errors).length
       )
     })
 
@@ -153,24 +96,28 @@ export default {
       return allFieldIsFilled.value && allFieldDoesNotHaveError.value
     })
 
-    const submitForm = () => {
-      const submitData = {}
-      Object.keys(formData).forEach(key => {
-        if (key === "confirmPassword") return
+    const submitForm = async () => {
+      const submitData = {
+        officeId: store.state.auth.user.officeId,
+      }
+      Object.keys(formData).forEach((key) => {
         submitData[key] = formData[key].value
       })
-      alert("Post 요청")
-      axios({
-        url: "/api/v1/users",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: submitData,
-      }).then(res => {
-        console.log(res)
+      try {
+        await axios({
+          url: "/api/v1/on-board/user",
+          method: "POST",
+          headers: {
+            accessToken: store.state.auth.accessToken,
+          },
+          data: submitData,
+        })
+        alert("전송 성공")
         emit("close")
-      })
+      } catch (error) {
+        alert("전송 실패")
+        console.log(error)
+      }
     }
 
     return {
@@ -179,6 +126,7 @@ export default {
       allFieldIsFilled,
       allFieldDoesNotHaveError,
       formIsValid,
+      handleUpdateValidate,
     }
   },
 }

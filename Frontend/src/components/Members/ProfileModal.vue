@@ -19,27 +19,56 @@
             @change="onFileChange"
           />
           <button class="edit-btn" v-if="true" @click="clickInputEl">
-            <span class="material-icons ">edit</span>
+            <span class="material-icons">edit</span>
           </button>
         </div>
       </div>
       <div>
         <div class="header">
           <h3>기본정보</h3>
-          <button class="edit-btn" v-if="true">
-            <span class="material-icons ">edit</span>
+          <button
+            class="edit-btn"
+            v-if="!editMode"
+            @click="editMode = !editMode"
+          >
+            <span class="material-icons">edit</span>
           </button>
         </div>
-        <ul class="info-list">
-          <li class="info-list-item" v-for="(field, key) in profile" :key="key">
+        <!-- Read Mode -->
+        <ul class="info-list" v-if="!editMode">
+          <li
+            class="info-list-item"
+            v-for="(field, key) in profileForm"
+            :key="key"
+          >
             <p class="label">{{ field.label }}</p>
-            <p class="">{{ field.value }}</p>
+            <p class="flex-1">{{ field.value }}</p>
           </li>
         </ul>
       </div>
-      <div class="change-pwd-btn-container" v-if="true">
-        <button>비밀번호 변경</button>
+      <div class="change-pwd-btn-container" v-if="!editMode">
+        <router-link :to="{ name: 'ChangePassword' }">
+          비밀번호 변경
+        </router-link>
       </div>
+      <!-- Edit Mode -->
+      <form class="edit-form" v-else @submit.prevent="updateProfile">
+        <TextInput
+          v-for="(field, key) in profileForm"
+          :key="key"
+          :name="key"
+          v-model="field.value"
+          :formData="profileForm"
+          :field="field"
+          :maxlength="field.maxlength"
+          :disabled="field.disabled"
+          @update:modelValue="profileFormError = ''"
+          @update:validate="handleUpdateValidate(profileForm, $event)"
+        />
+        <button class="w-full bg-blue-500 text-white py-4 rounded-xl">
+          적용하기
+        </button>
+      </form>
     </template>
   </Modal>
 </template>
@@ -47,51 +76,83 @@
 <script>
 import { reactive, ref } from "@vue/reactivity"
 import { onMounted } from "@vue/runtime-core"
-
-import Modal from "@/components/Common/Modal.vue"
 import { useStore } from "vuex"
+
+import {
+  requiredValidator,
+  emailValidator,
+  handleUpdateValidate,
+} from "@/lib/validator"
+import Modal from "@/components/Common/Modal.vue"
+import TextInput from "@/components/TextInput.vue"
 
 export default {
   name: "ProfileModal",
   components: {
     Modal,
+    TextInput,
   },
   props: {
     userId: Number,
   },
   setup(props) {
     const store = useStore()
-    const profile = reactive({
-      department: {
-        label: "부서",
-        value: "",
-      },
-      position: {
-        label: "직무",
-        value: "",
-      },
+    const profileForm = reactive({
       email: {
         label: "이메일",
+        type: "email",
         value: "",
+        validators: [requiredValidator, emailValidator],
+        errors: {},
+        disabled: true,
+      },
+      department: {
+        label: "부서",
+        type: "text",
+        value: "",
+        validators: [requiredValidator],
+        errors: {},
+      },
+      position: {
+        label: "역할",
+        type: "text",
+        value: "",
+        validators: [requiredValidator],
+        errors: {},
       },
       name: {
         label: "이름",
+        type: "text",
         value: "",
+        validators: [requiredValidator],
+        errors: {},
       },
       nickName: {
         label: "닉네임",
+        type: "text",
         value: "",
+        validators: [],
+        errors: {},
       },
       phone: {
         label: "휴대전화",
+        type: "text",
         value: "",
+        validators: [],
+        errors: {},
       },
     })
     const profileImg = ref(null)
     const fileInputEl = ref(null)
-
+    const editMode = ref(false)
+    const profileFormError = ref("")
     const clickInputEl = () => {
       fileInputEl.value.click()
+    }
+
+    const updateProfile = () => {
+      alert("프로필 수정하기")
+      editMode.value = false
     }
 
     const onFileChange = () => {
@@ -105,9 +166,12 @@ export default {
         const res = await store.dispatch("office/getMember", props.userId)
         console.log(res)
         if (res.status === 200) {
-          Object.keys(profile).forEach(key => {
-            profile[key].value = res.data[key]
-          })
+          profileForm.email.value = res.data.email
+          profileForm.department.value = res.data.deptEntity.deptName
+          profileForm.position.value = res.data.jobEntity.jobName
+          profileForm.name.value = res.data.name
+          profileForm.nickName.value = res.data.nickName
+          profileForm.phone.value = res.data.phone
         }
       } catch (error) {
         console.log(error)
@@ -115,11 +179,15 @@ export default {
     })
 
     return {
-      profile,
+      profileForm,
+      editMode,
       profileImg,
       fileInputEl,
       clickInputEl,
       onFileChange,
+      profileFormError,
+      updateProfile,
+      handleUpdateValidate,
     }
   },
 }
@@ -180,10 +248,14 @@ header {
     @apply flex items-center py-4 border-b;
 
     .label {
-      @apply font-medium text-gray-400 w-40;
+      @apply font-medium text-gray-400 w-32 flex-shrink-0;
     }
   }
 }
+.edit-form {
+  @apply grid gap-2;
+}
+
 .change-pwd-btn-container {
   @apply mt-4 flex justify-end;
 
