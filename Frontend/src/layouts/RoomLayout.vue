@@ -11,7 +11,7 @@
 
 <script>
 import MainNav from "@/components/Nav/MainNav.vue"
-import RoomRightAsidebar from "@/components/Room/RoomRightAsidebar.vue"
+import RoomRightAsidebar from "@/components/RightAsidebar.vue"
 import Room from "@/views/Room.vue"
 
 export default {

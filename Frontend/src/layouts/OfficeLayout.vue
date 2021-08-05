@@ -37,16 +37,12 @@ export default {
       const socket = new SockJS(serverURL)
       stompClient.value = Stomp.over(socket)
       // store.commit("socket/setStompClient", Stomp.over(socket))
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
       stompClient.value.connect(
         {},
         frame => {
           stompClient.value.connected = true
           store.commit("socket/setStompClient", stompClient.value)
-          console.log("소켓 연결 성공", frame)
-          console.log(stompClient.value)
           stompClient.value.subscribe(`/sub/${officeId.value}`, res => {
-            console.log("구독으로 받은 메시지 입니다.", JSON.parse(res.body))
             // 받은 데이터를 파싱하여 전체 채팅 리스트에 넣어줍니다.
             const message = JSON.parse(res.body)
             message.send
@@ -55,7 +51,6 @@ export default {
         },
         error => {
           // 소켓 연결 실패
-          console.log("소켓 연결 실패", error)
           alert("소켓 연결 실패!")
           stompClient.value.connected = false
           store.commit("socket/setStompClient", stompClient.value)
