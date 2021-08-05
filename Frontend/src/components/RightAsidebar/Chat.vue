@@ -2,19 +2,16 @@
   <div class="chat-container">
     <div class="chat-list-container">
       <div class="chat-list" ref="chatListEl">
-        <div class="chat-list-item" v-for="i in 4" :key="i">
-          <p class="user-name">
-            선명준
-          </p>
-          <div class="content">
-            <p class="message">채팅 메세지채팅 메세지채팅 메세지채팅 메세지</p>
-            <p class="created">11:10 AM</p>
-          </div>
-        </div>
-        <div class="chat-list-item" v-for="(chat, idx) in chatList" :key="idx">
-          <p class="user-">{{ chat.userName }}</p>
+        <div
+          class="chat-list-item"
+          :class="{ 'my-chat': chat.userId === userId }"
+          v-for="(chat, idx) in chatList"
+          :key="idx"
+        >
+          <p class="user-name">{{ chat.userName }}</p>
           <div class="content">
             <p class="message">{{ chat.content }}</p>
+            <p class="created">{{ chat.sendTime }}</p>
           </div>
         </div>
       </div>
@@ -24,14 +21,14 @@
         v-model="content"
         placeholder="채팅하려면 여기에 내용을 입력하세요."
         type="text"
-        @keydown.enter="sendMessage"
+        @keyup.enter="sendMessage"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, ref } from "vue"
+import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
 export default {
   name: "Chat",
@@ -40,7 +37,13 @@ export default {
     const officeId = computed(() => store.state.auth.user.officeId)
     const userId = computed(() => store.state.auth.user.userId)
     const userName = computed(() => store.state.auth.user.name)
-    const chatList = computed(() => store.state.socket.officeChatList)
+    const chatList = computed(() => {
+      return store.state.socket.officeChatList.map(chat => {
+        const AMPM = +chat.sendTime.slice(0, 2) < 12 ? "AM" : "PM"
+        chat.sendTime = `${chat.sendTime.slice(0, 5)} ${AMPM}`
+        return chat
+      })
+    })
     const stompClient = computed(() => store.state.socket.stompClient)
     const chatListEl = ref(null)
     const content = ref("")
@@ -63,9 +66,14 @@ export default {
       }
     }
 
+    onUpdated(() => {
+      chatListEl.value.scrollTo({
+        top: chatListEl.value.scrollHeight,
+      })
+    })
+
     onMounted(() => {
       if (chatListEl.value) {
-        console.log(chatListEl.value)
         chatListEl.value.scrollTo({
           top: chatListEl.value.scrollHeight,
           behavior: "smooth",
@@ -73,6 +81,7 @@ export default {
       }
     })
     return {
+      userId,
       content,
       chatList,
       chatListEl,
@@ -94,14 +103,14 @@ export default {
       @apply h-full overflow-auto grid gap-4 content-start;
 
       .chat-list-item {
-        @apply grid gap-1;
+        @apply grid gap-1 px-4;
 
         .content {
-          @apply flex items-end;
+          @apply flex items-end gap-2;
 
           .message {
             max-width: 224px;
-            @apply py-2 px-4 bg-gray-50 text-sm mr-1;
+            @apply py-2 px-4 bg-gray-50 text-sm;
           }
 
           .created {
@@ -111,7 +120,7 @@ export default {
 
         &.my-chat {
           .user-name {
-            @apply text-right;
+            @apply hidden;
           }
 
           .content {
