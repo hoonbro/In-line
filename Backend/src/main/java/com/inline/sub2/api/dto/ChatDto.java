@@ -17,6 +17,6 @@ public class ChatDto {
     String userName;
     String content;
     Date sendDate;
-    Date sendTime;
+    String sendTime;
 
 }
