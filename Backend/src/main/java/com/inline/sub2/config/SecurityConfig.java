@@ -40,23 +40,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), userService)) //HTTP 요청에 JWT 토큰 인증 필터를 거치도록 필터를 추가
                 .authorizeRequests() //시큐리티 처리에 HttpServletRequest를 이용한다는 것을 의미
                 //antMatchers()는 특정한 경로를 지정합니다.
-//                .anyRequest().permitAll()
-                .antMatchers(
-                        "/users/login",
-                        "/users",
-                        "/users/reset-password").permitAll()
-                .antMatchers(
-                        "/office",
-                        "/office/duplicate/{officeName}").permitAll()
-                .antMatchers(
-                        "/v2/api-docs",
-                        "/swagger-resources/**",
-                        "/swagger-ui.html",
-                        "/webjars/**" ,
-                        /*Probably not needed*/ "/swagger.json").permitAll()
-                .antMatchers("/users/test").hasRole("ADMIN")
-                .antMatchers("/").authenticated()       //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
-                .anyRequest().hasAnyRole("USER", "ADMIN")		//permitAll()는 모든 사용자가 접근할 수 있다는 것을 의미
+                .anyRequest().permitAll()
+//                .antMatchers(
+//                        "/users/login",
+//                        "/users",
+//                        "/users/reset-password").permitAll()
+//                .antMatchers(
+//                        "/office",
+//                        "/office/duplicate/{officeName}").permitAll()
+//                .antMatchers(
+//                        "/v2/api-docs",
+//                        "/swagger-resources/**",
+//                        "/swagger-ui.html",
+//                        "/webjars/**" ,
+//                        /*Probably not needed*/ "/swagger.json").permitAll()
+//                .antMatchers("/users/test").hasRole("ADMIN")
+//                .antMatchers("/").authenticated()       //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
+//                .anyRequest().hasAnyRole("USER", "ADMIN")		//permitAll()는 모든 사용자가 접근할 수 있다는 것을 의미
                 .and().cors();
     }
 }
