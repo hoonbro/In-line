@@ -45,6 +45,7 @@ export default {
   },
   setup() {
     const roomManageModalOpen = ref(false)
+
     return { roomManageModalOpen }
   },
 }
@@ -54,25 +55,19 @@ export default {
 .office {
   scrollbar-width: none;
   @apply bg-gray-100 p-10 grid gap-10 content-start overflow-auto;
-
   &::-webkit-scrollbar {
     display: none;
   }
-
   .rooms-row {
     @apply w-full grid gap-4;
-
     &:last-child {
       @apply mb-10;
     }
-
     .rooms-title {
       @apply text-2xl font-bold;
     }
-
     .rooms-container {
       @apply w-full grid grid-cols-2 gap-8 lg:grid-cols-3;
-
       &.basic {
         @apply grid-cols-2;
       }
@@ -80,7 +75,6 @@ export default {
   }
   .button-group {
     @apply flex justify-end;
-
     button {
       @apply w-40 h-9 bg-blue-800 text-white rounded-xl mr-0;
     }

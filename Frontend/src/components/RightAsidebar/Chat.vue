@@ -2,7 +2,7 @@
   <div class="chat-container">
     <div class="chat-list-container">
       <div class="chat-list" ref="chatListEl">
-        <div class="chat-list-item" v-for="i in 4" :key="i">
+        <!-- <div class="chat-list-item" v-for="i in 4" :key="i">
           <p class="user-name">
             선명준
           </p>
@@ -10,56 +10,59 @@
             <p class="message">채팅 메세지채팅 메세지채팅 메세지채팅 메세지</p>
             <p class="created">11:10 AM</p>
           </div>
-        </div>
-        <div class="chat-list-item" v-for="i in 4" :key="i">
-          <p class="user-name">
-            선명준
-          </p>
-          <div class="content">
-            <p class="message">채팅 메세지</p>
-            <p class="created">11:10 AM</p>
-          </div>
-        </div>
-        <div class="chat-list-item my-chat" v-for="i in 2" :key="i">
-          <p class="user-name">
-            김병훈
-          </p>
-          <div class="content">
-            <p class="message">채팅 메세지채팅 메세지채팅 메세지채팅 메세지</p>
-            <p class="created">11:10 AM</p>
-          </div>
-        </div>
-        <div class="chat-list-item my-chat" v-for="i in 2" :key="i">
-          <p class="user-name">
-            김병훈
-          </p>
-          <div class="content">
-            <p class="message">채팅 메세지</p>
-            <p class="created">11:10 AM</p>
-          </div>
-        </div>
+        </div> -->
+        <!-- <div class="chat-list-item" v-for="chat in chatList" :key="chat">
+
+        </div> -->
       </div>
     </div>
     <div class="chat-input-container">
       <textarea
+        v-model="content"
         placeholder="채팅하려면 여기에 내용을 입력하세요."
         type="text"
+        @keydown.enter="sendMessage"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from "@vue/reactivity"
-import { onMounted } from "@vue/runtime-core"
+import { computed, onMounted, ref } from "vue"
+import { useStore } from "vuex"
+// import { computed, onMounted } from "@vue/runtime-core"
 export default {
   name: "Chat",
   setup() {
+    const store = useStore()
+    const officeId = computed(() => store.state.auth.user.officeId)
+    const userId = computed(() => store.state.auth.user.userId)
+    const userName = computed(() => store.state.auth.user.name)
+    const chatList = computed(() => store.state.socket.officeChatList)
+    const stompClient = computed(() => store.state.socket.stompClient)
     const chatListEl = ref(null)
+    const content = ref("")
+
+    const sendMessage = event => {
+      console.log(`Send message: ${content.value}`)
+      if (stompClient.value && stompClient.value.connected) {
+        const msg = {
+          officeId: officeId.value,
+          userId: userId.value,
+          userName: userName.value,
+          content: content.value,
+        }
+        stompClient.value.send(
+          `/pub/${officeId.value}`,
+          JSON.stringify(msg),
+          {}
+        )
+      }
+    }
 
     onMounted(() => {
-      if (chatListEl) {
-        console.log(chatListEl)
+      if (chatListEl.value) {
+        console.log(chatListEl.value)
         chatListEl.value.scrollTo({
           top: chatListEl.value.scrollHeight,
           behavior: "smooth",
@@ -67,7 +70,10 @@ export default {
       }
     })
     return {
+      content,
+      chatList,
       chatListEl,
+      sendMessage,
     }
   },
 }
