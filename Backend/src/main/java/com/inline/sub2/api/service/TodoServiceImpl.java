@@ -26,7 +26,7 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     public TodoEntity registTodo(TodoEntity todoEntity) {
-        todoEntity.setTodoDate(new Date());
+//        todoEntity.setDay(new Date());
 
 
         return todoRepository.save(todoEntity);
@@ -34,7 +34,7 @@ public class TodoServiceImpl implements TodoService{
 
     @Override
     public TodoEntity updateTodo(TodoEntity todoEntity) {
-        todoEntity.setTodoDate(new Date());
+//        todoEntity.setTodoDate(new Date());
         return todoRepository.save(todoEntity);
 
 

@@ -54,6 +54,7 @@ public class TodoController {
         catch(Exception e) {
             todoEntity = null;
             httpStatus = HttpStatus.UNAUTHORIZED;
+            return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
         }
 
         return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
