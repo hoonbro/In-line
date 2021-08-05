@@ -3,36 +3,9 @@
     <div class="wrapper">
       <div class="video-chat">
         <!-- ------------------------------------------------------------------------- -->
-        <div class="video-part" v-if="videoList > 16">
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
+        <div id="participants" class="video-part">
+          <!-- 이 안에 participant가 들어온다 -->
         </div>
-        <div class="video-part2" v-else-if="videoList > 9">
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
-        </div>
-        <div class="video-part3" v-else-if="videoList > 4">
-          <Video
-            v-for="(video, idx) in videoList"
-            :key="video"
-            :idx="idx"
-            :videoList="videoList"
-          />
-        </div>
-        <div class="video-part4" v-else>
-          <Video
-            v-for="video in videoList"
-            :key="video"
-            :videoList="videoList"
-          />
-        </div>
-        <div id="participants"></div>
         <!-- ------------------------------------------------------------------------- -->
 
         <div class="bar-part">
@@ -65,7 +38,7 @@
             <span class="material-icons"> videocam_off </span> 카메라 켜기
           </div>
           <div class="close-button">
-            <router-link :to="{ name: 'Office' }"><span>✕</span></router-link>
+            <span @click="leaveRoom()" class="cursor-pointer">✕</span>
           </div>
         </div>
       </div>
@@ -77,6 +50,7 @@
 import Video from "@/components/Room/Video.vue"
 import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 // import Participant from "@/lib/participant.js"
 import kurentoUtils from "kurento-utils"
 
@@ -91,8 +65,10 @@ export default {
   setup() {
     const store = useStore()
 
+    const router = useRouter()
+
     const state = reactive({
-      room: "",
+      room: "전체 회의방",
       name: store.state.auth.user.name,
     })
 
@@ -100,9 +76,9 @@ export default {
       const message = {
         id: "joinRoom",
         // 얘가 닉네임
-        name: "내가 김두환이다",
+        name: state.name,
         //
-        room: "전체 회의방",
+        room: state.room,
         roomId: 2,
       }
 
@@ -200,12 +176,16 @@ export default {
 
     function onExistingParticipants(msg) {
       let constraints = {
+        // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
         audio: true,
         video: {
           mandatory: {
-            maxWidth: 320,
-            maxFrameRate: 15,
-            minFrameRate: 15,
+            // minWidth: 1000,
+            maxWidth: 2000,
+            // minHeight: 1000,
+            maxHeight: 2000,
+            maxFrameRate: 30,
+            minFrameRate: 30,
           },
         },
       }
@@ -233,21 +213,19 @@ export default {
     }
 
     // 얘도 떠날때임
-    // // RoomComponent
-    // function leaveRoom() {
-    //   sendMessage({
-    //     id: "leaveRoom",
-    //   })
+    // RoomComponent
+    function leaveRoom() {
+      sendMessage({
+        id: "leaveRoom",
+      })
 
-    //   for (let key in participants) {
-    //     participants[key].dispose()
-    //   }
+      for (let key in participants) {
+        participants[key].dispose()
+      }
 
-    //   // document.getElementById("join").style.display = "block"
-    //   // document.getElementById("room").style.display = "none"
-
-    //   // ws.close();
-    // }
+      ws.close()
+      router.push({ name: "Office" })
+    }
 
     function receiveVideo(sender) {
       let participant = new Participant(sender)
@@ -280,6 +258,8 @@ export default {
     // ===========================================================================
     // participant 시작
     // ===========================================================================
+
+    // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
     const PARTICIPANT_MAIN_CLASS = "participant main"
     const PARTICIPANT_CLASS = "participant"
 
@@ -309,8 +289,12 @@ export default {
       container.onclick = switchContainerClass
       document.getElementById("participants").appendChild(container)
 
+      // 이 부분이 유저의 name이 렌더링 되는 곳
+      // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
       span.appendChild(document.createTextNode(name))
 
+      // 이 부분이 video-id가 됨
+      // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
       video.id = "video-" + name
       video.autoplay = true
       video.controls = false
@@ -397,6 +381,7 @@ export default {
       switchCam,
       changeMic,
       changeCam,
+      leaveRoom,
     }
   },
 }
@@ -406,9 +391,9 @@ export default {
 .layout {
   @apply h-screen flex flex-col overflow-hidden;
 
-  main {
-    @apply h-full overflow-hidden flex;
-  }
+  // main {
+  //   apply h-full overflow-hidden flex;
+  // }
 }
 .wrapper {
   @apply h-full overflow-hidden;
@@ -458,5 +443,13 @@ export default {
 }
 .side-bar ul li.active {
   @apply text-blue-700;
+}
+
+// .main {
+//   border: 3px solid red;
+// }
+
+.main {
+  border: 5px solid blue;
 }
 </style>

@@ -76,7 +76,7 @@ public class Room implements Closeable {
         newParticipantMsg.addProperty("name", newParticipant.getName());
 
         final List<String> participantsList = new ArrayList<>(participants.values().size());
-        log.debug("ROOM {}: notifying other participants of new participant {}", roomName,
+        log.info("ROOM {}: notifying other participants of new participant {}", roomName,
                 newParticipant.getName());
 
         for (final UserSession participant : participants.values()) {
@@ -94,7 +94,7 @@ public class Room implements Closeable {
     private void removeParticipant(String name) throws IOException {
         participants.remove(name);
 
-        log.debug("ROOM {}: notifying all users that {} is leaving the room", this.roomName, name);
+        log.info("ROOM {}: notifying all users that {} is leaving the room", this.roomName, name);
 
         final List<String> unnotifiedParticipants = new ArrayList<>();
         final JsonObject participantLeftJson = new JsonObject();
