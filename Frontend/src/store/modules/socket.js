@@ -18,16 +18,19 @@ export const socket = {
     setStompClient(state, payload) {
       state.stompClient = payload
     },
-    setOfficeChatList(state, payload) {
-      console.log(payload)
-      state.officeChatList.push(payload)
+    initOfficeChatList(state, chatList) {
+      console.log(chatList)
+      state.officeChatList.push(...chatList)
+    },
+    addOfficeChat(state, chat) {
+      state.officeChatList.push(chat)
     },
   },
   actions: {
     async getAllOfficeChat({ commit }) {
       const res = await chatAxios.get(`/${auth.state.user.officeId}`)
       console.log(res.data)
-      commit("setOfficeChatList", res.data)
+      commit("initOfficeChatList", res.data)
     },
   },
 }
