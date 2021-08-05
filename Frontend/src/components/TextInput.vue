@@ -1,5 +1,5 @@
 <template>
-  <div class="grid gap-2">
+  <div class="grid gap-1">
     <div
       class="input-container"
       :class="{
@@ -22,14 +22,20 @@
         {{ field.label }}
       </label>
     </div>
-    <div
-      class="text-sm text-red-500 font-medium grid gap-1"
-      v-if="field.errors && Object.keys(field.errors).length"
-    >
-      <p v-for="(error, key) in field.errors" :key="key">
-        {{ error }}
-      </p>
-    </div>
+    <transition-group>
+      <div
+        class="error-list"
+        v-if="field.errors && Object.keys(field.errors).length"
+      >
+        <p
+          v-for="(error, key) in field.errors"
+          :key="key"
+          class="error-list-item"
+        >
+          {{ error }}
+        </p>
+      </div>
+    </transition-group>
   </div>
 </template>
 
@@ -113,6 +119,19 @@ export default {
 
     input {
       @apply border-red-500;
+    }
+  }
+}
+.error-list {
+  @apply text-sm text-red-500 font-medium grid gap-1;
+
+  .error-list-item {
+    @apply relative pl-3;
+
+    &::before {
+      content: "";
+      transform: translateY(-50%);
+      @apply absolute top-1/2 left-0 w-1 h-1 bg-red-400 rounded-full;
     }
   }
 }
