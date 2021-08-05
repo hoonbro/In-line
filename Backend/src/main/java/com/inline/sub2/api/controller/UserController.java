@@ -194,7 +194,7 @@ public class UserController {
     @PutMapping("/profile")
     @ApiOperation(value = "유저의 프로필 사진을 변경한다.")
     public ResponseEntity<String> updateProfile(@RequestParam("userId") Long userId, @RequestParam("file") MultipartFile file) {
-        HttpStatus status = HttpStatus.OK;
+        HttpStatus status = HttpStatus.CREATED;
 
         String originFileName = file.getOriginalFilename();
         int pos = originFileName.lastIndexOf( "." );
