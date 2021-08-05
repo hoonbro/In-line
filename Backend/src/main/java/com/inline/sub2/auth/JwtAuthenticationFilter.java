@@ -38,7 +38,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         // If header is null delegate to Spring impl and exit
         if (header == null) {
-            log.info("토큰이 없습니다.");
             filterChain.doFilter(request, response);
             return;
         }
