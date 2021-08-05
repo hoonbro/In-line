@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("/users")
 @CrossOrigin("*")
 public class UserController {
 
