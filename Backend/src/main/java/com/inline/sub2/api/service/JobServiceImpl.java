@@ -5,6 +5,8 @@ import com.inline.sub2.db.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class JobServiceImpl implements JobService{
@@ -20,6 +22,11 @@ public class JobServiceImpl implements JobService{
     @Override
     public JobEntity getJobName(Long jobId) {
         return jobRepository.findByJobId(jobId);
+    }
+
+    @Override
+    public List<JobEntity> getJobList(Long officeId) {
+        return jobRepository.findByOfficeId(officeId);
     }
 
 
