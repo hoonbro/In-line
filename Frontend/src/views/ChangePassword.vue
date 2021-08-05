@@ -1,6 +1,6 @@
 <template>
-  <div class="h-screen bg-gray-100 flex items-center justify-center">
-    <div class="bg-white shadow-lg p-8 grid gap-4 rounded-lg w-96">
+  <div class="wrapper">
+    <div class="inner">
       <h1 class="text-3xl font-bold">비밀번호 변경</h1>
       <div>
         <p>
@@ -18,7 +18,7 @@
         @update:validate="handleUpdateValidate(formData, $event)"
       />
       <button
-        class="bg-blue-400 text-white rounded-lg py-3"
+        class="change-btn"
         :class="{ disabled: !formIsValid }"
         @click="changePassword"
       >
@@ -74,21 +74,26 @@ export default {
     })
 
     const changePassword = async () => {
-      const res = await store.dispatch("auth/changePassword", {
-        currentPassword: formData.oldPassword.value,
-        newPassword: formData.password.value,
-      })
-      router.push({ name: "Office" })
+      try {
+        await store.dispatch("auth/changePassword", {
+          currentPassword: formData.oldPassword.value,
+          newPassword: formData.password.value,
+        })
+        router.push({ name: "Office" })
+      } catch (error) {
+        console.log(error)
+        console.log(error.message)
+      }
     }
 
     const formIsFilled = computed(() => {
-      return Object.keys(formData).every((key) => {
+      return Object.keys(formData).every(key => {
         return formData[key].value
       })
     })
 
     const formNoError = computed(() => {
-      return Object.keys(formData).every((key) => {
+      return Object.keys(formData).every(key => {
         return !Object.keys(formData[key].errors).length
       })
     })
@@ -108,7 +113,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.disabled {
-  @apply bg-gray-400;
+.wrapper {
+  @apply h-screen bg-gray-100 flex items-center justify-center;
+
+  .inner {
+    @apply bg-white shadow-lg p-8 grid gap-4 rounded-lg w-96;
+
+    .change-btn {
+      @apply bg-blue-400 text-white rounded-lg py-3;
+    }
+    .disabled {
+      @apply bg-gray-400;
+    }
+  }
 }
 </style>

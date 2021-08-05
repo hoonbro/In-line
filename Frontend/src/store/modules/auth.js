@@ -55,15 +55,11 @@ export const auth = {
     },
     async resetPassword({ commit }, email) {
       try {
-        const res = await axios({
-          method: "put",
-          url: "/api/v1/users/reset-password",
-          data: email,
-        })
+        await authAPI.put("/reset-password", email)
         commit("setShouldChangePassword", true)
-        return res
       } catch (error) {
         console.log(error)
+        console.log(error.response.status)
         throw Error("이메일 전송에 실패했습니다")
       }
     },
@@ -75,14 +71,15 @@ export const auth = {
           url: "/api/v1/users/change-password",
           data: passwordForm,
           headers: {
-            accessToken: `${localStorage.getItem("jwt")}`,
+            accessToken: `${localStorage.getItem("accessToken")}`,
           },
         })
+        console.log(res)
         commit("setShouldChangePassword", false)
-        return res
       } catch (error) {
         console.log(error)
-        return
+        console.log(error.response.status)
+        throw Error("비밀번호 변경에 실패했습니다")
       }
     },
   },

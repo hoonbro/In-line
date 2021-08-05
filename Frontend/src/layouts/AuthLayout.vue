@@ -1,7 +1,5 @@
 <template>
   <AuthNav />
-  <router-link :to="{ name: 'ResetPassword' }">reset</router-link> |
-  <router-link :to="{ name: 'ChangePassword' }">change</router-link>
   <router-view />
 </template>
 
