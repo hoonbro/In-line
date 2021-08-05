@@ -38,7 +38,9 @@
             <span class="material-icons"> videocam_off </span> 카메라 켜기
           </div>
           <div class="close-button">
-            <span @click="leaveRoom()" class="cursor-pointer">✕</span>
+            <router-link :to="{ name: 'Office' }">
+              <span class="cursor-pointer">✕</span></router-link
+            >
           </div>
         </div>
       </div>
@@ -48,10 +50,15 @@
 
 <script>
 import Video from "@/components/Room/Video.vue"
-import { computed, onMounted, reactive, ref } from "@vue/runtime-core"
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+} from "@vue/runtime-core"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
-// import Participant from "@/lib/participant.js"
 import kurentoUtils from "kurento-utils"
 
 export default {
@@ -85,19 +92,12 @@ export default {
       sendMessage(message)
     }
 
+    onUnmounted(() => leaveRoom())
+
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
 
     ws.onopen = function(event) {
       register()
-      //   var message = {
-      //     id: "joinRoom",
-      //     name: "Kim",
-      //     room: "전체 회의방",
-      //     roomId: 2,
-      //   }
-
-      //   sendMessage(message)
-      // ws.send("TEST!")
     }
 
     function sendMessage(message) {
@@ -105,10 +105,6 @@ export default {
       console.log("Sending message: " + jsonMessage)
       ws.send(jsonMessage)
     }
-
-    // onMounted(() => {
-    //   register()
-    // })
 
     const participants = {}
 
@@ -181,9 +177,9 @@ export default {
         video: {
           mandatory: {
             // minWidth: 1000,
-            maxWidth: 2000,
+            maxWidth: 5000,
             // minHeight: 1000,
-            maxHeight: 2000,
+            // maxHeight: 2000,
             maxFrameRate: 30,
             minFrameRate: 30,
           },
@@ -400,7 +396,7 @@ export default {
 
   .video-chat {
     .video-part {
-      @apply grid grid-cols-5 m-12 bg-Teal-300;
+      @apply grid grid-cols-3 m-12 bg-Teal-300;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;
