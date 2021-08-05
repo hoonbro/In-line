@@ -45,13 +45,16 @@ public class CallHandler extends TextWebSocketHandler {
         }
 
         switch (jsonMessage.get("id").getAsString()) {
-                case "joinRoom":
+            case "joinRoom":
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
                 final String senderName = jsonMessage.get("sender").getAsString();
                 final UserSession sender = registry.getByName(senderName);
                 final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
+                log.info(senderName);
+                log.info(sender.toString());
+                log.info(sdpOffer);
                 user.receiveVideoFrom(sender, sdpOffer);
                 break;
             case "leaveRoom":
@@ -92,7 +95,8 @@ public class CallHandler extends TextWebSocketHandler {
         final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId());
         room.leave(user);
         if (room.getParticipants().isEmpty()) {
-            roomManager.removeRoom(room);
+            log.info("{}이 비었습니다.", room.getRoomName());
+//            roomManager.removeRoom(room);
         }
     }
 }
