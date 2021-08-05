@@ -27,7 +27,7 @@ export default {
       name: store.state["user"].name,
     })
 
-    let ws = new WebSocket(`wss://13.124.47.223:8995/groupcall`)
+    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
     ws.onopen = function(event) {
       ws.send("TEST!")
     }
