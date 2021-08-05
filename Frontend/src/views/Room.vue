@@ -92,7 +92,7 @@ export default {
     const store = useStore()
 
     const state = reactive({
-      room: "",
+      room: "전체 회의방",
       name: store.state.auth.user.name,
     })
 
@@ -100,9 +100,9 @@ export default {
       const message = {
         id: "joinRoom",
         // 얘가 닉네임
-        name: "내가 김두환이다",
+        name: state.name,
         //
-        room: "전체 회의방",
+        room: state.room,
         roomId: 2,
       }
 
