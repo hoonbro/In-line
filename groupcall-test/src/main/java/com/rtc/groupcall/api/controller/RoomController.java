@@ -16,6 +16,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/rooms")
+@CrossOrigin("*")
 public class RoomController {
 
     @Autowired
