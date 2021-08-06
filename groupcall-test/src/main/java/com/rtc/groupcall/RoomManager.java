@@ -76,22 +76,22 @@ public class RoomManager {
         Room room = rooms.get(roomId);
         this.rooms.remove(roomId);
         room.close();
-        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
+//        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
     }
 
     public Room getRoom(String roomName, Long roomId) {
-        log.info("{}찾기 시도, roomId = {}", roomName, roomId);
+//        log.info("{}찾기 시도, roomId = {}", roomName, roomId);
         Room room = rooms.get(roomId);
 
         if (room == null) {
-            log.info("{}이/가 없다, 새로 생성!", roomName);
+//            log.info("{}이/가 없다, 새로 생성!", roomName);
             room = new Room(roomName, kurento.createMediaPipeline(), roomId);
             rooms.put(roomId, room);
         }else if(room.getPipeline() == null){
-            log.info("{}에 pipeline이 없다!. create pipeline!", roomName);
+//            log.info("{}에 pipeline이 없다!. create pipeline!", roomName);
             room.setPipeline(kurento.createMediaPipeline());
         }
-        log.info("{}을 찾음!, roomId = {}", roomName, roomId);
+//        log.info("{}을 찾음!, roomId = {}", roomName, roomId);
         log.info(room.toString());
         return room;
     }
