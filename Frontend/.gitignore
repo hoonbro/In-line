@@ -22,3 +22,6 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
+
+# package-lock.json
+package-lock.json

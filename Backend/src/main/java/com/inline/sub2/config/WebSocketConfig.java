@@ -19,8 +19,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         //  메시지 브로커는 특정 주제를 구독 한 연결된 모든 클라이언트에게 메시지를 broadcast 한다.
 //        registry.setApplicationDestinationPrefixes("/pub");
         registry.enableSimpleBroker("/sub");
-
-
     }
 
     @Override
