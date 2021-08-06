@@ -12,6 +12,7 @@
         type="text"
         @keydown.enter.exact.prevent="sendMessage"
         @keyup.enter.exact.prevent
+        @keydown.enter.shift.exact="newLine"
       />
     </div>
   </div>
@@ -22,7 +23,7 @@ import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
 import ChatListItem from "@/components/RightAsidebar/ChatListItem.vue"
 export default {
-  name: "Chat",
+  name: "RoomChat",
   components: { ChatListItem },
   setup() {
     const store = useStore()
@@ -40,11 +41,14 @@ export default {
     const chatListEl = ref(null)
     const content = ref("")
 
+    const newLine = () => {
+      content.value = `${content.value}\n`
+    }
+
     const sendMessage = event => {
       if (content.value && stompClient.value && stompClient.value.connected) {
         console.log(`Send message: ${content.value}`)
         const msg = {
-          type: "CHAT",
           officeId: officeId.value,
           userId: userId.value,
           userName: userName.value,
@@ -65,8 +69,7 @@ export default {
       })
     })
 
-    onMounted(async () => {
-      await store.dispatch("socket/getAllOfficeChat")
+    onMounted(() => {
       if (chatListEl.value) {
         chatListEl.value.scrollTo({
           top: chatListEl.value.scrollHeight,

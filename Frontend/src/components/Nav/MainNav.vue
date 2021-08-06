@@ -25,6 +25,8 @@ export default {
       if (yes) {
         localStorage.removeItem("accessToken")
         localStorage.removeItem("user")
+        localStorage.removeItem("chatList")
+        localStorage.removeItem("stompClient")
         router.push({ name: "Home" })
       }
     }
