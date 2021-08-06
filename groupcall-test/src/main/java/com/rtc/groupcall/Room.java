@@ -41,13 +41,13 @@ public class Room implements Closeable {
         this.roomName = roomName;
         this.pipeline = pipeline;
         this.roomId = roomId;
-        log.info("ROOM {} 생성 성공", roomName);
+//        log.info("ROOM {} 생성 성공", roomName);
     }
 
     public Room(String roomName, Long roomId) {
         this.roomName = roomName;
         this.roomId = roomId;
-        log.info("ROOM {} 생성 성공", roomName);
+//        log.info("ROOM {} 생성 성공", roomName);
     }
 
     @PreDestroy
@@ -76,8 +76,8 @@ public class Room implements Closeable {
         newParticipantMsg.addProperty("name", newParticipant.getName());
 
         final List<String> participantsList = new ArrayList<>(participants.values().size());
-        log.info("ROOM {}: notifying other participants of new participant {}", roomName,
-                newParticipant.getName());
+//        log.info("ROOM {}: notifying other participants of new participant {}", roomName,
+//                newParticipant.getName());
 
         for (final UserSession participant : participants.values()) {
             try {
@@ -94,7 +94,7 @@ public class Room implements Closeable {
     private void removeParticipant(String name) throws IOException {
         participants.remove(name);
 
-        log.info("ROOM {}: notifying all users that {} is leaving the room", this.roomName, name);
+//        log.info("ROOM {}: notifying all users that {} is leaving the room", this.roomName, name);
 
         final List<String> unnotifiedParticipants = new ArrayList<>();
         final JsonObject participantLeftJson = new JsonObject();
@@ -129,8 +129,8 @@ public class Room implements Closeable {
         final JsonObject existingParticipantsMsg = new JsonObject();
         existingParticipantsMsg.addProperty("id", "existingParticipants");
         existingParticipantsMsg.add("data", participantsArray);
-        log.debug("PARTICIPANT {}: sending a list of {} participants", user.getName(),
-                participantsArray.size());
+//        log.debug("PARTICIPANT {}: sending a list of {} participants", user.getName(),
+//                participantsArray.size());
         user.sendMessage(existingParticipantsMsg);
     }
 
