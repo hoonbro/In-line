@@ -102,7 +102,7 @@ export default {
 
     function sendMessage(message) {
       const jsonMessage = JSON.stringify(message)
-      console.log("Sending message: " + jsonMessage)
+      // console.log("Sending message: " + jsonMessage)
       ws.send(jsonMessage)
     }
 
@@ -114,7 +114,7 @@ export default {
 
     ws.onmessage = function(message) {
       let parsedMessage = JSON.parse(message.data)
-      console.info("Received message: " + message.data)
+      // console.info("Received message: " + message.data)
 
       switch (parsedMessage.id) {
         case "existingParticipants":
@@ -134,14 +134,14 @@ export default {
             parsedMessage.candidate,
             function(error) {
               if (error) {
-                console.error("Error adding candidate: " + error)
+                // console.error("Error adding candidate: " + error)
                 return
               }
             }
           )
           break
         default:
-          console.error("Unrecognized message", parsedMessage)
+        // console.error("Unrecognized message", parsedMessage)
       }
     }
 
@@ -335,7 +335,7 @@ export default {
       }
 
       this.onIceCandidate = function(candidate, wp) {
-        console.log("Local candidate" + JSON.stringify(candidate))
+        // console.log("Local candidate" + JSON.stringify(candidate))
 
         var message = {
           id: "onIceCandidate",
