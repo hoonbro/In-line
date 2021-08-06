@@ -5,6 +5,27 @@
     </div>
     <div class="menu-container">
       <div class="menu-list">
+        <template v-if="$route.fullPath.includes('rooms')">
+          <button
+            class="menu-list-item room-chat"
+            :class="{ active: activeMenu === 'room-chat' }"
+            @click="handleActiveMenu('room-chat')"
+          >
+            <span class="material-icons">
+              forum
+            </span>
+          </button>
+          <!-- <button
+            class="menu-list-item users"
+            :class="{ active: activeMenu === 'users' }"
+            @click="handleActiveMenu('users')"
+          >
+            <span class="material-icons">
+              people
+            </span>
+          </button> -->
+          <div class="hr"></div>
+        </template>
         <button
           class="menu-list-item noti"
           :class="{ active: activeMenu === 'noti' }"
@@ -60,6 +81,11 @@ export default {
             import("@/components/RightAsidebar/Todo.vue")
           )
         }
+        case "room-chat": {
+          return defineAsyncComponent(() =>
+            import("@/components/RightAsidebar/RoomChat.vue")
+          )
+        }
         default:
           return
       }
@@ -94,6 +120,10 @@ aside {
 
     .menu-list {
       @apply grid gap-4 justify-center;
+
+      .hr {
+        @apply bg-gray-400 h-px w-full;
+      }
 
       .menu-list-item {
         @apply p-2 text-gray-400 relative;
