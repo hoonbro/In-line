@@ -12,11 +12,12 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 public class ChatDto {
-    Long officeId;
-    Long userId;
-    String userName;
-    String content;
-    Date sendDate;
-    String sendTime;
+    private String type;
+    private Long officeId;
+    private Long userId;
+    private String userName;
+    private String content;
+    private Date sendDate;
+    private String sendTime;
 
 }

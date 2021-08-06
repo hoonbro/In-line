@@ -102,7 +102,7 @@ export default {
 
     function sendMessage(message) {
       const jsonMessage = JSON.stringify(message)
-      console.log("Sending message: " + jsonMessage)
+      // console.log("Sending message: " + jsonMessage)
       ws.send(jsonMessage)
     }
 
@@ -114,7 +114,7 @@ export default {
 
     ws.onmessage = function(message) {
       let parsedMessage = JSON.parse(message.data)
-      console.info("Received message: " + message.data)
+      // console.info("Received message: " + message.data)
 
       switch (parsedMessage.id) {
         case "existingParticipants":
@@ -134,14 +134,14 @@ export default {
             parsedMessage.candidate,
             function(error) {
               if (error) {
-                console.error("Error adding candidate: " + error)
+                // console.error("Error adding candidate: " + error)
                 return
               }
             }
           )
           break
         default:
-          console.error("Unrecognized message", parsedMessage)
+        // console.error("Unrecognized message", parsedMessage)
       }
     }
 
@@ -177,20 +177,22 @@ export default {
         video: {
           mandatory: {
             // minWidth: 1000,
-            maxWidth: 5000,
-            // minHeight: 1000,
+            maxWidth: 420,
+            minWidth: 420,
+            // minHeight: 400,
             // maxHeight: 2000,
-            maxFrameRate: 30,
-            minFrameRate: 30,
+            maxFrameRate: 20,
+            minFrameRate: 20,
           },
         },
       }
+
       console.log(state.name + " registered in room " + state.room)
       let participant = new Participant(state.name)
       participants[state.name] = participant
       let video = participant.getVideoElement()
 
-      let options = {
+      const options = {
         localVideo: video,
         mediaConstraints: constraints,
         onicecandidate: participant.onIceCandidate.bind(participant),
@@ -275,8 +277,11 @@ export default {
       container.className = isPresentMainParticipant()
         ? PARTICIPANT_CLASS
         : PARTICIPANT_MAIN_CLASS
+      container.classList.add("text-center", "pointer-events-none")
       container.id = name
       let span = document.createElement("span")
+      span.classList.add("text-blue-500", "w-12", "h-8", "bg-gray-50")
+
       let video = document.createElement("video")
       let rtcPeer
 
@@ -285,15 +290,13 @@ export default {
       container.onclick = switchContainerClass
       document.getElementById("participants").appendChild(container)
 
-      // 이 부분이 유저의 name이 렌더링 되는 곳
-      // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
       span.appendChild(document.createTextNode(name))
 
       // 이 부분이 video-id가 됨
       // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
       video.id = "video-" + name
       video.autoplay = true
-      video.controls = false
+      video.controls = true
 
       this.getElement = function() {
         return container
@@ -332,7 +335,7 @@ export default {
       }
 
       this.onIceCandidate = function(candidate, wp) {
-        console.log("Local candidate" + JSON.stringify(candidate))
+        // console.log("Local candidate" + JSON.stringify(candidate))
 
         var message = {
           id: "onIceCandidate",
@@ -364,6 +367,7 @@ export default {
     const changeMic = () => {
       switchMic.value = !switchMic.value
       console.log(switchMic.value)
+      // participants[name].rtcPeer.videoEnabled = false
     }
     const changeCam = () => {
       switchCam.value = !switchCam.value
@@ -395,8 +399,19 @@ export default {
   @apply h-full overflow-hidden;
 
   .video-chat {
+    width: 90%;
+
+    margin: auto;
+
+    .user-name {
+    }
+
+    .participant {
+      // apply text-red-500;
+    }
+
     .video-part {
-      @apply grid grid-cols-3 m-12 bg-Teal-300;
+      @apply grid grid-cols-3 mx-16 mt-20;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;
