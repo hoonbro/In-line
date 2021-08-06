@@ -177,8 +177,8 @@ export default {
         video: {
           mandatory: {
             // minWidth: 1000,
-            maxWidth: 450,
-            minWidth: 450,
+            maxWidth: 420,
+            minWidth: 420,
             // minHeight: 400,
             // maxHeight: 2000,
             maxFrameRate: 20,
@@ -400,6 +400,7 @@ export default {
 
   .video-chat {
     width: 90%;
+
     margin: auto;
 
     .user-name {
