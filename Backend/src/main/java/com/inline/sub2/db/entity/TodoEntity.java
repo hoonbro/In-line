@@ -29,8 +29,7 @@ public class TodoEntity {
     private String content;
 
     @Column(name="todo_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date todoDate;
+    private String day;
 
     @Column(name="done")
     private boolean done;
