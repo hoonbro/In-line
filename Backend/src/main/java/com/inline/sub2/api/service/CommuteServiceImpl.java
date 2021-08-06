@@ -18,11 +18,23 @@ public class CommuteServiceImpl implements CommuteService {
 
     @Override
     public CommuteEntity commuteLogin(CommuteDto commuteDto) {
-        CommuteEntity commuteEntity = new CommuteEntity();
-        commuteEntity.setUserId(commuteDto.getUserId());
-        commuteEntity.setOfficeId(commuteDto.getOfficeId());
-        commuteEntity.setYmd(new Date());
-        return commuteRepository.save(commuteEntity);
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        Date now = new Date();
+        System.out.println("여기까지 들어올텐데");
+        System.out.println(commuteDto.getUserId());
+        System.out.println(commuteDto.getOfficeId());
+        CommuteEntity commuteEntity = commuteRepository.findByUserIdAndYmd(commuteDto.getUserId(),now);
+        System.out.println(commuteEntity);
+        if(commuteEntity == null) {
+            commuteEntity = new CommuteEntity();
+            commuteEntity.setUserId(commuteDto.getUserId());
+            commuteEntity.setOfficeId(commuteDto.getOfficeId());
+            commuteEntity.setYmd(now);
+            return commuteRepository.save(commuteEntity);
+        }
+        else {
+            return commuteEntity;
+        }
     }
 
     @Override
