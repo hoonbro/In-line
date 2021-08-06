@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class ChatServiceImpl implements ChatService{
@@ -19,6 +20,7 @@ public class ChatServiceImpl implements ChatService{
 
     @Override
     public ChatEntity insertMessage(ChatDto chatDto) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         System.out.println("여기 ㅉ띡히니?");
         Date now = new Date();
         ChatEntity chatEntity = new ChatEntity();
