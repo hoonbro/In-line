@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -147,6 +148,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
     }
 
-
-
+    @Override
+    public UserEntity updateProfile(Long userId, String filePath) {
+        UserEntity userEntity = getUserInfo(userId);
+        userEntity.setProfileImage(filePath);
+        return userRepository.save(userEntity);
+    }
 }

@@ -77,6 +77,7 @@
 import { reactive, ref } from "@vue/reactivity"
 import { onMounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
+import axios from "axios"
 
 import {
   requiredValidator,
@@ -85,6 +86,15 @@ import {
 } from "@/lib/validator"
 import Modal from "@/components/Common/Modal.vue"
 import TextInput from "@/components/TextInput.vue"
+
+
+// const profileUpload = axios.create({
+//   baseURL: `/api/v1/users/profile`,
+//   headers: {
+//     'Content-Type': 'multipart/form-data'
+//     // accessToken: `${localStorage.getItem("accessToken")}`,
+//   },
+// })
 
 export default {
   name: "ProfileModal",
@@ -155,10 +165,26 @@ export default {
       editMode.value = false
     }
 
-    const onFileChange = () => {
+    const onFileChange = async() => {
       const image = fileInputEl.value.files[0]
+      const formData = new FormData();
+      formData.append("file", image);
+      formData.append("userId", props.userId);
+      console.log(image);
+      console.log(formData);
+       try {
+        await axios.put(
+          `/api/v1/users/profile`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }
+        ).then(function (response) {
+          console.log(response.data);
+       });
 
-      profileImg.value = URL.createObjectURL(image)
+        profileImg.value = URL.createObjectURL(image)
+        console.log("이미지 업로드 성공")
+      } catch (error) {
+        console.log(error)
+      }
+      
     }
 
     onMounted(async () => {
