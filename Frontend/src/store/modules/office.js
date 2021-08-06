@@ -23,9 +23,9 @@ const userAPI = axios.create({
 })
 
 const roomAPI = axios.create({
-  baseURL: `${process.env.VUE_APP_API_BASE_URL}/rooms`,
+  baseURL: `/api/v1/rooms`,
   headers: {
-    accessToken: `Bearer jwt`,
+    accessToken: auth.state.accessToken,
   },
 })
 
