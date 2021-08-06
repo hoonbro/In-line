@@ -27,26 +27,24 @@ export default {
   },
   setup() {
     const store = useStore()
-    const officeId = computed(() => store.state.auth.user.officeId)
-    const userId = computed(() => store.state.auth.user.userId)
-    const userName = computed(() => store.state.auth.user.name)
+    const user = computed(() => store.state.auth.user)
     const stompClient = ref(null)
 
     const connectStomp = () => {
       const serverURL = "/api/v1/stomp"
       const socket = new SockJS(serverURL)
       stompClient.value = Stomp.over(socket)
-      // store.commit("socket/setStompClient", Stomp.over(socket))
       stompClient.value.connect(
         {},
         frame => {
           stompClient.value.connected = true
           store.commit("socket/setStompClient", stompClient.value)
-          stompClient.value.subscribe(`/sub/${officeId.value}`, res => {
-            // 받은 데이터를 파싱하여 전체 채팅 리스트에 넣어줍니다.
-            const message = JSON.parse(res.body)
-            message.send
-            store.commit("socket/addOfficeChat", JSON.parse(res.body))
+          stompClient.value.subscribe(`/sub/${user.value.officeId}`, res => {
+            const data = JSON.parse(res.body)
+            if (data.type === "CHAT") {
+              store.commit("socket/addOfficeChat", JSON.parse(res.body))
+            } else if (data.type === "ENTER") {
+            }
           })
         },
         error => {
@@ -60,10 +58,9 @@ export default {
 
     onMounted(() => {
       connectStomp()
-      store.dispatch("socket/getAllOfficeChat")
     })
 
-    return { officeId, userId, userName }
+    return {}
   },
 }
 </script>

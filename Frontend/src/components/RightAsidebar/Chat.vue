@@ -12,7 +12,6 @@
         type="text"
         @keydown.enter.exact.prevent="sendMessage"
         @keyup.enter.exact.prevent
-        @keydown.enter.shift.exact="newLine"
       />
     </div>
   </div>
@@ -41,14 +40,11 @@ export default {
     const chatListEl = ref(null)
     const content = ref("")
 
-    const newLine = () => {
-      content.value = `${content.value}\n`
-    }
-
     const sendMessage = event => {
       if (content.value && stompClient.value && stompClient.value.connected) {
         console.log(`Send message: ${content.value}`)
         const msg = {
+          type: "CHAT",
           officeId: officeId.value,
           userId: userId.value,
           userName: userName.value,
@@ -69,7 +65,8 @@ export default {
       })
     })
 
-    onMounted(() => {
+    onMounted(async () => {
+      await store.dispatch("socket/getAllOfficeChat")
       if (chatListEl.value) {
         chatListEl.value.scrollTo({
           top: chatListEl.value.scrollHeight,
