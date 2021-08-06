@@ -1,19 +1,18 @@
 <template>
   <div class="office">
-    <div class="rooms-row">
+    <!-- <div class="rooms-row">
       <div class="rooms-container basic">
         <RoomLink :title="'전체회의'" :roomId="1" :large="true" />
         <RoomLink :title="'전체회의'" :roomId="2" :large="true" />
       </div>
-    </div>
+    </div> -->
     <div class="rooms-row">
       <div class="rooms-container">
-        <RoomLink :title="'Developer'" :roomId="3" />
-        <RoomLink :title="'Marketing'" :roomId="4" />
-        <RoomLink :title="'Developer'" :roomId="5" />
-        <RoomLink :title="'Marketing'" :roomId="6" />
-        <RoomLink :title="'MiniRoom'" :roomId="7" />
-        <RoomLink :title="'Marketing'" :roomId="8" />
+        <RoomLink
+          v-for="room in displayRoomList"
+          :title="room.roomName"
+          :roomId="room.roomId"
+        />
       </div>
     </div>
     <div class="button-group">
@@ -33,7 +32,8 @@
 </template>
 
 <script>
-import { ref } from "vue"
+import { useStore } from "vuex"
+import { ref, computed } from "vue"
 import RoomLink from "@/components/Office/RoomLink.vue"
 import RoomManageModal from "@/components/Office/RoomManageModal.vue"
 
@@ -44,9 +44,27 @@ export default {
     RoomManageModal,
   },
   setup() {
+    const store = useStore()
     const roomManageModalOpen = ref(false)
+    const user = JSON.parse(localStorage.getItem("user"))
 
-    return { roomManageModalOpen }
+    const rooms = computed(() => {
+      return store.state.office.rooms
+    })
+    // 로비는 빼자
+    const displayRoomList = computed(() => {
+      return rooms.value.filter(room => room.roomName !== "로비")
+    })
+
+    // getRooms 실행시키자
+    store.dispatch("office/getRooms", user.officeId)
+
+    return {
+      user,
+      rooms,
+      roomManageModalOpen,
+      displayRoomList,
+    }
   },
 }
 </script>
