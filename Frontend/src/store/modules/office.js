@@ -101,7 +101,11 @@ export const office = {
       try {
         const res = await todoAPI({
           method: "POST",
-          data: todoData,
+          data: {
+            officeId: auth.state.user.officeId,
+            userId: auth.state.user.userId,
+            ...todoData,
+          },
         })
         const todos = [...state.todos]
         todos.push(res.data)

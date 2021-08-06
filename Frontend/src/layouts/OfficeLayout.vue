@@ -57,6 +57,9 @@ export default {
     }
 
     onMounted(() => {
+      if (stompClient.value && stompClient.value.connected == true) {
+        return
+      }
       connectStomp()
     })
 
