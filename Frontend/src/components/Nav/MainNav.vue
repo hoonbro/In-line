@@ -14,19 +14,24 @@
 
 <script>
 import { useRouter } from "vue-router"
+import { useStore } from "vuex"
 
 export default {
   name: "MainNav",
   setup() {
     const router = useRouter()
+    const store = useStore()
 
     const logout = () => {
       const yes = confirm("로그아웃 하시겠습니까?")
       if (yes) {
-        localStorage.removeItem("accessToken")
-        localStorage.removeItem("user")
+        store.state.socket.stompClient.disconnect(() => {
+          console.log("stomp 끊기")
+        })
         localStorage.removeItem("chatList")
         localStorage.removeItem("stompClient")
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("user")
         router.push({ name: "Home" })
       }
     }
