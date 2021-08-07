@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 @Service
 public class CommuteServiceImpl implements CommuteService {
@@ -17,15 +18,28 @@ public class CommuteServiceImpl implements CommuteService {
 
     @Override
     public CommuteEntity commuteLogin(CommuteDto commuteDto) {
-        CommuteEntity commuteEntity = new CommuteEntity();
-        commuteEntity.setUserId(commuteDto.getUserId());
-        commuteEntity.setOfficeId(commuteDto.getOfficeId());
-        commuteEntity.setYmd(new Date());
-        return commuteRepository.save(commuteEntity);
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        Date now = new Date();
+        System.out.println("여기까지 들어올텐데");
+        System.out.println(commuteDto.getUserId());
+        System.out.println(commuteDto.getOfficeId());
+        CommuteEntity commuteEntity = commuteRepository.findByUserIdAndYmd(commuteDto.getUserId(),now);
+        System.out.println(commuteEntity);
+        if(commuteEntity == null) {
+            commuteEntity = new CommuteEntity();
+            commuteEntity.setUserId(commuteDto.getUserId());
+            commuteEntity.setOfficeId(commuteDto.getOfficeId());
+            commuteEntity.setYmd(now);
+            return commuteRepository.save(commuteEntity);
+        }
+        else {
+            return commuteEntity;
+        }
     }
 
     @Override
     public CommuteEntity commuteIn(Long commuteId) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 
         CommuteEntity commuteEntity = commuteRepository.findByCommuteId(commuteId);
         commuteEntity.setComeIn(new Date()); // 출근 시분초
@@ -34,6 +48,8 @@ public class CommuteServiceImpl implements CommuteService {
 
     @Override
     public CommuteEntity commuteOut(Long commuteId) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+
         Date now = new Date();
         CommuteEntity commuteEntity = commuteRepository.findByCommuteId(commuteId);
         System.out.println(commuteEntity.getComeIn());

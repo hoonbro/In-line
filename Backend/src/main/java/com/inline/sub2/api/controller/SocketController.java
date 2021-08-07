@@ -36,7 +36,6 @@ public class SocketController {
 
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         chatDto.setSendTime(transFormat.format(chatEntity.getSendTime()).split(" ")[1]);
-        System.out.println(chatDto.getSendTime());
         return chatDto;
     }
 }

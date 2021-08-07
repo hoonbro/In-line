@@ -23,9 +23,10 @@ const userAPI = axios.create({
 })
 
 const roomAPI = axios.create({
-  baseURL: `${process.env.VUE_APP_API_BASE_URL}/rooms`,
+  // 이따 옴
+  baseURL: `/rooms`,
   headers: {
-    accessToken: `Bearer jwt`,
+    accessToken: auth.state.accessToken,
   },
 })
 
@@ -101,7 +102,11 @@ export const office = {
       try {
         const res = await todoAPI({
           method: "POST",
-          data: todoData,
+          data: {
+            officeId: auth.state.user.officeId,
+            userId: auth.state.user.userId,
+            ...todoData,
+          },
         })
         const todos = [...state.todos]
         todos.push(res.data)
@@ -158,14 +163,20 @@ export const office = {
       })
     },
     // Rooms
-    async getRooms({ commit }) {
+    // --------------------------------------------------------------------------------
+    async getRooms({ commit }, officeId) {
       try {
-        const res = await roomAPI()
+        const res = await axios({
+          url: `http://i5d207.p.ssafy.io:8998/rooms?officeId=${officeId}`,
+          method: "GET",
+        })
         commit("setRooms", res.data)
+        console.log(res.data)
       } catch (error) {
         console.log(error)
       }
     },
+    // --------------------------------------------------------------------------------
     async createRoom({ commit, state }, roomData) {
       try {
         const res = await roomAPI({
@@ -179,7 +190,7 @@ export const office = {
         console.log(error)
       }
     },
-
+    // --------------------------------------------------------------------------------
     async editRoom({ commit, state }, { room, roomId }) {
       try {
         const res = await roomAPI({

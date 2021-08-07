@@ -38,11 +38,11 @@ public class CallHandler extends TextWebSocketHandler {
 
         final UserSession user = registry.getBySession(session);
 
-        if (user != null) {
-            log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
-        } else {
-            log.debug("Incoming message from new user: {}", jsonMessage);
-        }
+//        if (user != null) {
+//            log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
+//        } else {
+//            log.debug("Incoming message from new user: {}", jsonMessage);
+//        }
 
         switch (jsonMessage.get("id").getAsString()) {
             case "joinRoom":
@@ -52,9 +52,7 @@ public class CallHandler extends TextWebSocketHandler {
                 final String senderName = jsonMessage.get("sender").getAsString();
                 final UserSession sender = registry.getByName(senderName);
                 final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
-                log.info(senderName);
-                log.info(sender.toString());
-                log.info(sdpOffer);
+
                 user.receiveVideoFrom(sender, sdpOffer);
                 break;
             case "leaveRoom":
@@ -84,7 +82,7 @@ public class CallHandler extends TextWebSocketHandler {
         final String roomName = params.get("room").getAsString();
         final String name = params.get("name").getAsString();
         final Long roomId = params.get("roomId").getAsLong();
-        log.info(" {}님의 {} 접근 요청", name, roomName);
+//        log.info(" {}님의 {} 접근 요청", name, roomName);
 
         Room room = roomManager.getRoom(roomName, roomId);
         final UserSession user = room.join(name, session);
@@ -94,9 +92,9 @@ public class CallHandler extends TextWebSocketHandler {
     private void leaveRoom(UserSession user) throws IOException {
         final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId());
         room.leave(user);
-        if (room.getParticipants().isEmpty()) {
-            log.info("{}이 비었습니다.", room.getRoomName());
-//            roomManager.removeRoom(room);
-        }
+//        if (room.getParticipants().isEmpty()) {
+//            log.info("{}이 비었습니다.", room.getRoomName());
+////            roomManager.removeRoom(room);
+//        }
     }
 }

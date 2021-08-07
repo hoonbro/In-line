@@ -1,4 +1,4 @@
-package com.inline.sub2.api.dto;
+package com.rtc.groupcall.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +14,7 @@ import java.util.Date;
 public class ChatDto {
     private String type;
     private Long officeId;
+    private Long roomId;
     private Long userId;
     private String userName;
     private String content;

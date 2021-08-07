@@ -19,6 +19,7 @@ export const socket = {
       state.stompClient = payload
     },
     initOfficeChatList(state, chatList) {
+      state.officeChatList = []
       state.officeChatList.push(...chatList)
     },
     addOfficeChat(state, chat) {
