@@ -57,10 +57,10 @@ export default {
     }
 
     onMounted(() => {
-      if (stompClient.value && stompClient.value.connected == true) {
-        return
+      store.dispatch("office/getMembers")
+      if (!stompClient.value || stompClient.value.connected === false) {
+        connectStomp()
       }
-      connectStomp()
     })
 
     return {}

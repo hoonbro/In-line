@@ -2,7 +2,7 @@
   <aside>
     <div class="infos">
       <p class="hello-message">
-        김병훈님,
+        {{ userName }}님,
         <br />
         안녕하세요! 🙌
       </p>
@@ -29,18 +29,17 @@
     </div>
     <hr />
     <div class="members">
-      <div class="member online" v-for="i in 4" :key="i">
-        <img :src="`https://picsum.photos/seed/user-1-${i}/40`" alt="프로필" />
+      <div class="member" v-for="member in members" :key="member.userId">
+        <img
+          :src="
+            member.profileImage ||
+              `https://picsum.photos/seed/user-2-${member.userId}/40`
+          "
+          alt="프로필"
+        />
         <div>
-          <p class="name">김병훈</p>
-          <p class="department">Develop</p>
-        </div>
-      </div>
-      <div class="member" v-for="i in 10" :key="i">
-        <img :src="`https://picsum.photos/seed/user-2-${i}/40`" alt="프로필" />
-        <div>
-          <p class="name">김병훈</p>
-          <p class="department">Develop</p>
+          <p class="name">{{ member.name }}</p>
+          <p class="department">{{ member.deptEntity.deptName }}</p>
         </div>
       </div>
     </div>
@@ -49,10 +48,15 @@
 
 <script>
 import { ref } from "@vue/reactivity"
+import { computed } from "@vue/runtime-core"
+import { useStore } from "vuex"
 export default {
   name: "LeftAsidebar",
   setup() {
+    const store = useStore()
     const workType = ref("start")
+    const userName = computed(() => store.state.auth.user.name)
+    const members = computed(() => store.state.office.members)
 
     const changeWorkType = () => {
       const workTypes = ["start", "doing", "done"]
@@ -62,6 +66,8 @@ export default {
       workType.value = workTypes[(current + 1) % 3]
     }
     return {
+      userName,
+      members,
       workType,
       changeWorkType,
     }
