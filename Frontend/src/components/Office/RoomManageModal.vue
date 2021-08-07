@@ -12,52 +12,54 @@
       <div class="modal-body">
         <div class="modal-explain">
           <span
-            >구미_2반_7팀의 회의실을 관리할 수 있습니다.<br />
+            >{{ user.officeEntity.officeName }}의 회의실을 관리할 수
+            있습니다.<br />
             기본적으로 생성된 회의실은 수정할 수 없습니다.
           </span>
+          <p>{{ room }}</p>
         </div>
         <div>
           <ul class="room-list">
             <li
               class="room-list-item"
-              :class="{ edit: activeEdit === room.id }"
-              v-for="room in rooms"
-              :key="room.id"
+              :class="{ edit: activeEdit === room.roomId }"
+              v-for="room in displayRoomList"
               :room="room"
             >
               <div class="info">
-                <span v-if="activeEdit !== room.id">{{ room.name }}</span>
+                <span v-if="activeEdit !== room.roomId">{{
+                  room.roomName
+                }}</span>
                 <!-- 아직도 value는..못했따.. -->
-                <!-- editmode에 진입 시 테두리 -->
                 <input
                   id="input-tag"
-                  v-if="activeEdit === room.id"
+                  v-if="activeEdit === room.roomId"
                   v-model="newName"
-                  :placeholder="room.name"
-                  @keyup.enter="editRoom(room.id)"
+                  :placeholder="room.roomName"
+                  @keyup.enter="editRoom(room.roomId)"
                   @keyup.esc="editMode()"
                 />
               </div>
 
               <!-- ---------------icons----------------- -->
-              <div class="icons" v-if="room.id > 2">
+              <div class="icons" v-if="room.roomId > 3">
                 <span
-                  v-if="activeEdit !== room.id"
+                  v-if="activeEdit !== room.roomId"
                   class="material-icons text-gray-500"
-                  @click="editMode(room.id)"
+                  @click="editMode(room.roomId)"
                 >
                   edit </span
                 ><span
-                  v-if="activeEdit !== room.id"
+                  v-if="activeEdit !== room.roomId"
                   class="material-icons text-red-500"
-                  @click="deleteRoom(room.id)"
+                  @click="deleteRoom(room.roomId)"
                 >
                   close
                 </span>
                 <span
-                  v-if="activeEdit === room.id"
+                  v-if="activeEdit === room.roomId"
                   class="material-icons"
-                  @click="editRoom(room.id)"
+                  @click="editRoom(room.roomId)"
                 >
                   done
                 </span>
@@ -98,7 +100,7 @@
 </template>
 
 <script>
-import { onMounted, ref, reactive, computed } from "vue"
+import { ref, reactive, computed } from "vue"
 import { requiredValidator, handleUpdateValidate } from "@/lib/validator"
 import { useStore } from "vuex"
 
@@ -120,17 +122,18 @@ export default {
     const rooms = computed(() => {
       return store.state.office.rooms
     })
+
+    const user = JSON.parse(localStorage.getItem("user"))
+
+    const displayRoomList = computed(() => {
+      return rooms.value.filter(room => room.roomName !== "로비")
+    })
     // 방 생성 Input (원래 안보임)
     const activeCreate = ref(false)
 
     const activeEdit = ref("")
 
     const newName = ref("")
-
-    // 방 가져오기
-    const getRooms = () => {
-      store.dispatch("office/getRooms")
-    }
 
     const formData = reactive({
       name: {
@@ -150,7 +153,7 @@ export default {
     }
 
     // 방 생성할 때 최대 길이 제한 걸어야 함
-    const createRoom = () => {
+    const createRoom = async () => {
       // 회의실 이름이 비어있으면 alert 출력하고
       if (!formData.name.value) {
         alert("회의실 이름은 공백으로 할 수 없습니다.")
@@ -158,8 +161,10 @@ export default {
         return
       }
       try {
-        const room = {
-          name: formData.name.value,
+        // 누런줄 오류나는거 물어보기
+        const room = await {
+          roomName: formData.name.value,
+          officeId: user.officeId,
         }
         store.dispatch("office/createRoom", room)
         activeCreate.value = !activeCreate.value
@@ -194,11 +199,8 @@ export default {
       store.dispatch("office/deleteRoom", roomId)
     }
 
-    onMounted(() => {
-      getRooms()
-    })
-
     return {
+      user,
       formData,
       activeCreate,
       activeEdit,
@@ -210,6 +212,7 @@ export default {
       editRoom,
       deleteRoom,
       handleUpdateValidate,
+      displayRoomList,
     }
   },
 }
