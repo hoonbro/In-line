@@ -29,7 +29,7 @@ export default {
   @apply grid gap-1 px-4;
 
   .content {
-    @apply flex items-end gap-2 whitespace-pre;
+    @apply flex items-end gap-2 whitespace-pre-line;
 
     .message {
       max-width: 224px;
