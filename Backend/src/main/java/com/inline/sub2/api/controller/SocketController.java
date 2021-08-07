@@ -30,10 +30,13 @@ public class SocketController {
     public ChatDto SocketHandler(ChatDto chatDto, @DestinationVariable("officeId") Long officeId) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         chatDto.setOfficeId(officeId);
-        ChatEntity chatEntity = chatService.insertMessage(chatDto);
-        System.out.println("내용 확인 : "+ chatEntity.getSendTime());
-        chatDto.setSendDate(chatEntity.getSendDate());
 
+        ChatEntity chatEntity = new ChatEntity();
+        if(chatDto.getType().equals("CHAT")) {
+             chatEntity = chatService.insertMessage(chatDto);
+        }
+
+        chatDto.setSendDate(chatEntity.getSendDate());
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         chatDto.setSendTime(transFormat.format(chatEntity.getSendTime()).split(" ")[1]);
         return chatDto;

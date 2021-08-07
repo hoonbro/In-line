@@ -21,7 +21,6 @@ public class ChatController {
     public ResponseEntity<List<ChatEntity>> chatList(@PathVariable("officeId") Long officeId){
         HttpStatus httpStatus = HttpStatus.OK;
         List<ChatEntity> list = chatService.chatList(officeId);
-
         return new ResponseEntity<List<ChatEntity>>(list,httpStatus);
     }
 
