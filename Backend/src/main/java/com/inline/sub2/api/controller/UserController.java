@@ -97,7 +97,7 @@ public class UserController {
                     commuteDto.setOfficeId(loginUser.getOfficeId());
 
                     CommuteEntity commuteEntity = commuteService.commuteLogin(commuteDto);
-                    map.put("commuteId", commuteEntity.getCommuteId());
+                    map.put("commuteEntity", commuteEntity);
                     status = HttpStatus.OK;
                 } else {
                     log.error("비밀번호가 일치하지 않습니다.");
