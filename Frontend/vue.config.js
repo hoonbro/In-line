@@ -1,11 +1,10 @@
 module.exports = {
   // publicPath: "/",
   devServer: {
-    host: "localhost",
     port: 8083,
     proxy: {
       "/api/v1": {
-        target: "http://i5d207.p.ssafy.io:8080",
+        target: process.env.VUE_APP_API_BASE_URL,
       },
       // "/groupcall": {
       //   target: "https://13.124.47.223:8995",
