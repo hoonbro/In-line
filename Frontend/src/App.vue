@@ -3,10 +3,15 @@
 </template>
 
 <script>
+import { computed, onUnmounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
+import { exitOffice, disconnectStomp } from "@/lib/websocket"
 export default {
   setup() {
     const store = useStore()
+    const user = computed(() => store.state.auth.user)
+    const stompClient = computed(() => store.state.socket.stompClient)
+    // 새로고침했을 때 LocalStorage => vuex
     if (localStorage.getItem("accessToken")) {
       store.commit("auth/setToken", localStorage.getItem("accessToken"))
     }
@@ -19,6 +24,15 @@ export default {
         JSON.parse(localStorage.getItem("commute"))
       )
     }
+
+    // 연결 끊기
+    onUnmounted(() => {
+      if (stompClient.value.connected === true) {
+        exitOffice(stompClient.value, user.value)
+        disconnectStomp()
+        // store.state.socket.subscription.unsubscribe()
+      }
+    })
   },
 }
 </script>

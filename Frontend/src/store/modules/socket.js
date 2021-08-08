@@ -1,17 +1,14 @@
 import axios from "axios"
-import { auth } from "@/store/modules/auth"
 
 const chatAxios = axios.create({
   baseURL: "/api/v1/chat",
-  headers: {
-    accessToken: auth.state.accessToken,
-  },
 })
 
 export const socket = {
   namespaced: true,
   state: {
     stompClient: null,
+    subscription: null,
     officeChatList: [],
   },
   mutations: {
@@ -19,16 +16,24 @@ export const socket = {
       state.stompClient = payload
     },
     initOfficeChatList(state, chatList) {
-      state.officeChatList = []
-      state.officeChatList.push(...chatList)
+      state.officeChatList = chatList
     },
     addOfficeChat(state, chat) {
       state.officeChatList.push(chat)
     },
+    setSubscription(state, subscription) {
+      state.subscription = subscription
+    },
   },
   actions: {
-    async getAllOfficeChat({ commit }) {
-      const res = await chatAxios.get(`/${auth.state.user.officeId}`)
+    async getAllOfficeChat({ commit, rootState }) {
+      const res = await chatAxios({
+        method: "GET",
+        url: `/${rootState.auth.user.officeId}`,
+        headers: {
+          accessToken: rootState.auth.accessToken,
+        },
+      })
       commit("initOfficeChatList", res.data)
     },
   },
