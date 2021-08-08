@@ -13,6 +13,12 @@ export default {
     if (localStorage.getItem("user")) {
       store.commit("auth/setUser", JSON.parse(localStorage.getItem("user")))
     }
+    if (localStorage.getItem("commute")) {
+      store.commit(
+        "auth/setCommute",
+        JSON.parse(localStorage.getItem("commute"))
+      )
+    }
   },
 }
 </script>
