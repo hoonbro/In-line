@@ -3,6 +3,7 @@ package com.inline.sub2.api.service;
 import com.inline.sub2.api.dto.EmailDto;
 import com.inline.sub2.api.dto.UserRegistDto;
 import com.inline.sub2.db.entity.OnBoardEntity;
+import com.inline.sub2.db.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,6 +23,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    UserService userService;
 
     @Override
     public void sendEmail(UserRegistDto user) {
@@ -61,14 +65,27 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public String sendPassword(String email) {
-        SimpleMailMessage message = new SimpleMailMessage();
+        MimeMessage message = javaMailSender.createMimeMessage();
         String TemporaryPassword = getRamdomPassword();
-        //임시 비밀번호 발송
-        message.setTo(email);
-        message.setSubject("Inline 임시 비밀번호 발급 안내");
-        message.setText("안녕하세요 " + email + "님 임시 비밀번호 안내드립니다. 비밀번호 변경 후 사용하세요\n" + "임시 비밀번호 : " + TemporaryPassword);
+        UserEntity userEntity = userService.getUserByEmail(email);
+        try {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+            messageHelper.setTo(email);
+            messageHelper.setSubject("Inline 임시 비밀번호 발급 안내");
+            messageHelper.setText(  "<html><body><div style=\"display: flex; flex-direction: column;\"> \n" +
+                   " <h1>인-라인</h1>\n" +
+                "<h2>비밀번호를 잊으셨나요?</h2>\n" +
+                "<p>" + userEntity.getName() + "님, 안녕하세요. 임시 비밀번호를 발급해 드렸습니다.<br>" +
+                    "아래 임시 비밀번호를 통해 로그인 해 주시고, 로그인 후 비밀번호를 꼭 바꿔주시기 바랍니다.</p>\n" +
+                "<p style=\"font-weight: bold;\"><span>임시 비밀번호 : </span>"+TemporaryPassword+"</p>\n" +
+                    "</div></body></html>", true);
 
-        javaMailSender.send(message);
+            javaMailSender.send(message);
+        }catch(MessagingException e){
+            log.error("가입 메일 발송 실패 :{}", e);
+        }
+        //임시 비밀번호 발송
+
         return TemporaryPassword;
     }
 
