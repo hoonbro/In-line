@@ -13,6 +13,8 @@ public interface CommuteRepository extends JpaRepository<CommuteEntity,String> {
 
     @Query("SELECT u FROM CommuteEntity u WHERE u.commuteId = ?1")
     public CommuteEntity findByCommuteId(Long commuteId);
+    public CommuteEntity findByUserId(Long userId);
+    public CommuteEntity findByUserIdAndYmd(Long userId, Date ymd);
 
     @Query("SELECT c FROM CommuteEntity c WHERE c.officeId = ?1 ORDER BY c.ymd")
     public List<CommuteEntity> findAllByOfficeId(Long officeId);
