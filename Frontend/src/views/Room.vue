@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <div class="wrapper">
-      <div class="video-chat">
+      <div class="video-chat text-center">
         <!-- ------------------------------------------------------------------------- -->
         <div id="participants" class="video-part">
           <!-- 이 안에 participant가 들어온다 -->
@@ -69,24 +69,30 @@ export default {
   props: {
     roomId: [String || Number],
   },
-  setup() {
+  // props한거 쓰고싶으면 인자로 넣어줘야함
+  setup(props) {
     const store = useStore()
 
     const router = useRouter()
 
+    const room = ref("")
+    store.state.office.rooms.forEach(item => {
+      if (item.roomId == props.roomId) {
+        room.value = item.roomName
+      }
+    })
     const state = reactive({
-      room: "전체 회의방",
+      room: room.value,
       name: store.state.auth.user.name,
     })
 
+    // 동명이인 처리 어떻게 할건지
     const register = () => {
       const message = {
         id: "joinRoom",
-        // 얘가 닉네임
         name: state.name,
-        //
         room: state.room,
-        roomId: 2,
+        roomId: props.roomId,
       }
 
       sendMessage(message)
@@ -106,7 +112,7 @@ export default {
       ws.send(jsonMessage)
     }
 
-    const participants = {}
+    const participants = reactive({})
 
     // window.onbeforeunload = function() {
     //   ws.close()
@@ -172,17 +178,15 @@ export default {
 
     function onExistingParticipants(msg) {
       let constraints = {
-        // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
         audio: true,
         video: {
           mandatory: {
-            // minWidth: 1000,
-            maxWidth: 420,
-            minWidth: 420,
-            // minHeight: 400,
-            // maxHeight: 2000,
-            maxFrameRate: 20,
-            minFrameRate: 20,
+            minWidth: 450,
+            maxWidth: 450,
+            minHeight: 320,
+            maxHeight: 320,
+            maxFrameRate: 15,
+            minFrameRate: 15,
           },
         },
       }
@@ -257,7 +261,6 @@ export default {
     // participant 시작
     // ===========================================================================
 
-    // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
     const PARTICIPANT_MAIN_CLASS = "participant main"
     const PARTICIPANT_CLASS = "participant"
 
@@ -277,12 +280,13 @@ export default {
       container.className = isPresentMainParticipant()
         ? PARTICIPANT_CLASS
         : PARTICIPANT_MAIN_CLASS
-      container.classList.add("text-center", "pointer-events-none")
+      container.classList.add("pointer-events-none")
       container.id = name
       let span = document.createElement("span")
-      span.classList.add("text-blue-500", "w-12", "h-8", "bg-gray-50")
+      span.classList.add("w-full", "h-full", "bg-gray-200", "inline-block")
 
       let video = document.createElement("video")
+      video.classList.add("asdasd")
       let rtcPeer
 
       container.appendChild(video)
@@ -357,6 +361,8 @@ export default {
     // participant 끝
     // ===========================================================================
 
+    // console.log(store.state)
+
     // -------------------------------------------------------------------------------
     const videoList = 6
 
@@ -366,14 +372,23 @@ export default {
 
     const changeMic = () => {
       switchMic.value = !switchMic.value
-      console.log(switchMic.value)
-      // participants[name].rtcPeer.videoEnabled = false
+      // console.log(switchMic.value)
+      participants[
+        store.state.auth.user.name
+      ].rtcPeer.audioEnabled = !participants[store.state.auth.user.name].rtcPeer
+        .audioEnabled
     }
     const changeCam = () => {
       switchCam.value = !switchCam.value
-      console.log(switchCam.value)
+      // console.log(switchCam.value)
+      participants[
+        store.state.auth.user.name
+      ].rtcPeer.videoEnabled = !participants[store.state.auth.user.name].rtcPeer
+        .videoEnabled
     }
-    // 여기까지 마이크, 캠 껐다 켰다하기
+    console.log(store.state.auth.user.name)
+
+    // console.log(participants["이원우"].rtcPeer)
 
     return {
       videoList,
@@ -382,6 +397,9 @@ export default {
       changeMic,
       changeCam,
       leaveRoom,
+      participants,
+
+      // muteMicrophone,
     }
   },
 }
@@ -400,7 +418,6 @@ export default {
 
   .video-chat {
     width: 90%;
-
     margin: auto;
 
     .user-name {
@@ -411,18 +428,10 @@ export default {
     }
 
     .video-part {
-      @apply grid grid-cols-3 mx-16 mt-20;
+      @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;
-    }
-
-    .video-part3 {
-      @apply grid lg:grid-cols-3 md:grid-cols-2 mx-40 mt-28 gap-5;
-      // grid-column: 1/3;
-    }
-    .video-part4 {
-      @apply grid grid-cols-2 m-12 bg-black;
     }
 
     .bar-part {
@@ -459,6 +468,10 @@ export default {
 // .main {
 //   border: 3px solid red;
 // }
+
+.asdasd:hover {
+  border: 3px solid red;
+}
 
 .main {
   border: 5px solid blue;

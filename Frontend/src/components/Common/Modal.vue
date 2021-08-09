@@ -5,6 +5,7 @@
         <slot name="modal-header"></slot>
         <div class="modal-body">
           <slot name="modal-body"></slot>
+          <slot name="modal-footer"></slot>
         </div>
       </div>
     </div>

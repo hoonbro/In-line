@@ -2,97 +2,109 @@
   <Modal>
     <template v-slot:modal-header>
       <header>
-        <h3 class="text-3xl">회의실 관리</h3>
-        <button class="close-btn" @click="$emit('close')">
-          <span class="material-icons">close</span>
-        </button>
+        <h3 class="text-3xl font-bold select-none">회의실 관리</h3>
       </header>
     </template>
     <template v-slot:modal-body>
       <div class="modal-body">
-        <div class="modal-explain">
-          <span
-            >{{ user.officeEntity.officeName }}의 회의실을 관리할 수
-            있습니다.<br />
-            기본적으로 생성된 회의실은 수정할 수 없습니다.
-          </span>
-          <p>{{ room }}</p>
+        <div class="modal-explain select-none">
+          <p>
+            {{ user.officeEntity.officeName }}의 회의실을 관리할 수 있습니다.
+          </p>
+          <p>기본적으로 생성된 회의실은 수정할 수 없습니다.</p>
         </div>
-        <div>
-          <ul class="room-list">
-            <li
-              class="room-list-item"
-              :class="{ edit: activeEdit === room.roomId }"
-              v-for="room in displayRoomList"
-              :room="room"
-            >
-              <div class="info">
-                <span v-if="activeEdit !== room.roomId">{{
-                  room.roomName
-                }}</span>
-                <!-- 아직도 value는..못했따.. -->
-                <input
-                  id="input-tag"
-                  v-if="activeEdit === room.roomId"
-                  v-model="newName"
-                  :placeholder="room.roomName"
-                  @keyup.enter="editRoom(room.roomId)"
-                  @keyup.esc="editMode()"
-                />
-              </div>
-
-              <!-- ---------------icons----------------- -->
-              <div class="icons" v-if="room.roomId > 3">
-                <span
-                  v-if="activeEdit !== room.roomId"
-                  class="material-icons text-gray-500"
-                  @click="editMode(room.roomId)"
-                >
-                  edit </span
-                ><span
-                  v-if="activeEdit !== room.roomId"
-                  class="material-icons text-red-500"
-                  @click="deleteRoom(room.roomId)"
-                >
-                  close
-                </span>
-                <span
-                  v-if="activeEdit === room.roomId"
-                  class="material-icons"
-                  @click="editRoom(room.roomId)"
-                >
-                  done
-                </span>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="modal-footer my-3">
-        <div class="create-room">
-          <template v-if="activeCreate">
-            <TextInput
-              v-for="(field, key) in formData"
-              :key="key"
-              :name="key"
-              v-model="field.value"
-              :field="field"
-              :formData="formData"
-              :maxlength="field.maxlength"
-              @update:validate="handleUpdateValidate(formData, $event)"
-            />
-          </template>
-        </div>
-        <div class="text-center create-btn" v-if="activeCreate === false">
-          <span class="cursor-pointer" @click="showCreateButton()"
-            >회의실 추가</span
+        <ul class="room-list">
+          <li
+            v-for="(room, index) in displayRoomList"
+            :key="room.roomId"
+            class="room-list-item"
+            :class="{ edit: activeEdit === room.roomId }"
+            :room="room"
           >
+            <div class="info">
+              <span v-if="activeEdit !== room.roomId">
+                {{ room.roomName }}
+              </span>
+              <!-- 아직도 value는..못했따.. -->
+              <input
+                class="edit-input"
+                v-else
+                v-model="newName"
+                :placeholder="room.roomName"
+                maxlength="20"
+                @keyup.enter="editRoom(room.roomId)"
+                @keyup.esc="editMode()"
+              />
+            </div>
+            <!-- ---------------icons----------------- -->
+            <!-- 기본 회의실은 수정 불가 -->
+            <div class="icons" v-if="index > 1">
+              <span
+                v-if="activeEdit !== room.roomId"
+                class="material-icons edit"
+                @click="editMode(room.roomId, room.roomName)"
+              >
+                edit
+              </span>
+              <span
+                v-if="activeEdit !== room.roomId"
+                class="material-icons delete"
+                @click="deleteRoom(room.roomId, room.roomName)"
+              >
+                close
+              </span>
+              <span
+                v-if="activeEdit === room.roomId"
+                class="material-icons done"
+                @click="editRoom(room.roomId)"
+              >
+                done
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </template>
+    <template v-slot:modal-footer>
+      <div class="modal-footer">
+        <div class="create-room" v-if="activeCreate">
+          <TextInput
+            v-for="(field, key) in formData"
+            :key="key"
+            class="mb-4"
+            :name="key"
+            v-model="field.value"
+            :field="field"
+            :formData="formData"
+            :maxlength="field.maxlength"
+            @update:validate="handleUpdateValidate(formData, $event)"
+          />
         </div>
-        <!--  -->
-        <div>
-          <button class="create-btn" v-if="activeCreate" @click="createRoom()">
-            회의실 추가하기
+        <div class="flex flex-col gap-2">
+          <button
+            class="create-btn mx-auto"
+            v-if="activeCreate === false"
+            @click="activeCreate = true"
+          >
+            회의실 추가
           </button>
+          <!--  -->
+          <template v-else>
+            <button
+              class="create-btn active"
+              :class="{ disabled: !createFormIsValid }"
+              :disabled="!createFormIsValid"
+              @click="createRoom()"
+            >
+              회의실 추가하기
+            </button>
+            <button
+              @click="activeCreate = false"
+              class="text-sm text-gray-400 font-medium mx-auto"
+            >
+              취소
+            </button>
+          </template>
         </div>
       </div>
     </template>
@@ -118,21 +130,14 @@ export default {
   },
   setup() {
     const store = useStore()
-
-    const rooms = computed(() => {
-      return store.state.office.rooms
-    })
-
+    const rooms = computed(() => store.state.office.rooms)
     const user = JSON.parse(localStorage.getItem("user"))
-
     const displayRoomList = computed(() => {
       return rooms.value.filter(room => room.roomName !== "로비")
     })
     // 방 생성 Input (원래 안보임)
     const activeCreate = ref(false)
-
     const activeEdit = ref("")
-
     const newName = ref("")
 
     const formData = reactive({
@@ -143,16 +148,19 @@ export default {
         // 유효성과 에러,,필요할까?
         validators: [requiredValidator],
         errors: {},
-        maxlength: 16,
+        maxlength: 20,
       },
     })
 
     // 방 생성하기를 누르면 Input이 보이면서 해당 버튼은 없어지게
-    const showCreateButton = () => {
-      activeCreate.value = !activeCreate.vaule
-    }
+    // template에서 바로 상태 변경 (false => true)
 
-    // 방 생성할 때 최대 길이 제한 걸어야 함
+    // 방 생성할 때, 유효성 체크
+    const createFormIsValid = computed(() => {
+      return formData.name.value && !Object.keys(formData.name.errors).length
+    })
+
+    // 방 생성할 때 최대 길이 제한 걸어야 함 (Ok)
     const createRoom = async () => {
       // 회의실 이름이 비어있으면 alert 출력하고
       if (!formData.name.value) {
@@ -161,24 +169,23 @@ export default {
         return
       }
       try {
-        // 누런줄 오류나는거 물어보기
-        const room = await {
+        const room = {
           roomName: formData.name.value,
           officeId: user.officeId,
         }
-        store.dispatch("office/createRoom", room)
+        await store.dispatch("office/createRoom", room)
         activeCreate.value = !activeCreate.value
       } catch (error) {
         console.log(error)
       }
     }
 
-    const editMode = roomId => {
+    const editMode = (roomId, roomName) => {
       activeEdit.value = roomId
-      newName.value = ""
+      newName.value = roomName
     }
 
-    const editRoom = roomId => {
+    const editRoom = async roomId => {
       if (!newName.value) {
         alert("회의실 이름은 공백으로 할 수 없습니다.")
         return
@@ -187,16 +194,17 @@ export default {
         const room = {
           name: newName.value,
         }
-        store.dispatch("office/editRoom", { room, roomId })
+        await store.dispatch("office/editRoom", { room, roomId })
       } catch (error) {
         console.log(error)
       }
-
       activeEdit.value = ""
     }
 
-    const deleteRoom = roomId => {
-      store.dispatch("office/deleteRoom", roomId)
+    const deleteRoom = (roomId, roomName) => {
+      if (confirm(`회의실 이름: ${roomName}\n회의실을 삭제하시겠어요?`)) {
+        store.dispatch("office/deleteRoom", roomId)
+      }
     }
 
     return {
@@ -204,7 +212,6 @@ export default {
       formData,
       activeCreate,
       activeEdit,
-      showCreateButton,
       editMode,
       newName,
       rooms,
@@ -213,6 +220,7 @@ export default {
       deleteRoom,
       handleUpdateValidate,
       displayRoomList,
+      createFormIsValid,
     }
   },
 }
@@ -230,27 +238,55 @@ header {
     @apply mb-10;
   }
   .room-list {
-    @apply flex flex-col overflow-y-auto h-48;
-
-    .edit {
-      @apply border-blue-600 border-2;
-      // border: 2px
-    }
+    @apply grid gap-2 overflow-y-auto h-48;
 
     .room-list-item {
       // flex 박스 안에 요소가 많아져도 크기를 유지하는 flex-shrink-0(0은 false, 1은 true)
-      @apply bg-gray-50 w-96 h-10 flex-shrink-0 rounded my-1 items-center px-4 flex justify-between;
+      @apply bg-gray-50 py-2 pl-9 pr-6 select-none rounded items-center flex justify-between relative;
 
-      input {
-        @apply outline-none bg-gray-50;
+      &::before {
+        content: "";
+        transform: translateY(-50%);
+        @apply absolute w-1 h-1 bg-green-400 top-1/2 left-4 rounded-full;
+      }
+
+      &:hover {
+        @apply bg-gray-100;
+      }
+
+      &.edit {
+        @apply border-blue-600 border-2;
+        // border: 2px
+      }
+
+      .icons {
+        @apply flex gap-1;
+
+        .material-icons {
+          font-size: 18px;
+          @apply cursor-pointer;
+
+          &.edit {
+            @apply text-gray-300 hover:text-gray-500;
+          }
+
+          &.delete {
+            @apply text-red-300 hover:text-red-500;
+          }
+        }
+      }
+
+      .info {
+        @apply w-full;
+
+        input {
+          @apply outline-none bg-transparent w-full;
+        }
       }
     }
 
     .room-list-item-add {
       @apply bg-blue-500 w-full h-10 rounded my-1 items-center px-4 flex justify-between;
-    }
-    .material-icons {
-      @apply w-2 h-2 ml-2 mr-2 px-2 cursor-pointer;
     }
 
     .label {
@@ -260,11 +296,16 @@ header {
 }
 
 .modal-footer {
-  .create-room {
-  }
-
   .create-btn {
-    @apply w-full h-14 bg-gray-400 text-white rounded-xl py-4 mt-4;
+    @apply text-center font-bold rounded-xl;
+
+    &.active {
+      @apply py-2 bg-blue-500 text-white;
+    }
+
+    &.disabled {
+      @apply bg-gray-400;
+    }
   }
 }
 </style>
