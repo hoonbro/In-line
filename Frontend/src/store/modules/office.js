@@ -32,6 +32,8 @@ export const office = {
     todos: [],
     members: [],
     rooms: [],
+    depts: [],
+    jobs: [],
   },
   mutations: {
     setNotifications(state, notis) {
@@ -46,6 +48,12 @@ export const office = {
     setRooms(state, rooms) {
       state.rooms = rooms
     },
+    setDepts(state, depts) {
+      state.depts = depts
+    },
+    setJobs(state, jobs) {
+      state.jobs = jobs
+    },
   },
   getters: {
     user(state) {
@@ -53,15 +61,43 @@ export const office = {
     },
   },
   actions: {
+    async getDepts({ commit }) {
+      try {
+        const res = await officeAPI({
+          method: "get",
+          url: "depts",
+        })
+        console.log(res)
+        commit("setDepts", res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getJobs({ commit }) {
+      try {
+        const res = await officeAPI({
+          method: "get",
+          url: "jobs",
+        })
+        console.log(res)
+        commit("setJobs", res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async registerOffice({ rootState }, formData) {
-      return officeAPI({
-        method: "POST",
-        url: "",
-        data: formData,
-        headers: {
-          accessToken: rootState.auth.accessToken,
-        },
-      })
+      try {
+        const res = await officeAPI({
+          method: "post",
+          url: "",
+          data: formData,
+        })
+        console.log(res)
+        return res
+      } catch (error) {
+        console.log("error:", error)
+        throw Error("회사등록 실패")
+      }
     },
     async getNotifications({ commit, rootState }) {
       try {

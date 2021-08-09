@@ -12,6 +12,7 @@
         </div>
         <p>인-라인에 오신 것을 환영합니다.</p>
       </div>
+      <!-- step 1 : 회사이름 입력 -->
       <div v-if="step === 1">
         <div class="input-list">
           <TextInput
@@ -45,18 +46,54 @@
           </div>
         </div>
       </div>
+      <!-- step 2 : 관리자 정보 입력 -->
       <div v-else>
         <div class="input-list">
-          <TextInput
-            v-for="(field, key) in managerFormData"
-            :key="key"
-            v-model="field.value"
-            :name="key"
-            :formData="managerFormData"
-            :field="field"
-            @update:modelValue="managerFormError = ''"
-            @update:validate="handleUpdateValidate(managerFormData, $event)"
-          />
+          <div v-for="(field, key) in managerFormData" :key="key">
+            <select
+              v-if="key === 'deptName'"
+              v-model="field.value"
+              class="w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600"
+              :class="{ selectLabel: !field.value }"
+            >
+              <option disabled value="">{{ field.label }}</option>
+              <option v-for="dept in depts">
+                {{ dept.deptName }}
+              </option>
+            </select>
+
+            <select
+              v-else-if="key === 'jobName'"
+              v-model="field.value"
+              class="w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600"
+              :class="{ selectLabel: !field.value }"
+            >
+              <option disabled value="">{{ field.label }}</option>
+              <option v-for="job in jobs">
+                {{ job.jobName }}
+              </option>
+            </select>
+
+            <TextInput
+              v-else
+              v-model="field.value"
+              :name="key"
+              :formData="managerFormData"
+              :field="field"
+              @update:modelValue="managerFormError = ''"
+              @update:validate="handleUpdateValidate(managerFormData, $event)"
+            />
+            <!-- <TextInput
+              v-for="(field, key) in managerFormData"
+              :key="key"
+              v-model="field.value"
+              :name="key"
+              :formData="managerFormData"
+              :field="field"
+              @update:modelValue="managerFormError = ''"
+              @update:validate="handleUpdateValidate(managerFormData, $event)"
+            /> -->
+          </div>
           <div>
             <input
               class="mr-1"
@@ -107,6 +144,13 @@ export default {
   components: { TextInput, Modal },
   setup(props, { emit }) {
     const store = useStore()
+
+    store.dispatch("office/getDepts")
+    store.dispatch("office/getJobs")
+
+    const depts = computed(() => store.state.office.depts)
+    const jobs = computed(() => store.state.office.jobs)
+
     const step = ref(1)
     const officeFormData = reactive({
       officeName: {
@@ -129,13 +173,12 @@ export default {
       },
       deptName: {
         label: "담당자 소속",
-        type: "text",
         value: "",
         validators: [requiredValidator],
         errors: {},
       },
       jobName: {
-        label: "담당자 역할",
+        label: "담당자 직무",
         type: "text",
         value: "",
         validators: [requiredValidator],
@@ -199,12 +242,12 @@ export default {
 
     const managerFormIsFilled = computed(() => {
       return Object.keys(managerFormData).every(
-        (key) => managerFormData[key].value
+        key => managerFormData[key].value
       )
     })
 
     const managerFormNoError = computed(() => {
-      return Object.keys(managerFormData).every((key) => {
+      return Object.keys(managerFormData).every(key => {
         return !Object.keys(managerFormData[key].errors).length
       })
     })
@@ -223,13 +266,15 @@ export default {
     const registerOffice = async () => {
       const submitData = { term: term.value }
       Object.keys(formData.value).forEach(
-        (key) => (submitData[key] = formData.value[key].value)
+        key => (submitData[key] = formData.value[key].value)
       )
       try {
+        console.log(submitData)
         await store.dispatch("office/registerOffice", submitData)
         alert("회사 등록을 완료했어요!")
         emit("close")
       } catch (error) {
+        console.log(error)
         if (error.response.status === 409) {
           managerFormError.value = "이미 존재하는 이메일이에요!"
         } else {
@@ -239,6 +284,8 @@ export default {
     }
 
     return {
+      depts,
+      jobs,
       step,
       officeFormData,
       officeFormError,
@@ -277,6 +324,10 @@ export default {
         &.error {
           @apply bg-red-600;
         }
+      }
+
+      .selectLabel {
+        @apply text-gray-600;
       }
 
       .submit-error {
