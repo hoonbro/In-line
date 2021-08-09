@@ -205,7 +205,8 @@ public class UserController {
         //파일에 날짜 추가하기(중복방지)
         Date date = new Date();
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String filePath = "/home/ubuntu/test/bjh/img/" + fileName + "(" + transFormat.format(date) + ")" + extension;
+        String name = fileName + "(" + transFormat.format(date) + ")" + extension;
+        String filePath = "/home/ubuntu/images/" + name;
 
         try (
             // 파일 저장할 경로 + 파일명을 파라미터로 넣고 fileOutputStream 객체 생성하고
@@ -235,6 +236,6 @@ public class UserController {
         } catch (Exception ex) {
             throw new RuntimeException("file Save Error");
         }
-        return new ResponseEntity<String>(filePath,status);
+        return new ResponseEntity<String>(name,status);
     }
 }

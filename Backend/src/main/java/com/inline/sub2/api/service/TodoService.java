@@ -15,5 +15,5 @@ public interface TodoService {
     TodoEntity findUserIdByTodoId(Long todoId);
 
     void deleteTodo(Long todoId);
-    void taskTodo(Long todoId);
+    TodoEntity taskTodo(Long todoId);
 }
