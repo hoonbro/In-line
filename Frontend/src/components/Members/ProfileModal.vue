@@ -1,19 +1,13 @@
 <template>
   <Modal>
-    <!-- <template v-slot:modal-header>
-      <header>
-        <button @click="$emit('close')">
-          <span class="material-icons">close</span>
-        </button>
-      </header>
-    </template> -->
     <template v-slot:modal-body>
       <div class="profile-img-container">
         <div class="profile-img-wrapper">
           <img
             :src="
-              `/images/${profileImg}` ||
-                `https://picsum.photos/seed/user-2-${userId}/100`
+              profileImg
+                ? `/images/${profileImg}`
+                : `https://picsum.photos/seed/user-2-${userId}/100`
             "
             alt="프로필 이미지"
           />
@@ -82,7 +76,7 @@
 
 <script>
 import { reactive, ref } from "@vue/reactivity"
-import { computed, onMounted } from "@vue/runtime-core"
+import { computed, onMounted, onUnmounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import axios from "axios"
 
@@ -181,7 +175,7 @@ export default {
           },
         })
         console.log(res)
-        profileImg.value = URL.createObjectURL(image)
+        profileImg.value = res.data
         console.log("이미지 업로드 성공")
       } catch (error) {
         console.log(error)
@@ -204,6 +198,14 @@ export default {
         }
       } catch (error) {
         console.log(error)
+      }
+    })
+
+    onUnmounted(() => {
+      try {
+        store.dispatch("office/getMembers")
+      } catch (error) {
+        alert(error)
       }
     })
 
