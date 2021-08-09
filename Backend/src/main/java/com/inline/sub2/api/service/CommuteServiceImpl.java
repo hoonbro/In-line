@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 @Service
@@ -20,7 +21,6 @@ public class CommuteServiceImpl implements CommuteService {
     public CommuteEntity commuteLogin(CommuteDto commuteDto) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         Date now = new Date();
-        System.out.println("여기까지 들어올텐데");
         System.out.println(commuteDto.getUserId());
         System.out.println(commuteDto.getOfficeId());
         CommuteEntity commuteEntity = commuteRepository.findByUserIdAndYmd(commuteDto.getUserId(),now);
@@ -43,6 +43,7 @@ public class CommuteServiceImpl implements CommuteService {
 
         CommuteEntity commuteEntity = commuteRepository.findByCommuteId(commuteId);
         commuteEntity.setComeIn(new Date()); // 출근 시분초
+        System.out.println(commuteEntity.getComeIn());
         return commuteRepository.save(commuteEntity);
     }
 
@@ -55,5 +56,12 @@ public class CommuteServiceImpl implements CommuteService {
         System.out.println(commuteEntity.getComeIn());
         commuteEntity.setComeOut(now);
         return commuteRepository.save(commuteEntity);
+    }
+
+    @Override
+    public List<CommuteEntity> commuteList(Long officeId) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        Date now = new Date();
+        return commuteRepository.findByOfficeIdAndYmdAndComeInNotNullAndComeOutNull(officeId,now);
     }
 }

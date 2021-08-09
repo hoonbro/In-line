@@ -34,7 +34,7 @@ public class TodoController {
 
         try{
             list = todoService.UserTodoList(userId);
-            System.out.println(list);
+//            System.out.println(list);
         }
         catch(Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
