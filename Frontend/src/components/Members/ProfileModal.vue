@@ -18,7 +18,7 @@
             ref="fileInputEl"
             @change="onFileChange"
           />
-          <button class="edit-btn" v-if="true" @click="clickInputEl">
+          <button class="edit-btn" v-if="canEdit" @click="clickInputEl">
             <span class="material-icons">edit</span>
           </button>
         </div>
@@ -28,7 +28,7 @@
           <h3>기본정보</h3>
           <button
             class="edit-btn"
-            v-if="!editMode"
+            v-if="canEdit && !editMode"
             @click="editMode = !editMode"
           >
             <span class="material-icons">edit</span>
@@ -46,13 +46,17 @@
           </li>
         </ul>
       </div>
-      <div class="change-pwd-btn-container" v-if="!editMode">
+      <div class="change-pwd-btn-container" v-if="canEdit && !editMode">
         <router-link :to="{ name: 'ChangePassword' }">
           비밀번호 변경
         </router-link>
       </div>
       <!-- Edit Mode -->
-      <form class="edit-form" v-else @submit.prevent="updateProfile">
+      <form
+        class="edit-form"
+        v-else-if="canEdit"
+        @submit.prevent="updateProfile"
+      >
         <TextInput
           v-for="(field, key) in profileForm"
           :key="key"
@@ -75,7 +79,7 @@
 
 <script>
 import { reactive, ref } from "@vue/reactivity"
-import { onMounted } from "@vue/runtime-core"
+import { computed, onMounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import axios from "axios"
 
@@ -86,7 +90,6 @@ import {
 } from "@/lib/validator"
 import Modal from "@/components/Common/Modal.vue"
 import TextInput from "@/components/TextInput.vue"
-
 
 // const profileUpload = axios.create({
 //   baseURL: `/api/v1/users/profile`,
@@ -107,6 +110,11 @@ export default {
   },
   setup(props) {
     const store = useStore()
+    const canEdit = computed(
+      () =>
+        store.getters["auth/isAdmin"] ||
+        store.state.auth.user.userId === props.userId
+    )
     const profileForm = reactive({
       email: {
         label: "이메일",
@@ -165,26 +173,31 @@ export default {
       editMode.value = false
     }
 
-    const onFileChange = async() => {
+    const onFileChange = async () => {
       const image = fileInputEl.value.files[0]
-      const formData = new FormData();
-      formData.append("file", image);
-      formData.append("userId", props.userId);
-      console.log(image);
-      console.log(formData);
-       try {
-        await axios.put(
-          `/api/v1/users/profile`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }
-        ).then(function (response) {
-          console.log(response.data);
-       });
-
+      const formData = new FormData()
+      formData.append("userId", store.state.auth.user.userId)
+      formData.append("file", image)
+      console.log(image)
+      for (let value of formData.values()) {
+        console.log(value)
+      }
+      try {
+        const res = await axios({
+          method: "PUT",
+          url: "/api/v1/users/profile",
+          data: formData,
+          headers: {
+            accessToken: store.state.auth.accessToken,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        console.log(res)
         profileImg.value = URL.createObjectURL(image)
         console.log("이미지 업로드 성공")
       } catch (error) {
         console.log(error)
       }
-      
     }
 
     onMounted(async () => {
@@ -205,6 +218,7 @@ export default {
     })
 
     return {
+      canEdit,
       profileForm,
       editMode,
       profileImg,
