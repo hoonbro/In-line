@@ -47,6 +47,10 @@ public class UserEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date joinDate;
 
+    @Column(name = "retire_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date retireDate;
+
     @Column(name = "auth")
     private String auth;
 
