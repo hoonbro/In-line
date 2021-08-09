@@ -20,6 +20,7 @@
       <button
         class="change-btn"
         :class="{ disabled: !formIsValid }"
+        :disabled="!formIsValid"
         @click="changePassword"
       >
         비밀번호 변경 완료
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { computed, reactive } from "vue"
+import { computed, reactive, ref } from "vue"
 import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
@@ -38,7 +39,7 @@ import {
   handleUpdateValidate,
 } from "@/lib/validator"
 import { useStore } from "vuex"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 
 export default {
   name: "ChangePassword",
@@ -48,12 +49,15 @@ export default {
   setup() {
     const store = useStore()
     const router = useRouter()
+    const route = useRoute()
 
     const formData = reactive({
       oldPassword: {
         label: "이전 비밀번호",
         type: "password",
-        value: store.state.auth.shouldChangePassword ? "asd" : "",
+        value: store.state.auth.shouldChangePassword
+          ? route.params.tempPassword
+          : "",
         validators: [requiredValidator],
         errors: {},
       },
@@ -98,8 +102,12 @@ export default {
       })
     })
 
+    const confirmIsValid = computed(() => {
+      return formData.password.value === formData.confirmPassword.value
+    })
+
     const formIsValid = computed(() => {
-      return formIsFilled.value && formNoError.value
+      return formIsFilled.value && formNoError.value && confirmIsValid.value
     })
 
     return {

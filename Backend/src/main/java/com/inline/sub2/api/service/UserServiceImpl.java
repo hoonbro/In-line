@@ -1,6 +1,5 @@
 package com.inline.sub2.api.service;
 
-import com.inline.sub2.api.dto.UserDto;
 import com.inline.sub2.api.dto.UserRegistDto;
 import com.inline.sub2.api.dto.UserUpdateDto;
 import com.inline.sub2.db.entity.*;
@@ -11,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -111,23 +109,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmailAndRetireDateIsNull(email);
     }
 
     @Override
-    public UserEntity getUserInfo(Long userId) {
-        return userRepository.findByUserId(userId);
+    public UserEntity getUserId(Long userId) {
+        return userRepository.findByUserIdAndRetireDateIsNull(userId);
     }
 
     @Override
     public List<UserEntity> getUserList(Long officeId){
-        return userRepository.findByOfficeId(officeId);
+        return userRepository.findAllByOfficeIdAndRetireDateIsNull(officeId);
     }
 
 
     @Override
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
-        UserEntity userEntity = userRepository.findByUserId(userUpdateDto.getUserId());
+        UserEntity userEntity = userRepository.findByUserIdAndRetireDateIsNull(userUpdateDto.getUserId());
 
         DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),userEntity.getOfficeId());
         JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), userEntity.getOfficeId());
@@ -150,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity updateProfile(Long userId, String filePath) {
-        UserEntity userEntity = getUserInfo(userId);
+        UserEntity userEntity = getUserId(userId);
         userEntity.setProfileImage(filePath);
         return userRepository.save(userEntity);
     }

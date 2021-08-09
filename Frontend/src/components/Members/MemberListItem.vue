@@ -1,7 +1,14 @@
 <template>
   <li class="user-list-item">
-    <div class="icon">
-      <span>Icon</span>
+    <div class="profile-container">
+      <img
+        :src="
+          member.profileImage
+            ? `/images/${member.profileImage}`
+            : `https://picsum.photos/seed/user-2-${member.userId}/40`
+        "
+        alt="프로필 이미지"
+      />
     </div>
     <div class="infos">
       <p class="name">{{ member.name }}</p>
@@ -28,8 +35,8 @@ export default {
     @apply bg-gray-100 cursor-pointer select-none;
   }
 
-  .icon {
-    @apply w-10 h-10 rounded-full bg-green-400 flex items-center justify-center text-sm font-bold mr-8 text-white;
+  .profile-container {
+    @apply w-10 h-10 rounded-full overflow-hidden bg-green-400 flex items-center justify-center text-sm font-bold mr-8 text-white;
   }
 
   .infos {

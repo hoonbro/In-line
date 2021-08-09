@@ -1,16 +1,16 @@
 <template>
   <Modal>
-    <template v-slot:modal-header>
-      <header>
-        <button @click="$emit('close')">
-          <span class="material-icons">close</span>
-        </button>
-      </header>
-    </template>
     <template v-slot:modal-body>
       <div class="profile-img-container">
         <div class="profile-img-wrapper">
-          <img :src="profileImg" alt="프로필 이미지" />
+          <img
+            :src="
+              profileImg
+                ? `/images/${profileImg}`
+                : `https://picsum.photos/seed/user-2-${userId}/100`
+            "
+            alt="프로필 이미지"
+          />
           <input
             type="file"
             accept="image/*"
@@ -18,7 +18,7 @@
             ref="fileInputEl"
             @change="onFileChange"
           />
-          <button class="edit-btn" v-if="true" @click="clickInputEl">
+          <button class="edit-btn" v-if="isMine" @click="clickInputEl">
             <span class="material-icons">edit</span>
           </button>
         </div>
@@ -26,13 +26,14 @@
       <div>
         <div class="header">
           <h3>기본정보</h3>
-          <button
-            class="edit-btn"
-            v-if="!editMode"
-            @click="editMode = !editMode"
-          >
-            <span class="material-icons">edit</span>
-          </button>
+          <template v-if="isMine || isAdmin">
+            <button class="edit-btn" v-if="!editMode" @click="editMode = true">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="edit-btn" v-else @click="editMode = false">
+              <span class="material-icons">arrow_back</span>
+            </button>
+          </template>
         </div>
         <!-- Read Mode -->
         <ul class="info-list" v-if="!editMode">
@@ -46,13 +47,13 @@
           </li>
         </ul>
       </div>
-      <div class="change-pwd-btn-container" v-if="!editMode">
+      <div class="change-pwd-btn-container" v-if="isMine && !editMode">
         <router-link :to="{ name: 'ChangePassword' }">
           비밀번호 변경
         </router-link>
       </div>
       <!-- Edit Mode -->
-      <form class="edit-form" v-else @submit.prevent="updateProfile">
+      <form class="edit-form" v-if="editMode" @submit.prevent="updateProfile">
         <TextInput
           v-for="(field, key) in profileForm"
           :key="key"
@@ -75,7 +76,7 @@
 
 <script>
 import { reactive, ref } from "@vue/reactivity"
-import { onMounted } from "@vue/runtime-core"
+import { computed, onMounted, onUnmounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import axios from "axios"
 
@@ -86,15 +87,6 @@ import {
 } from "@/lib/validator"
 import Modal from "@/components/Common/Modal.vue"
 import TextInput from "@/components/TextInput.vue"
-
-
-// const profileUpload = axios.create({
-//   baseURL: `/api/v1/users/profile`,
-//   headers: {
-//     'Content-Type': 'multipart/form-data'
-//     // accessToken: `${localStorage.getItem("accessToken")}`,
-//   },
-// })
 
 export default {
   name: "ProfileModal",
@@ -107,6 +99,8 @@ export default {
   },
   setup(props) {
     const store = useStore()
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
+    const isMine = computed(() => store.state.auth.user.userId === props.userId)
     const profileForm = reactive({
       email: {
         label: "이메일",
@@ -165,26 +159,27 @@ export default {
       editMode.value = false
     }
 
-    const onFileChange = async() => {
+    const onFileChange = async () => {
       const image = fileInputEl.value.files[0]
-      const formData = new FormData();
-      formData.append("file", image);
-      formData.append("userId", props.userId);
-      console.log(image);
-      console.log(formData);
-       try {
-        await axios.put(
-          `/api/v1/users/profile`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }
-        ).then(function (response) {
-          console.log(response.data);
-       });
-
-        profileImg.value = URL.createObjectURL(image)
+      const formData = new FormData()
+      formData.append("userId", store.state.auth.user.userId)
+      formData.append("file", image)
+      try {
+        const res = await axios({
+          method: "PUT",
+          url: "/api/v1/users/profile",
+          data: formData,
+          headers: {
+            accessToken: store.state.auth.accessToken,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        console.log(res)
+        profileImg.value = res.data
         console.log("이미지 업로드 성공")
       } catch (error) {
         console.log(error)
       }
-      
     }
 
     onMounted(async () => {
@@ -192,6 +187,8 @@ export default {
         const res = await store.dispatch("office/getMember", props.userId)
         console.log(res)
         if (res.status === 200) {
+          profileImg.value = res.data.profileImage
+          // Form에 데이터 넣기
           profileForm.email.value = res.data.email
           profileForm.department.value = res.data.deptEntity.deptName
           profileForm.position.value = res.data.jobEntity.jobName
@@ -204,7 +201,17 @@ export default {
       }
     })
 
+    onUnmounted(() => {
+      try {
+        store.dispatch("office/getMembers")
+      } catch (error) {
+        alert(error)
+      }
+    })
+
     return {
+      isAdmin,
+      isMine,
       profileForm,
       editMode,
       profileImg,
@@ -232,7 +239,7 @@ header {
   @apply mb-10 flex justify-center;
 
   .profile-img-wrapper {
-    @apply bg-green-200 w-32 h-32 flex items-center justify-center relative;
+    @apply bg-green-200 w-32 h-32 rounded-full flex items-center justify-center relative;
 
     img {
       @apply w-full h-full object-cover rounded-full;
