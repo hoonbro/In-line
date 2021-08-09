@@ -17,7 +17,8 @@ const roomAPI = axios.create({
   // baseURL: `http://i5d207.p.ssafy.io:8997/rooms`,
 
   // deploy URL
-  baseURL: `http://localhost:8998/rooms`,
+  // 로컬에서는 CORS 에러 발생
+  baseURL: `http://i5d207.p.ssafy.io:8995/rooms`,
 })
 
 const officeAPI = axios.create({
@@ -144,16 +145,11 @@ export const office = {
         console.log(error)
       }
     },
-    async toggleTodoDone(
-      { commit, state, rootState },
-      { todoId, currentDone }
-    ) {
+    async toggleTodoDone({ commit, state, rootState }, todoId) {
+      console.log(todoId)
       await todoAPI({
-        method: "PATCH",
+        method: "PUT",
         url: `/${todoId}`,
-        data: {
-          done: !currentDone,
-        },
         headers: {
           accessToken: rootState.auth.accessToken,
         },
@@ -193,8 +189,10 @@ export const office = {
     async getRooms({ commit, rootState }, officeId) {
       try {
         const res = await roomAPI({
-          url: `?officeId=${officeId}`,
           method: "GET",
+          params: {
+            officeId,
+          },
           headers: {
             accessToken: rootState.auth.accessToken,
           },
