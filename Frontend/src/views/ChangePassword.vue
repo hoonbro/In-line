@@ -53,7 +53,7 @@ export default {
       oldPassword: {
         label: "이전 비밀번호",
         type: "password",
-        value: store.state.auth.shouldChangePassword ? "asd" : "",
+        value: store.state.auth.shouldChangePassword ? "" : "",
         validators: [requiredValidator],
         errors: {},
       },
