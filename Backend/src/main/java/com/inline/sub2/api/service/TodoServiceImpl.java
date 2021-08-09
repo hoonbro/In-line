@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class TodoServiceImpl implements TodoService{
+public class TodoServiceImpl implements TodoService {
 
     @Autowired
     TodoRepository todoRepository;
@@ -38,8 +38,8 @@ public class TodoServiceImpl implements TodoService{
         return todoRepository.save(todoEntity);
 
 
-
     }
+
     @Override
     public TodoEntity findUserIdByTodoId(Long todoId) {
         return todoRepository.findUserIdByTodoId(todoId);
@@ -53,16 +53,15 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
-    public void taskTodo(Long todoId) {
-    TodoEntity todoEntity = todoRepository.findByTodoId(todoId);
-    if(todoEntity.isDone() == false) {
-        todoEntity.setDone(true);
-    }
-    else {
-        todoEntity.setDone(false);
-    }
+    public TodoEntity taskTodo(Long todoId) {
+        TodoEntity todoEntity = todoRepository.findByTodoId(todoId);
+        if (todoEntity.isDone() == false) {
+            todoEntity.setDone(true);
+        } else {
+            todoEntity.setDone(false);
+        }
 
-    todoRepository.save(todoEntity);
+        return todoRepository.save(todoEntity);
 
-}
+    }
 }
