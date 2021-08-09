@@ -80,4 +80,5 @@ public class UserEntity {
     @ManyToOne
     @JoinColumn(name = "office_id", insertable = false, updatable = false)
     private OfficeEntity officeEntity;
+
 }
