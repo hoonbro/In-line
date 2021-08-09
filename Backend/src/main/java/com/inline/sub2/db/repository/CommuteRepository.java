@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Date;
 
 @Repository
@@ -15,4 +16,9 @@ public interface CommuteRepository extends JpaRepository<CommuteEntity,String> {
     public CommuteEntity findByUserId(Long userId);
     public CommuteEntity findByUserIdAndYmd(Long userId, Date ymd);
 
+    @Query("SELECT c FROM CommuteEntity c WHERE c.officeId = ?1 ORDER BY c.ymd")
+    public List<CommuteEntity> findAllByOfficeId(Long officeId);
+
+    @Query("SELECT DISTINCT FUNCTION('DATE_FORMAT', c.ymd, '%Y-%m') FROM CommuteEntity c WHERE c.officeId = ?1 ORDER BY c.ymd")
+    public List<String> findByYmd(Long officeId);
 }
