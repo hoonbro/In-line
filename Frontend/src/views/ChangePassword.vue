@@ -20,6 +20,7 @@
       <button
         class="change-btn"
         :class="{ disabled: !formIsValid }"
+        :disabled="!formIsValid"
         @click="changePassword"
       >
         비밀번호 변경 완료
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { computed, reactive } from "vue"
+import { computed, reactive, ref } from "vue"
 import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
@@ -101,8 +102,12 @@ export default {
       })
     })
 
+    const confirmIsValid = computed(() => {
+      return formData.password.value === formData.confirmPassword.value
+    })
+
     const formIsValid = computed(() => {
-      return formIsFilled.value && formNoError.value
+      return formIsFilled.value && formNoError.value && confirmIsValid.value
     })
 
     return {
