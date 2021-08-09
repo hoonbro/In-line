@@ -7,10 +7,7 @@
           {{ todo.content }}
         </p>
       </div>
-      <button
-        class="done-btn"
-        @click="$emit('toggleComplete', todo.id, todo.done)"
-      >
+      <button class="done-btn" @click="$emit('toggleComplete', todo.todoId)">
         <span class="material-icons icon">done</span>
       </button>
     </div>

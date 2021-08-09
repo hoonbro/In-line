@@ -12,7 +12,7 @@ import Admin from "@/views/Admin.vue"
 import Room from "@/views/Room.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
-import InputTest from "@/views/InputTest.vue"
+import Signup from "@/views/Signup.vue"
 
 const routes = [
   {
@@ -59,7 +59,7 @@ const routes = [
     ],
   },
   {
-    path: "/rooms/",
+    path: "/rooms",
     component: RoomLayout,
     meta: { loginRequired: true },
     children: [
@@ -72,7 +72,7 @@ const routes = [
     ],
   },
   {
-    path: "/auth/",
+    path: "/auth",
     component: AuthLayout,
     children: [
       {
@@ -86,10 +86,15 @@ const routes = [
         component: ChangePassword,
         meta: { loginRequired: true },
       },
+    ],
+  },
+  {
+    path: "/onboarding",
+    component: AuthLayout,
+    children: [
       {
-        path: "test",
-        name: "InputTest",
-        component: InputTest,
+        path: "signup",
+        component: Signup,
       },
     ],
   },
