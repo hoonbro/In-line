@@ -15,6 +15,7 @@
 <script>
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
+import { disconnectStomp } from "@/lib/websocket"
 
 export default {
   name: "MainNav",
@@ -22,17 +23,16 @@ export default {
     const router = useRouter()
     const store = useStore()
 
-    const logout = () => {
+    const logout = async () => {
       const yes = confirm("로그아웃 하시겠습니까?")
       if (yes) {
-        store.state.socket.stompClient.disconnect(() => {
-          console.log("stomp 끊기")
-        })
-        localStorage.removeItem("chatList")
-        localStorage.removeItem("stompClient")
-        localStorage.removeItem("accessToken")
-        localStorage.removeItem("user")
+        disconnectStomp()
+        console.group("Logout")
+        store.commit("auth/setUser", null)
+        store.commit("auth/setToken", "")
+        store.commit("auth/setCommute", null)
         router.push({ name: "Home" })
+        console.groupEnd()
       }
     }
 
