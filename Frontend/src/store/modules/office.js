@@ -17,7 +17,6 @@ const roomAPI = axios.create({
   // baseURL: `http://i5d207.p.ssafy.io:8997/rooms`,
 
   // deploy URL
-  // 로컬에서는 CORS 에러 발생
   baseURL: `https://i5d207.p.ssafy.io:8995/rooms`,
 })
 

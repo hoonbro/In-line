@@ -4,16 +4,18 @@
     class="room"
     :class="{ large: large }"
   >
-    <p class="title">{{ title }}</p>
+    <div class="flex justify-between gap-4">
+      <p class="title">{{ title }}</p>
+      <img
+        class="img"
+        :class="{ large: large }"
+        :src="`https://picsum.photos/seed/room-${roomId}/100`"
+        alt="이미지"
+      />
+    </div>
     <div>
       참가자 이미지
     </div>
-    <img
-      class="img"
-      :class="{ large: large }"
-      :src="`https://picsum.photos/seed/room-${roomId}/100`"
-      alt="이미지"
-    />
   </router-link>
 </template>
 
@@ -45,7 +47,7 @@ export default {
   }
 
   .img {
-    @apply absolute w-16 h-16 top-6 right-6 rounded-full;
+    @apply w-16 h-16 rounded-full;
   }
 
   &.large {

@@ -15,7 +15,7 @@
       <div class="members-container">
         <div class="department-container">
           <div class="header">
-            ssafy_2반_7팀 (회사 이름)
+            {{ officeName }}
           </div>
           <div class="departments-container">
             <ul class="department-list">
@@ -30,7 +30,7 @@
               <span class="material-icons">search</span>
             </button>
             <input
-              v-model="searchTerm"
+              v-model.trim="searchTerm"
               type="text"
               placeholder="이름을 검색할 수 있어요."
             />
@@ -85,9 +85,12 @@ export default {
     const addMemberModalOpen = ref(false)
     const profileModalOpen = ref(false)
     const profileUserId = ref(null)
+    const officeName = computed(
+      () => store.state.auth.user.officeEntity.officeName
+    )
     const searchedMembers = computed(() => {
       return store.state.office.members.filter(member => {
-        if (searchTerm.value.trim()) {
+        if (searchTerm.value) {
           return member.name.includes(searchTerm.value)
         } else {
           return true
@@ -105,6 +108,7 @@ export default {
     })
 
     return {
+      officeName,
       searchTerm,
       searchedMembers,
       addMemberModalOpen,
@@ -129,7 +133,8 @@ export default {
     @apply grid gap-6;
 
     .header {
-      @apply flex items-center justify-between;
+      @apply flex items-center justify-between select-none;
+
       .section-title {
         @apply text-2xl font-bold;
       }

@@ -129,5 +129,9 @@ export const auth = {
       }
     },
   },
-  getters: {},
+  getters: {
+    isAdmin(state) {
+      return state.user.auth === "ROLE_ADMIN"
+    },
+  },
 }

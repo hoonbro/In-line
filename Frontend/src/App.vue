@@ -41,5 +41,6 @@ export default {
 body {
   background: white;
   font-family: "Noto Sans KR", sans-serif;
+  @apply text-gray-900;
 }
 </style>
