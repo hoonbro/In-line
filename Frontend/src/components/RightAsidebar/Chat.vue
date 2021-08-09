@@ -42,7 +42,9 @@ export default {
 
     const sendMessage = event => {
       if (content.value && stompClient.value && stompClient.value.connected) {
+        console.group("sendMessage")
         console.log(`Send message: ${content.value}`)
+        console.groupEnd()
         const msg = {
           type: "CHAT",
           officeId: officeId.value,

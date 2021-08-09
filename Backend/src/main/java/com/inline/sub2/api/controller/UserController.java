@@ -228,7 +228,7 @@ public class UserController {
             }
 
             try{
-                UserEntity userEntity = userService.updateProfile(userId, filePath);
+                UserEntity userEntity = userService.updateProfile(userId, name);
             }catch (Exception e){
                 log.error("서버에러");
                 status = HttpStatus.INTERNAL_SERVER_ERROR;

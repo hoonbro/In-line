@@ -89,8 +89,8 @@ export default {
       }
     }
 
-    const handleToggleComplete = async (todoId, currentDone) => {
-      store.dispatch("office/toggleTodoDone", { todoId, currentDone })
+    const handleToggleComplete = async todoId => {
+      store.dispatch("office/toggleTodoDone", todoId)
     }
 
     const deleteTodo = todoId => {

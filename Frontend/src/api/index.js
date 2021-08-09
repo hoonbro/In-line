@@ -9,4 +9,4 @@ const backendAPI = axios.create({
 
 export const getTodosAPI = () => backendAPI.get("/todos")
 export const toggleTodoDone = (todoId, newDone) =>
-  backendAPI.patch(`/todos/${todoId}`, { done: newDone })
+  backendAPI.put(`/todos/${todoId}`, { done: newDone })
