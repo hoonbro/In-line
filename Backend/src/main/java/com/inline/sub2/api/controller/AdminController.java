@@ -55,4 +55,19 @@ public class AdminController {
         }
         return new ResponseEntity<UserEntity>(userEntity, status);
     }
+
+    @GetMapping("/retireRate/{officeId}")
+    @ApiOperation(value = "요청한 회사의 퇴사율을 반환한다.", response = Double.class)
+    public ResponseEntity<Double> getRetireRate(@PathVariable Long officeId){
+        HttpStatus status = HttpStatus.OK;
+        double retireRate = 0;
+        try{
+            retireRate = adminService.getRetireRate(officeId);
+            log.info("퇴사율 반환 성공");
+        }catch (Exception e){
+            log.error("퇴사율 반환 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Double>(retireRate, status);
+    }
 }

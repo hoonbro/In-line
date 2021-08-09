@@ -57,4 +57,9 @@ public class AdminServiceImpl implements AdminService{
         userEntity.setRetireDate(new Date());
         return userRepository.save(userEntity);
     }
+
+    @Override
+    public Double getRetireRate(Long officeId) {
+        return userRepository.findRetireRate(officeId);
+    }
 }
