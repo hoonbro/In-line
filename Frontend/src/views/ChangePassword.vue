@@ -38,7 +38,7 @@ import {
   handleUpdateValidate,
 } from "@/lib/validator"
 import { useStore } from "vuex"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 
 export default {
   name: "ChangePassword",
@@ -48,12 +48,15 @@ export default {
   setup() {
     const store = useStore()
     const router = useRouter()
+    const route = useRoute()
 
     const formData = reactive({
       oldPassword: {
         label: "이전 비밀번호",
         type: "password",
-        value: store.state.auth.shouldChangePassword ? "asd" : "",
+        value: store.state.auth.shouldChangePassword
+          ? route.params.tempPassword
+          : "",
         validators: [requiredValidator],
         errors: {},
       },

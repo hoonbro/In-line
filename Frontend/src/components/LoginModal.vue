@@ -132,7 +132,7 @@ export default {
         }
         emit("close")
         if (store.state.auth.shouldChangePassword) {
-          router.push({ name: "ChangePassword" })
+          router.push({ name: "ChangePassword", params: { tempPassword: submitData.password } })
         } else {
           router.push({ name: "Office" })
         }
