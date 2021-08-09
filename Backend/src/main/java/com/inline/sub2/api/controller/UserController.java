@@ -206,7 +206,7 @@ public class UserController {
         Date date = new Date();
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String name = fileName + "(" + transFormat.format(date) + ")" + extension;
-        String filePath = "/home/ubuntu/image/" + name;
+        String filePath = "/home/ubuntu/images/" + name;
 
         try (
             // 파일 저장할 경로 + 파일명을 파라미터로 넣고 fileOutputStream 객체 생성하고
