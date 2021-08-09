@@ -10,4 +10,6 @@ public interface AdminService {
     Map<String, List<CommuteEntity>> getCommutes(Long officeId);
 
     UserEntity retireUser(Long userId);
+
+    Double getRetireRate(Long officeId);
 }

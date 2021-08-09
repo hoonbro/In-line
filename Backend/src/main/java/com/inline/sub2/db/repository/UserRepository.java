@@ -14,4 +14,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     public UserEntity findByUserIdAndRetireDateIsNull(Long userId);
 
     public List<UserEntity> findAllByOfficeIdAndRetireDateIsNull(Long officeId);
+
+    @Query("select ((select count(user.userId) from UserEntity user where user.retireDate is not null and user.officeId=?1) / 2) * 100 from UserEntity u where u.officeId = ?1")
+    public Double findRetireRate(Long officeId);
 }
