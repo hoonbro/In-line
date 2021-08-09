@@ -62,6 +62,16 @@ const routes = [
     path: "/rooms",
     component: RoomLayout,
     meta: { loginRequired: true },
+    beforeEnter: (to, from, next) => {
+      console.log(to)
+      console.log(from)
+      if (to.fullPath === "/rooms/" || to.fullPath.includes("1")) {
+        alert("잘못된 접근입니다.")
+        next({ name: "Office" })
+      } else {
+        next()
+      }
+    },
     children: [
       {
         path: "/rooms/:roomId",

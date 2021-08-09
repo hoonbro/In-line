@@ -6,13 +6,5 @@ export const landing = {
   state: () => ({}),
   getters: {},
   mutations: {},
-  actions: {
-    registerOffice: async (context, formData) => {
-      return axios({
-        method: "post",
-        url: "/api/v1/office",
-        data: formData,
-      })
-    },
-  },
+  actions: {},
 }
