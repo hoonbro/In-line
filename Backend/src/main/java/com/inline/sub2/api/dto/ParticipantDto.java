@@ -9,4 +9,5 @@ public class ParticipantDto {
     private String userName;
     private Long officeId;
     private Long userId;
+    private Long roomId;
 }
