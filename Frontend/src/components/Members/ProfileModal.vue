@@ -201,14 +201,6 @@ export default {
       }
     })
 
-    onUnmounted(() => {
-      try {
-        store.dispatch("office/getMembers")
-      } catch (error) {
-        alert(error)
-      }
-    })
-
     return {
       isAdmin,
       isMine,

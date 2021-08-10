@@ -133,5 +133,11 @@ export const auth = {
     isAdmin(state) {
       return state.user.auth === "ROLE_ADMIN"
     },
+    officeId(state) {
+      return state.user.officeId
+    },
+    accessToken(state) {
+      return state.accessToken
+    },
   },
 }

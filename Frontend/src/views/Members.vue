@@ -103,10 +103,6 @@ export default {
       profileModalOpen.value = true
     }
 
-    onMounted(() => {
-      store.dispatch("office/getMembers")
-    })
-
     return {
       officeName,
       searchTerm,

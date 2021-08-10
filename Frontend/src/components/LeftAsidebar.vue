@@ -29,34 +29,40 @@
     </div>
     <hr />
     <div class="members">
-      <div class="member" v-for="member in members" :key="member.userId">
-        <img
-          :src="
-            member.profileImage
-              ? `/images/${member.profileImage}`
-              : `https://picsum.photos/seed/user-2-${member.userId}/40`
-          "
-          alt="프로필"
-        />
-        <div>
-          <p class="name">{{ member.name }}</p>
-          <p class="department">{{ member.deptEntity.deptName }}</p>
-        </div>
-      </div>
+      <MemberListItem
+        v-for="member in members"
+        :key="member.userId"
+        :member="member"
+      />
     </div>
   </aside>
+  <!-- Commute Modal -->
+  <ConfirmModal ref="confirmModal" :content="confirmModalContent" />
 </template>
 
 <script>
-import { computed } from "@vue/runtime-core"
+import { computed, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
+import ConfirmModal from "@/components/Common/ConfirmModal.vue"
+import MemberListItem from "@/components/LeftAsidebar/MemberListItem.vue"
+
 export default {
   name: "LeftAsidebar",
+  components: {
+    ConfirmModal,
+    MemberListItem,
+  },
   setup() {
     const store = useStore()
     const userName = computed(() => store.state.auth.user.name)
-    const members = computed(() => store.state.office.members)
+    const members = computed(
+      () => store.getters["office/sortedMembersByOnline"]
+    )
     const commute = computed(() => store.state.auth.commute)
+
+    const confirmModal = ref(null)
+    const confirmModalContent = ref([])
+
     const workType = computed(() => {
       if (!commute.value.comeIn) {
         return "beforeStart"
@@ -67,21 +73,31 @@ export default {
       }
     })
 
-    const changeWorkType = () => {
+    const changeWorkType = async () => {
       const now = new Date(Date.now())
       const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
-      let confirmRes = null
+
       switch (workType.value) {
         case "beforeStart": {
-          confirmRes = confirm(`현재 시간: ${currentTime}\n출근하시겠습니까?`)
-          if (confirmRes) {
+          confirmModalContent.value = [
+            `현재 시간: ${currentTime}`,
+            "출근하시겠습니까?",
+          ]
+          confirmModal.value.isVisible = true
+          const ok = await confirmModal.value.show()
+          if (ok) {
             store.dispatch("auth/commuteIn")
           }
           break
         }
         case "doing": {
-          confirmRes = confirm(`현재 시간: ${currentTime}\n퇴근하시겠습니까?`)
-          if (confirmRes) {
+          confirmModalContent.value = [
+            `현재 시간: ${currentTime}`,
+            "퇴근하시겠습니까?",
+          ]
+          confirmModal.value.isVisible = true
+          const ok = await confirmModal.value.show()
+          if (ok) {
             store.dispatch("auth/commuteOut")
           }
           break
@@ -90,12 +106,17 @@ export default {
           alert("오늘 업무는 종료되었습니다.")
         }
       }
+      // 초기화
+      confirmModalContent.value = []
     }
+
     return {
       userName,
       members,
       workType,
       changeWorkType,
+      confirmModalContent,
+      confirmModal,
     }
   },
 }
@@ -155,35 +176,6 @@ aside {
 
   .members {
     @apply grid gap-2 overflow-auto;
-
-    .member {
-      @apply flex p-2 relative rounded bg-white items-center select-none cursor-pointer;
-
-      &::before {
-        content: "";
-        @apply absolute z-10 top-2 left-2 w-2 h-2 bg-gray-400 rounded-full;
-      }
-
-      &.online::before {
-        @apply bg-green-400;
-      }
-
-      img {
-        @apply w-9 h-9 object-cover object-center rounded-full mr-2 relative;
-      }
-
-      p {
-        @apply text-sm;
-      }
-
-      .name {
-        @apply mb-1;
-      }
-
-      .department {
-        @apply text-gray-500;
-      }
-    }
   }
 }
 </style>
