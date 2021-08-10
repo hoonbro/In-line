@@ -86,8 +86,7 @@ const routes = [
     path: "/auth",
     component: AuthLayout,
     beforeEnter: (to, from, next) => {
-      console.log(!to.meta.loginRequired)
-      console.log(localStorage.getItem("accessToken"))
+      // 로그인 필수 X + 로그인 되어있다면 접근 금지
       if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
         alert("잘못된 접근입니다.")
         next({ name: "Office" })
