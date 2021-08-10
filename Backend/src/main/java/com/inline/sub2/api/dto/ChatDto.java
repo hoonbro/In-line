@@ -19,5 +19,4 @@ public class ChatDto {
     private String content;
     private Date sendDate;
     private String sendTime;
-
 }
