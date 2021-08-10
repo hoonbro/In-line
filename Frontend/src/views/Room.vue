@@ -63,6 +63,7 @@ import kurentoUtils from "kurento-utils"
 
 export default {
   name: "Room",
+  userId: "",
   components: {
     Video,
   },
@@ -90,8 +91,9 @@ export default {
     const register = () => {
       const message = {
         id: "joinRoom",
-        name: state.name,
-        room: state.room,
+        userId: store.state.auth.user.userId,
+        userName: state.name,
+        roomName: state.room,
         roomId: props.roomId,
       }
 
@@ -100,7 +102,7 @@ export default {
 
     onUnmounted(() => leaveRoom())
 
-    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
+    let ws = new WebSocket(`wss://13.124.47.223:8997/groupcall`)
 
     ws.onopen = function(event) {
       register()
@@ -136,7 +138,7 @@ export default {
           receiveVideoResponse(parsedMessage)
           break
         case "iceCandidate":
-          participants[parsedMessage.name].rtcPeer.addIceCandidate(
+          participants[parsedMessage.userId].rtcPeer.addIceCandidate(
             parsedMessage.candidate,
             function(error) {
               if (error) {
@@ -152,11 +154,12 @@ export default {
     }
 
     function onNewParticipant(request) {
-      receiveVideo(request.name)
+      console.log(request.userId)
+      receiveVideo(request.userId)
     }
 
     function receiveVideoResponse(result) {
-      participants[result.name].rtcPeer.processAnswer(
+      participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function(error) {
           if (error) return console.error(error)
@@ -192,8 +195,8 @@ export default {
       }
 
       console.log(state.name + " registered in room " + state.room)
-      let participant = new Participant(state.name)
-      participants[state.name] = participant
+      let participant = new Participant(store.state.auth.user.userId)
+      participants[store.state.auth.user.userId] = participant
       let video = participant.getVideoElement()
 
       const options = {
@@ -229,9 +232,9 @@ export default {
       router.push({ name: "Office" })
     }
 
-    function receiveVideo(sender) {
-      let participant = new Participant(sender)
-      participants[sender] = participant
+    function receiveVideo(userId) {
+      let participant = new Participant(userId)
+      participants[userId] = participant
       let video = participant.getVideoElement()
 
       let options = {
@@ -273,15 +276,15 @@ export default {
      * @return
      */
 
-    function Participant(name) {
-      this.name = name
+    function Participant(userId) {
+      this.userId = userId
       let container = document.createElement("div")
       // PARTICIPANT_MAIN_CLASS가 없을 때
       container.className = isPresentMainParticipant()
         ? PARTICIPANT_CLASS
         : PARTICIPANT_MAIN_CLASS
       container.classList.add("pointer-events-none")
-      container.id = name
+      container.id = userId
       let span = document.createElement("span")
       span.classList.add("w-full", "h-full", "bg-gray-200", "inline-block")
 
@@ -294,11 +297,11 @@ export default {
       container.onclick = switchContainerClass
       document.getElementById("participants").appendChild(container)
 
-      span.appendChild(document.createTextNode(name))
+      span.appendChild(document.createTextNode(userId))
 
       // 이 부분이 video-id가 됨
       // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
-      video.id = "video-" + name
+      video.id = "video-" + userId
       video.autoplay = true
       video.controls = true
 
@@ -334,7 +337,11 @@ export default {
       this.offerToReceiveVideo = function(error, offerSdp, wp) {
         if (error) return console.error("sdp offer error")
         console.log("Invoking SDP offer callback function")
-        var msg = { id: "receiveVideoFrom", sender: name, sdpOffer: offerSdp }
+        var msg = {
+          id: "receiveVideoFrom",
+          sender: store.state.auth.user.userId,
+          sdpOffer: offerSdp,
+        }
         sendMessage(msg)
       }
 
@@ -344,7 +351,7 @@ export default {
         var message = {
           id: "onIceCandidate",
           candidate: candidate,
-          name: name,
+          userId: userId,
         }
         sendMessage(message)
       }
@@ -352,7 +359,7 @@ export default {
       Object.defineProperty(this, "rtcPeer", { writable: true })
 
       this.dispose = function() {
-        console.log("Disposing participant " + this.name)
+        console.log("Disposing participant " + this.userId)
         this.rtcPeer.dispose()
         container.parentNode.removeChild(container)
       }
