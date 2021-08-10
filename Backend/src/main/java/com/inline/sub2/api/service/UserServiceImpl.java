@@ -152,4 +152,14 @@ public class UserServiceImpl implements UserService {
         userEntity.setProfileImage(filePath);
         return userRepository.save(userEntity);
     }
+
+    @Override
+    public Boolean duplicateEmail(String Email){
+        UserEntity userEntity = userRepository.findByEmailAndRetireDateIsNull(Email);
+        boolean isDuplicate = false;
+        if(userEntity != null)
+            isDuplicate = true;
+
+        return isDuplicate;
+    }
 }
