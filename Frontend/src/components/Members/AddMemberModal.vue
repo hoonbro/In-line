@@ -3,19 +3,42 @@
     <template v-slot:modal-body>
       <div class="header">
         <h3 class="title" @click="$emit('close')">구성원 추가</h3>
-        <p class="detail">구미 2반 7팀의 구성원을 추가합니다.</p>
+        <p class="detail">{{ officeName }}의 구성원을 추가합니다.</p>
       </div>
       <div class="add-form">
         <div class="input-list">
-          <TextInput
-            v-for="(field, key) in formData"
-            :key="key"
-            v-model="field.value"
-            :name="key"
-            :formData="formData"
-            :field="field"
-            @update:validate="handleUpdateValidate(formData, $event)"
-          />
+          <div v-for="(field, key) in formData" :key="key">
+            <select
+              v-if="key === 'deptName'"
+              v-model="field.value"
+              class="select-box"
+              :class="{ selectLabel: !field.value }"
+            >
+              <option disabled value="">{{ field.label }}</option>
+              <option v-for="dept in depts">
+                {{ dept.deptName }}
+              </option>
+            </select>
+            <select
+              v-else-if="key === 'jobName'"
+              v-model="field.value"
+              class="select-box"
+              :class="{ selectLabel: !field.value }"
+            >
+              <option disabled value="">{{ field.label }}</option>
+              <option v-for="job in jobs">
+                {{ job.jobName }}
+              </option>
+            </select>
+            <TextInput
+              v-else
+              v-model="field.value"
+              :name="key"
+              :formData="formData"
+              :field="field"
+              @update:validate="handleUpdateValidate(formData, $event)"
+            />
+          </div>
         </div>
         <button
           class="submit-btn"
@@ -51,11 +74,20 @@ export default {
   },
   setup(_, { emit }) {
     const store = useStore()
+
+    const officeName = JSON.parse(localStorage.getItem("user")).officeEntity
+      .officeName
+
+    store.dispatch("office/getDepts")
+    store.dispatch("office/getJobs")
+    const depts = computed(() => store.state.office.depts)
+    const jobs = computed(() => store.state.office.jobs)
+
     const formData = reactive({
       name: {
         label: "이름",
         type: "text",
-        value: "김병훈",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
@@ -68,27 +100,28 @@ export default {
       },
       deptName: {
         label: "소속",
-        type: "text",
-        value: "인사",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
       jobName: {
         label: "역할",
-        type: "text",
-        value: "사원",
+        value: "",
         validators: [requiredValidator],
         errors: {},
       },
     })
 
+    // ===================================================================
+    // 유효성 검사
+    // ===================================================================
     const allFieldIsFilled = computed(() => {
-      return Object.keys(formData).every((key) => formData[key].value)
+      return Object.keys(formData).every(key => formData[key].value)
     })
 
     const allFieldDoesNotHaveError = computed(() => {
       return Object.keys(formData).every(
-        (key) => !Object.keys(formData[key].errors).length
+        key => !Object.keys(formData[key].errors).length
       )
     })
 
@@ -96,15 +129,19 @@ export default {
       return allFieldIsFilled.value && allFieldDoesNotHaveError.value
     })
 
+    // ===================================================================
+    // api 요청
+    // ===================================================================
     const submitForm = async () => {
       const submitData = {
         officeId: store.state.auth.user.officeId,
       }
-      Object.keys(formData).forEach((key) => {
+      Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
       })
       try {
-        await axios({
+        console.log(submitData)
+        const res = await axios({
           url: "/api/v1/on-board/user",
           method: "POST",
           headers: {
@@ -112,6 +149,7 @@ export default {
           },
           data: submitData,
         })
+        console.log(res)
         alert("전송 성공")
         emit("close")
       } catch (error) {
@@ -121,6 +159,9 @@ export default {
     }
 
     return {
+      officeName,
+      depts,
+      jobs,
       formData,
       submitForm,
       allFieldIsFilled,
@@ -146,6 +187,13 @@ export default {
 
   .input-list {
     @apply grid gap-4;
+
+    .select-box {
+      @apply w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600;
+    }
+    .selectLabel {
+      @apply text-gray-600;
+    }
   }
   .submit-btn {
     @apply py-4 rounded-xl bg-blue-400 text-white font-bold;
