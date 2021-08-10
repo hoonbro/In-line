@@ -50,6 +50,7 @@ public class SocketController {
             chatDto.setSendDate(chatEntity.getSendDate());
             SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             chatDto.setSendTime(transFormat.format(chatEntity.getSendTime()).split(" ")[1]);
+            map.put("type",chatDto.getType());
             map.put("chatDto",chatDto);
         }
         else if(chatDto.getType().equals("ENTER")) {
@@ -59,12 +60,15 @@ public class SocketController {
             participantDto.setOfficeId(chatDto.getOfficeId());
             participantDto.setUserName(chatDto.getUserName());
             ConcurrentMap<Long,ParticipantDto> participants = office.join(participantDto);
-            map.put(chatDto.getOfficeId().toString(),participants);
+//            map.put("chatDto",chatDto);
+            map.put("type",chatDto.getType());
+            map.put("members",participants);
         }
         else if(chatDto.getType().equals("EXIT")) {
             Office office = officeManager.getOffice(chatDto.getOfficeId());
             ConcurrentMap<Long,ParticipantDto> participants = office.removeParticipant(chatDto.getOfficeId());
-            map.put(chatDto.getOfficeId().toString(),participants);
+            map.put("type",chatDto.getType());
+            map.put("members",participants);
         }
 
         return map;
