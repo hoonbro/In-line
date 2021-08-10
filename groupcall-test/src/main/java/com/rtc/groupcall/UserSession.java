@@ -95,7 +95,7 @@ public class UserSession implements Closeable {
     public Long getRoomId(){return this.roomId;}
 
     public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
-        log.info("USER {} : {}님이 {}에 연결되었습니다.", this.userName, sender.getUserName(), this.roomName);
+//        log.info("USER {} : {}님이 {}에 연결되었습니다.", this.userName, sender.getUserName(), this.roomName);
 
 //        log.trace("USER {}: SdpOffer for {} is {}", this.name, sender.getName(), sdpOffer);
 
