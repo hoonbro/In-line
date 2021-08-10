@@ -9,9 +9,12 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
-    public UserEntity findByEmail(String email);
+    public UserEntity findByEmailAndRetireDateIsNull(String email);
 
-    public UserEntity findByUserId(Long userId);
+    public UserEntity findByUserIdAndRetireDateIsNull(Long userId);
 
-    public List<UserEntity> findByOfficeId(Long officeId);
+    public List<UserEntity> findAllByOfficeIdAndRetireDateIsNull(Long officeId);
+
+    @Query("select ((select count(user.userId) from UserEntity user where user.retireDate is not null and user.officeId=?1) / 2) * 100 from UserEntity u where u.officeId = ?1")
+    public Double findRetireRate(Long officeId);
 }

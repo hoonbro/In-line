@@ -16,7 +16,7 @@ public interface UserService {
 
     UserEntity getUserByEmail(String email);
 
-    UserEntity getUserInfo(Long userId);
+    UserEntity getUserId(Long userId);
 
     List<UserEntity> getUserList(Long officeId);
 

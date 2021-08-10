@@ -5,13 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommuteDto {
-    private Long commuteId;
-    private Long userId;
+public class ParticipantDto {
+    private String userName;
     private Long officeId;
-
-
-
-
-
+    private Long userId;
 }

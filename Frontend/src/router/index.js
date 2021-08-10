@@ -65,7 +65,7 @@ const routes = [
     beforeEnter: (to, from, next) => {
       console.log(to)
       console.log(from)
-      if (to.fullPath === "/rooms/" || to.fullPath.includes("1")) {
+      if (to.fullPath === "/rooms/") {
         alert("잘못된 접근입니다.")
         next({ name: "Office" })
       } else {
