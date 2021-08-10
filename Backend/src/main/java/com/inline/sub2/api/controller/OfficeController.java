@@ -5,6 +5,8 @@ import com.inline.sub2.api.service.DeptService;
 import com.inline.sub2.api.service.JobService;
 import com.inline.sub2.api.service.OfficeService;
 import com.inline.sub2.api.service.UserService;
+import com.inline.sub2.db.entity.DeptEntity;
+import com.inline.sub2.db.entity.JobEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -61,4 +65,35 @@ public class OfficeController {
 
         return new ResponseEntity<Boolean>(isDuplicate, httpStatus);
     }
+
+    @GetMapping("/depts")
+    @ApiOperation(value = "부서 리스트를 반환한다.", response = List.class)
+    public ResponseEntity<List<DeptEntity>> getDeptList(){
+        HttpStatus status = HttpStatus.OK;
+        List<DeptEntity> list = new ArrayList<>();
+        try{
+            list = deptService.getDeptList(1l);
+            log.info("부서 리스트 반환 성공");
+        }catch (Exception e){
+            log.error("부서 리스트 반환 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<List<DeptEntity>>(list, status);
+    }
+
+    @GetMapping("/jobs")
+    @ApiOperation(value = "직책 리스트를 반환한다.", response = List.class)
+    public ResponseEntity<List<JobEntity>> getJobList(){
+        HttpStatus status = HttpStatus.OK;
+        List<JobEntity> list = new ArrayList<>();
+        try{
+            list = jobService.getJobList(1l);
+            log.info("직책 리스트 반환 성공");
+        }catch (Exception e){
+            log.error("직책 리스트 반환 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<List<JobEntity>>(list, status);
+    }
+
 }

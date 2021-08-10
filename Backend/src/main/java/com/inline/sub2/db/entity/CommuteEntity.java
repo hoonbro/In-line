@@ -41,4 +41,7 @@ public class CommuteEntity {
     @Column(name="office_id")
     private Long officeId;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private UserEntity userEntity;
 }

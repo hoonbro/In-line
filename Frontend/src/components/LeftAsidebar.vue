@@ -32,8 +32,9 @@
       <div class="member" v-for="member in members" :key="member.userId">
         <img
           :src="
-            member.profileImage ||
-              `https://picsum.photos/seed/user-2-${member.userId}/40`
+            member.profileImage
+              ? `/images/${member.profileImage}`
+              : `https://picsum.photos/seed/user-2-${member.userId}/40`
           "
           alt="프로필"
         />

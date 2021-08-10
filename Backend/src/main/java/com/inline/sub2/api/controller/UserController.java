@@ -119,7 +119,7 @@ public class UserController {
         HttpStatus httpStatus = HttpStatus.OK;
         UserEntity userEntity = null;
         try {
-            userEntity = userService.getUserInfo(userId);
+            userEntity = userService.getUserId(userId);
             log.info("user정보 조회 성공");
         } catch (Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -228,7 +228,7 @@ public class UserController {
             }
 
             try{
-                UserEntity userEntity = userService.updateProfile(userId, filePath);
+                UserEntity userEntity = userService.updateProfile(userId, name);
             }catch (Exception e){
                 log.error("서버에러");
                 status = HttpStatus.INTERNAL_SERVER_ERROR;

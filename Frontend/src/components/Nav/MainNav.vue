@@ -27,12 +27,8 @@ export default {
       const yes = confirm("로그아웃 하시겠습니까?")
       if (yes) {
         disconnectStomp()
-        console.group("Logout")
-        store.commit("auth/setUser", null)
         store.commit("auth/setToken", "")
-        store.commit("auth/setCommute", null)
         router.push({ name: "Home" })
-        console.groupEnd()
       }
     }
 

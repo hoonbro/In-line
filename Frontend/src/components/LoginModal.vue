@@ -14,6 +14,7 @@
           :field="field"
           :maxlength="field.maxlength"
           @update:validate="handleUpdateValidate(formData, $event)"
+          @submit="login"
         />
         <div>
           <input
@@ -78,7 +79,7 @@ import {
   emailValidator,
   handleUpdateValidate,
 } from "@/lib/validator"
-import TextInput from "@/components/TextInput.vue"
+import TextInput from "@/components/Members/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
 
 export default {
@@ -111,16 +112,19 @@ export default {
 
     const formDataIsValid = computed(() => {
       const keys = Object.keys(formData)
-      return keys.every((key) => {
+      return keys.every(key => {
         const errors = Object.keys(formData[key].errors)
         return formData[key].value && !errors.length
       })
     })
 
     const login = async () => {
+      if (!formDataIsValid) {
+        return
+      }
       loading.value = true
       const submitData = {}
-      Object.keys(formData).forEach((key) => {
+      Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
       })
       try {
@@ -132,7 +136,10 @@ export default {
         }
         emit("close")
         if (store.state.auth.shouldChangePassword) {
-          router.push({ name: "ChangePassword" })
+          router.push({
+            name: "ChangePassword",
+            params: { tempPassword: submitData.password },
+          })
         } else {
           router.push({ name: "Office" })
         }
