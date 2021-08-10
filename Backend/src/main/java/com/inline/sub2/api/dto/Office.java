@@ -35,10 +35,6 @@ public class Office {
         participants.put(userId,participantDto);
         return participants;
     }
-    public ConcurrentMap<Long,ParticipantDto> leave(Long officeId) {
-        participants.remove(officeId);
-        return participants;
-    }
 
     public ConcurrentMap<Long,ParticipantDto> removeParticipant(Long userId) {
         participants.remove(userId);
