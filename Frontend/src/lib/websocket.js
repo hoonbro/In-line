@@ -13,12 +13,14 @@ export const connectStomp = officeId => {
       stompClient.connected = true
       store.commit("socket/setStompClient", stompClient)
       subscription = stompClient.subscribe(`/sub/${officeId}`, res => {
+        console.group("subscription")
         const data = JSON.parse(res.body)
         if (data.type === "CHAT") {
-          store.commit("socket/addOfficeChat", JSON.parse(res.body))
+          store.commit("socket/addOfficeChat", data.chatDto)
         } else if (data.type === "ENTER") {
-          console.log(res.body)
+          console.log(data.members)
         }
+        console.groupEnd()
       })
       store.commit("socket/setSubscription", subscription)
     },
