@@ -11,7 +11,7 @@
 
 <script>
 import { useStore } from "vuex"
-import { computed, onMounted, ref, watchEffect } from "vue"
+import { computed, onMounted, watchEffect } from "vue"
 import { enterOffice, connectStomp } from "@/lib/websocket"
 import MainNav from "@/components/Nav/MainNav.vue"
 import RightAsidebar from "@/components/RightAsidebar.vue"
