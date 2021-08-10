@@ -2,13 +2,15 @@
   <Modal>
     <template v-slot:modal-body>
       <div class="grid gap-5 mb-10">
-        <div class="flex justify-between">
-          <button v-if="step > 1" @click="step -= 1">
-            <span class="material-icons-outlined">
-              arrow_back
-            </span>
-          </button>
-          <h1 class="text-3xl font-bold">회사 등록</h1>
+        <div class="flex justify-between items-center">
+          <div>
+            <button v-if="step > 1" @click="step -= 1">
+              <span class="material-icons-outlined">
+                arrow_back
+              </span>
+            </button>
+            <h1 class="text-3xl font-bold">회사 등록</h1>
+          </div>
           <div
             class="py-1 px-4 flex justify-center items-center rounded-full bg-blue-400 text-sm text-white"
           >
@@ -62,7 +64,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts">
+              <option v-for="dept in depts" :key="dept.deptId">
                 {{ dept.deptName }}
               </option>
             </select>
@@ -74,7 +76,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs">
+              <option v-for="job in jobs" :key="job.jobId">
                 {{ job.jobName }}
               </option>
             </select>
