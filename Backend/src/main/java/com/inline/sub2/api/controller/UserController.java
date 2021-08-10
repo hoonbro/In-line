@@ -238,4 +238,15 @@ public class UserController {
         }
         return new ResponseEntity<String>(name,status);
     }
+
+    @GetMapping("/duplicate/{email}")
+    @ApiOperation(value = "회사 이름의 중복을 확인한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> duplicateOfficeName(@PathVariable("email") String email){
+        HttpStatus httpStatus = HttpStatus.OK;
+        boolean isDuplicate = userService.duplicateEmail(email);
+        if(isDuplicate)
+            httpStatus = HttpStatus.CONFLICT;
+
+        return new ResponseEntity<Boolean>(isDuplicate, httpStatus);
+    }
 }

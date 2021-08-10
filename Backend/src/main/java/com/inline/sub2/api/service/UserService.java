@@ -25,4 +25,6 @@ public interface UserService {
     void updatePassword(UserEntity userEntity, String password);
 
     UserEntity updateProfile(Long userId, String filePath);
+
+    public Boolean duplicateEmail(String Email);
 }
