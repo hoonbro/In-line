@@ -43,7 +43,20 @@ export const office = {
       state.todos = todos
     },
     setMembers(state, members) {
-      state.members = members
+      state.members = members.map(member => {
+        return { ...member, connected: false }
+      })
+    },
+    updateConnectionOfMembers(state, members) {
+      const connectedMemberIdList = Object.keys(members).map(key => +key)
+      console.log(connectedMemberIdList)
+      state.members.forEach(member => {
+        if (connectedMemberIdList.includes(member.userId)) {
+          member.connected = true
+        } else {
+          member.connected = false
+        }
+      })
     },
     setRooms(state, rooms) {
       state.rooms = rooms
@@ -58,6 +71,11 @@ export const office = {
   getters: {
     user(state) {
       return state.user
+    },
+    sortedMembersByOnline(state) {
+      return state.members.sort((a, b) => {
+        return a.connected === b.connected ? 0 : a.connected ? -1 : 1
+      })
     },
   },
   actions: {

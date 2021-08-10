@@ -15,19 +15,23 @@
 <script>
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
-import { disconnectStomp } from "@/lib/websocket"
+import { disconnectStomp, exitOffice } from "@/lib/websocket"
+import { computed } from "@vue/runtime-core"
 
 export default {
   name: "MainNav",
   setup() {
     const router = useRouter()
     const store = useStore()
+    const stompClient = computed(() => store.state.socket.stompClient)
+    const user = computed(() => store.state.auth.user)
 
     const logout = async () => {
       const yes = confirm("로그아웃 하시겠습니까?")
       if (yes) {
-        disconnectStomp()
         store.commit("auth/setToken", "")
+        exitOffice(stompClient.value, user.value)
+        disconnectStomp()
         router.push({ name: "Home" })
       }
     }

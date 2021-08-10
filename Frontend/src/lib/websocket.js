@@ -17,8 +17,9 @@ export const connectStomp = officeId => {
         const data = JSON.parse(res.body)
         if (data.type === "CHAT") {
           store.commit("socket/addOfficeChat", data.chatDto)
-        } else if (data.type === "ENTER") {
+        } else if (data.type === "ENTER" || data.type === "EXIT") {
           console.log(data.members)
+          store.commit("office/updateConnectionOfMembers", data.members)
         }
         console.groupEnd()
       })
