@@ -3,7 +3,7 @@
     <template v-slot:modal-body>
       <div class="header">
         <h3 class="title" @click="$emit('close')">구성원 추가</h3>
-        <p class="detail">구미 2반 7팀의 구성원을 추가합니다.</p>
+        <p class="detail">{{ officeName }}의 구성원을 추가합니다.</p>
       </div>
       <div class="add-form">
         <div class="input-list">
@@ -74,6 +74,9 @@ export default {
   },
   setup(_, { emit }) {
     const store = useStore()
+
+    const officeName = JSON.parse(localStorage.getItem("user")).officeEntity
+      .officeName
 
     store.dispatch("office/getDepts")
     store.dispatch("office/getJobs")
@@ -156,6 +159,7 @@ export default {
     }
 
     return {
+      officeName,
       depts,
       jobs,
       formData,

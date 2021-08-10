@@ -12,6 +12,7 @@ import Admin from "@/views/Admin.vue"
 import Room from "@/views/Room.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
+import RegisterMember from "@/views/RegisterMember.vue"
 import Signup from "@/views/Signup.vue"
 
 const routes = [
@@ -84,6 +85,16 @@ const routes = [
   {
     path: "/auth",
     component: AuthLayout,
+    beforeEnter: (to, from, next) => {
+      console.log(!to.meta.loginRequired)
+      console.log(localStorage.getItem("accessToken"))
+      if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
+        alert("잘못된 접근입니다.")
+        next({ name: "Office" })
+      } else {
+        next()
+      }
+    },
     children: [
       {
         path: "reset-password",
@@ -95,6 +106,11 @@ const routes = [
         name: "ChangePassword",
         component: ChangePassword,
         meta: { loginRequired: true },
+      },
+      {
+        path: "register-member",
+        name: "RegisterMember",
+        component: RegisterMember,
       },
     ],
   },
