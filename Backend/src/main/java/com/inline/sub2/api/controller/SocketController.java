@@ -54,6 +54,7 @@ public class SocketController {
             map.put("chatDto",chatDto);
         }
         else if(chatDto.getType().equals("ENTER")) {
+            System.out.println("ENTER 들어오는지 여부");
             Office office = officeManager.getOffice(chatDto.getOfficeId());
             ParticipantDto participantDto = new ParticipantDto();
             participantDto.setUserId(chatDto.getUserId());
@@ -65,8 +66,9 @@ public class SocketController {
             map.put("members",participants);
         }
         else if(chatDto.getType().equals("EXIT")) {
+            System.out.println("EXIT 들어오는지 여부");
             Office office = officeManager.getOffice(chatDto.getOfficeId());
-            ConcurrentMap<Long,ParticipantDto> participants = office.removeParticipant(chatDto.getOfficeId());
+            ConcurrentMap<Long,ParticipantDto> participants = office.removeParticipant(chatDto.getUserId());
             map.put("type",chatDto.getType());
             map.put("members",participants);
         }
