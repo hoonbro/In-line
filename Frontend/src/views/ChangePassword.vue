@@ -85,8 +85,7 @@ export default {
         })
         router.push({ name: "Office" })
       } catch (error) {
-        console.log(error)
-        console.log(error.message)
+        alert(error.message)
       }
     }
 
