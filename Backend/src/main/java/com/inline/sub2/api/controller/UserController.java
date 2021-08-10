@@ -107,7 +107,7 @@ public class UserController {
                 log.error("일치하는 이메일이 없습니다.");
             }
         } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            status = HttpStatus.BAD_REQUEST;
             return new ResponseEntity<Map<String, Object>>(map, status);
         }
         return new ResponseEntity<Map<String, Object>>(map, status);
