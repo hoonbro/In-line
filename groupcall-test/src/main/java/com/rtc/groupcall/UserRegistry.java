@@ -14,7 +14,6 @@ public class UserRegistry {
     public void register(UserSession user) {
 //        log.info("user register user name : {}", user.getName());
         usersById.put(user.getUserId(), user);
-        System.out.println(user.toString());
         usersBySessionId.put(user.getSession().getId(), user);
 //        log.info("user register : {}",user.toString());
     }

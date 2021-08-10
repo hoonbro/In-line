@@ -85,13 +85,14 @@ export default {
     const state = reactive({
       room: room.value,
       name: store.state.auth.user.name,
+      userId : store.state.auth.user.userId
     })
 
     // 동명이인 처리 어떻게 할건지
     const register = () => {
       const message = {
         id: "joinRoom",
-        userId: store.state.auth.user.userId,
+        userId: state.userId,
         userName: state.name,
         roomName: state.room,
         roomId: props.roomId,
@@ -154,7 +155,6 @@ export default {
     }
 
     function onNewParticipant(request) {
-      console.log(request.userId)
       receiveVideo(request.userId)
     }
 
@@ -195,10 +195,11 @@ export default {
       }
 
       console.log(state.name + " registered in room " + state.room)
-      let participant = new Participant(store.state.auth.user.userId)
-      participants[store.state.auth.user.userId] = participant
+      console.log(msg)
+      let participant = new Participant(state.userId)
+      participants[state.userId] = participant
       let video = participant.getVideoElement()
-
+      
       const options = {
         localVideo: video,
         mediaConstraints: constraints,
@@ -213,8 +214,8 @@ export default {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant))
         }
       )
-
-      msg.data.forEach(receiveVideo)
+      
+      msg.userId.forEach(receiveVideo)
     }
 
     // 얘도 떠날때임
@@ -254,10 +255,10 @@ export default {
     }
     //  떠날때임
     function onParticipantLeft(request) {
-      console.log("Participant " + request.name + " left")
-      let participant = participants[request.name]
+      console.log("Participant " + request.userId + " left")
+      let participant = participants[request.userId]
       participant.dispose()
-      delete participants[request.name]
+      delete participants[request.userId]
     }
 
     // ===========================================================================
@@ -339,7 +340,7 @@ export default {
         console.log("Invoking SDP offer callback function")
         var msg = {
           id: "receiveVideoFrom",
-          sender: store.state.auth.user.userId,
+          sender: userId,
           sdpOffer: offerSdp,
         }
         sendMessage(msg)
@@ -381,19 +382,19 @@ export default {
       switchMic.value = !switchMic.value
       // console.log(switchMic.value)
       participants[
-        store.state.auth.user.name
-      ].rtcPeer.audioEnabled = !participants[store.state.auth.user.name].rtcPeer
+        state.userId
+      ].rtcPeer.audioEnabled = !participants[ state.userId].rtcPeer
         .audioEnabled
     }
     const changeCam = () => {
       switchCam.value = !switchCam.value
       // console.log(switchCam.value)
       participants[
-        store.state.auth.user.name
-      ].rtcPeer.videoEnabled = !participants[store.state.auth.user.name].rtcPeer
+         state.userId
+      ].rtcPeer.videoEnabled = !participants[ state.userId].rtcPeer
         .videoEnabled
     }
-    console.log(store.state.auth.user.name)
+    console.log(state.userId)
 
     // console.log(participants["이원우"].rtcPeer)
 

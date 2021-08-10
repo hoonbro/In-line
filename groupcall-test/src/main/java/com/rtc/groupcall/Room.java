@@ -73,7 +73,7 @@ public class Room implements Closeable {
     private Collection<Long> joinRoom(UserSession newParticipant) throws IOException {
         final JsonObject newParticipantMsg = new JsonObject();
         newParticipantMsg.addProperty("id", "newParticipantArrived");
-        newParticipantMsg.addProperty("userId", newParticipant.getUserName());
+        newParticipantMsg.addProperty("userId", newParticipant.getUserId());
         newParticipantMsg.addProperty("userName", newParticipant.getUserName());
 
         final List<Long> participantsList = new ArrayList<>(participants.values().size());
@@ -120,17 +120,21 @@ public class Room implements Closeable {
 
     public void sendParticipantNames(UserSession user) throws IOException {
 
-        final JsonArray participantsArray = new JsonArray();
+        final JsonArray participantsId = new JsonArray();
+        final JsonArray participantsName = new JsonArray();
         for (final UserSession participant : this.getParticipants()) {
-            if (!participant.equals(user)) {
-                final JsonElement participantName = new JsonPrimitive(participant.getUserName());
-                participantsArray.add(participantName);
+            if (participant.getUserId() != user.getUserId()) {
+                final JsonElement userId = new JsonPrimitive(participant.getUserId());
+                final JsonElement userName = new JsonPrimitive(participant.getUserName());
+                participantsId.add(userId);
+                participantsName.add(userName);
             }
         }
 
         final JsonObject existingParticipantsMsg = new JsonObject();
         existingParticipantsMsg.addProperty("id", "existingParticipants");
-        existingParticipantsMsg.add("data", participantsArray);
+        existingParticipantsMsg.add("userId", participantsId);
+        existingParticipantsMsg.add("userName", participantsName);
 //        log.debug("PARTICIPANT {}: sending a list of {} participants", user.getName(),
 //                participantsArray.size());
         user.sendMessage(existingParticipantsMsg);

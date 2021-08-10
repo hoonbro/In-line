@@ -95,9 +95,6 @@ public class UserSession implements Closeable {
     public Long getRoomId(){return this.roomId;}
 
     public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
-        log.info(this.userName);
-        log.info(sender.getUserName());
-        log.info(this.roomName);
         log.info("USER {} : {}님이 {}에 연결되었습니다.", this.userName, sender.getUserName(), this.roomName);
 
 //        log.trace("USER {}: SdpOffer for {} is {}", this.name, sender.getName(), sdpOffer);
@@ -116,7 +113,6 @@ public class UserSession implements Closeable {
     }
 
     private WebRtcEndpoint getEndpointForUser(final UserSession sender) {
-        System.out.println(sender.toString());
         if (sender.getUserId() == userId) {
 //            log.debug("PARTICIPANT {}: configuring loopback", this.name);
             return outgoingMedia;
@@ -124,7 +120,7 @@ public class UserSession implements Closeable {
 
 //        log.debug("PARTICIPANT {}: receiving video from {}", this.name, sender.getName());
 
-        WebRtcEndpoint incoming = incomingMedia.get(sender.getUserName());
+        WebRtcEndpoint incoming = incomingMedia.get(sender.getUserId());
         if (incoming == null) {
 //            log.debug("PARTICIPANT {}: creating new endpoint for {}", this.name, sender.getName());
             incoming = new WebRtcEndpoint.Builder(pipeline).build();
@@ -164,7 +160,6 @@ public class UserSession implements Closeable {
     public void cancelVideoFrom(final Long userId) {
 //        log.debug("PARTICIPANT {}: canceling video reception from {}", this.name, senderName);
         final WebRtcEndpoint incoming = incomingMedia.remove(userId);
-
 //        log.debug("PARTICIPANT {}: removing endpoint for {}", this.name, senderName);
         incoming.release(new Continuation<Void>() {
             @Override
