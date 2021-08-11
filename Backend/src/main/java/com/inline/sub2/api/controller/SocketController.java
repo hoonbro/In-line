@@ -63,6 +63,7 @@ public class SocketController {
             participantDto.setUserId(chatDto.getUserId());
             participantDto.setOfficeId(chatDto.getOfficeId());
             participantDto.setUserName(chatDto.getUserName());
+            participantDto.setRoomId(chatDto.getRoomId());
             ConcurrentMap<Long,ParticipantDto> participants = office.join(participantDto);
             System.out.println("멤버 사이즈 : " + participants.size());
             map.put("type",chatDto.getType());
@@ -74,6 +75,12 @@ public class SocketController {
             ConcurrentMap<Long,ParticipantDto> participants = office.removeParticipant(chatDto.getUserId());
             map.put("type",chatDto.getType());
             map.put("members",participants);
+        }
+        else if(chatDto.getType().equals("MOVE")) {
+            System.out.println("MOVE 들어오는지 여부");
+            Office office = officeManager.getOffice(chatDto.getOfficeId());
+            ParticipantDto participantDto = office.moveParticipant(chatDto);
+            map.put("moveMember" , participantDto);
         }
 
         return map;
