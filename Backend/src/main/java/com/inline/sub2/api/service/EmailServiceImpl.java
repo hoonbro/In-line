@@ -45,7 +45,7 @@ public class EmailServiceImpl implements EmailService {
                     "      <span>" + user.getName() +"님으로 구성원 등록을 진행하시겠습니까?</span>\n" +
                     "      <br><br>\n" +
                     "      <div class=\"button-list\">\n" +
-                    "        <button type=\"button\" onclick=\"location.href = '#'\">인라인 시작하기</button>\n" +
+                    "        <button type=\"button\" onclick=\"location.href = 'https://i5d207.p.ssafy.io/onboarding/signup?email='" + user.getEmail() +"\">인라인 시작하기</button>\n" +
                     "      </div>\n" +
                     "      <br>\n" +
                     "      <hr>\n" +
