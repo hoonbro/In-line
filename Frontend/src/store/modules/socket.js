@@ -8,8 +8,13 @@ export const socket = {
   namespaced: true,
   state: {
     stompClient: null,
-    subscription: null,
+    // subscription: null,
     officeChatList: [],
+  },
+  getters: {
+    stompClient(state) {
+      return state.stompClient
+    },
   },
   mutations: {
     setStompClient(state, payload) {
@@ -21,9 +26,9 @@ export const socket = {
     addOfficeChat(state, chat) {
       state.officeChatList.push(chat)
     },
-    setSubscription(state, subscription) {
-      state.subscription = subscription
-    },
+    // setSubscription(state, subscription) {
+    //   state.subscription = subscription
+    // },
   },
   actions: {
     async getAllOfficeChat({ commit, rootState }) {

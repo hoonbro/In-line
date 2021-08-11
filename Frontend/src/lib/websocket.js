@@ -2,29 +2,40 @@ import Stomp from "webstomp-client"
 import SockJS from "sockjs-client"
 import store from "@/store/index"
 
-export const connectStomp = officeId => {
+// send: notification/:userId
+// sub: queue/:userId
+
+export const connectStomp = (userId, officeId) => {
   const serverURL = "/api/v1/stomp"
   const socket = new SockJS(serverURL)
   let stompClient = Stomp.over(socket)
-  let subscription
   return new Promise((res, rej) => {
     stompClient.connect(
       {},
       frame => {
         stompClient.connected = true
         store.commit("socket/setStompClient", stompClient)
-        subscription = stompClient.subscribe(`/sub/${officeId}`, res => {
-          console.group("subscription")
-          const data = JSON.parse(res.body)
-          if (data.type === "CHAT") {
-            store.commit("socket/addOfficeChat", data.chatDto)
-          } else if (data.type === "ENTER" || data.type === "EXIT") {
-            console.log(data.members)
-            store.commit("office/updateConnectionOfMembers", data.members)
+        const officeSubscription = stompClient.subscribe(
+          `/sub/${officeId}`,
+          res => {
+            console.group("subscription")
+            const data = JSON.parse(res.body)
+            if (data.type === "CHAT") {
+              store.commit("socket/addOfficeChat", data.chatDto)
+            } else if (data.type === "ENTER" || data.type === "EXIT") {
+              console.log(data.members)
+              store.commit("office/updateConnectionOfMembers", data.members)
+            }
+            console.groupEnd()
           }
-          console.groupEnd()
-        })
-        store.commit("socket/setSubscription", subscription)
+        )
+        const mySubscription = stompClient.subscribe(
+          `/queue/${userId}`,
+          res => {
+            console.log(res)
+          }
+        )
+        // store.commit("socket/setSubscription", officeSubscription)
         res("성공")
       },
       error => {
@@ -54,6 +65,7 @@ export const enterOffice = (stompClient, user) => {
   console.log({ ...stompClient })
   if (stompClient && stompClient.connected) {
     console.log(stompClient.connected)
+    console.log(user)
     const msg = {
       type: "ENTER",
       officeId: user.officeId,

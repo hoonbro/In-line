@@ -15,7 +15,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts">
+              <option v-for="dept in depts" :key="dept.deptId">
                 {{ dept.deptName }}
               </option>
             </select>
@@ -26,7 +26,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs">
+              <option v-for="job in jobs" :key="job.jobId">
                 {{ job.jobName }}
               </option>
             </select>
@@ -37,6 +37,7 @@
               :formData="formData"
               :field="field"
               @update:validate="handleUpdateValidate(formData, $event)"
+              @submit="submitForm"
             />
           </div>
         </div>
@@ -133,6 +134,7 @@ export default {
     // api 요청
     // ===================================================================
     const submitForm = async () => {
+      if (!formIsValid.value) return
       const submitData = {
         officeId: store.state.auth.user.officeId,
       }
@@ -149,11 +151,15 @@ export default {
           },
           data: submitData,
         })
-        console.log(res)
-        alert("전송 성공")
+        store.commit("landing/addAlertModalList", {
+          message: "전송 성공",
+        })
         emit("close")
       } catch (error) {
-        alert("전송 실패")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "전송 실패",
+        })
         console.log(error)
       }
     }
