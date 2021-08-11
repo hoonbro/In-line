@@ -177,12 +177,12 @@ export default {
         audio: true,
         video: {
           mandatory: {
-            minWidth: 440,
-            maxWidth: 440,
-            minHeight: 300,
-            maxHeight: 300,
-            maxFrameRate: 15,
-            minFrameRate: 15,
+            minWidth: 450,
+            maxWidth: 450,
+            minHeight: 320,
+            maxHeight: 320,
+            maxFrameRate: 30,
+            minFrameRate: 30,
           },
         },
       }
@@ -404,9 +404,9 @@ export default {
       ].rtcPeer.videoEnabled = !participants[store.state.auth.user.name].rtcPeer
         .videoEnabled
     }
-    console.log(store.state.auth.user.name)
+    // console.log(store.state.auth.user.name)
 
-    // console.log(participants["store.state.auth.user.name"].rtcPeer)
+    // console.log(participants[store.state.auth.user.name].rtcPeer)
 
     return {
       switchMic,

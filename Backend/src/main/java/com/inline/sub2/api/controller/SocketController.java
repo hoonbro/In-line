@@ -1,9 +1,6 @@
 package com.inline.sub2.api.controller;
 
-import com.inline.sub2.api.dto.ChatDto;
-import com.inline.sub2.api.dto.Office;
-import com.inline.sub2.api.dto.ParticipantDto;
-import com.inline.sub2.api.dto.SocketVO;
+import com.inline.sub2.api.dto.*;
 import com.inline.sub2.api.service.ChatService;
 import com.inline.sub2.api.service.CommuteService;
 import com.inline.sub2.api.service.OfficeManager;
@@ -14,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -74,5 +72,13 @@ public class SocketController {
         }
 
         return map;
+    }
+
+
+    @MessageMapping("/notification/{userId}")
+    @SendToUser("/queue/{userId}")
+    public InviteDto invite(InviteDto inviteDto,@DestinationVariable("userId") Long userId) throws IOException {
+        System.out.println("여기들어오니? " + userId);
+        return inviteDto;
     }
 }

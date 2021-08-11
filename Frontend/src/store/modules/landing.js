@@ -1,10 +1,16 @@
-// 영수
-import axios from "axios"
-
 export const landing = {
   namespaced: true,
-  state: () => ({}),
+  state: {
+    alertModalList: [],
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    addAlertModalList(state, alertModalItem) {
+      state.alertModalList.push({ ...alertModalItem, created: Date.now() })
+      setTimeout(() => {
+        state.alertModalList.shift()
+      }, 5000)
+    },
+  },
   actions: {},
 }

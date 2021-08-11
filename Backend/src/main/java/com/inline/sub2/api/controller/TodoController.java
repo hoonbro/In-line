@@ -60,21 +60,21 @@ public class TodoController {
         return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
     }
 
-    @PutMapping("/{todoId}")
-    @ApiOperation(value = "사용자의 할일(Todo)를 수정한다.", response = TodoEntity.class)
-    public ResponseEntity<TodoEntity> updateTodo(@PathVariable("todoId") Long todoId,@RequestBody TodoEntity todoEntity) {
-        HttpStatus httpStatus = HttpStatus.CREATED;
-        todoEntity.setTodoId(todoId);
-        try{
-            todoEntity = todoService.updateTodo(todoEntity);
-        }
-        catch(Exception e) {
-            todoEntity = null;
-            httpStatus = HttpStatus.UNAUTHORIZED;
-        }
-
-        return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
-    }
+//    @PutMapping("/{todoId}")
+//    @ApiOperation(value = "사용자의 할일(Todo)를 수정한다.", response = TodoEntity.class)
+//    public ResponseEntity<TodoEntity> updateTodo(@PathVariable("todoId") Long todoId,@RequestBody TodoEntity todoEntity) {
+//        HttpStatus httpStatus = HttpStatus.CREATED;
+//        todoEntity.setTodoId(todoId);
+//        try{
+//            todoEntity = todoService.updateTodo(todoEntity);
+//        }
+//        catch(Exception e) {
+//            todoEntity = null;
+//            httpStatus = HttpStatus.UNAUTHORIZED;
+//        }
+//
+//        return new ResponseEntity<TodoEntity>(todoEntity,httpStatus);
+//    }
 
     @DeleteMapping("/{todoId}")
     @ApiOperation(value = "사용자의 할일(Todo)를 삭제한다.")
@@ -92,7 +92,7 @@ public class TodoController {
         return new ResponseEntity<Void>(httpStatus);
     }
 
-    @PutMapping("/done/{todoId}")
+    @PutMapping("/{todoId}")
     @ApiOperation(value = "todo가 진행중이라면 종료, 종료라면 진행중으로 상태를 바꾼다.", response = TodoEntity.class)
     public ResponseEntity<TodoEntity> taskTodo(@PathVariable(value = "todoId") Long todoId) {
         HttpStatus httpStatus = HttpStatus.CREATED;
