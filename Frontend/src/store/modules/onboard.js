@@ -34,5 +34,8 @@ export const onboard = {
         }
       }
     },
+    getInitData: (context, email) => {
+      return axios.get(`/api/v1/on-board/user/${email}`)
+    },
   },
 }

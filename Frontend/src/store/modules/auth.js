@@ -38,6 +38,14 @@ export const auth = {
     },
   },
   actions: {
+    signUp: async (context, formData) => {
+      try {
+        const res = await axios.post("/api/v1/users", formData)
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async login({ commit }, formData) {
       try {
         const res = await authAPI.post("/login", formData)

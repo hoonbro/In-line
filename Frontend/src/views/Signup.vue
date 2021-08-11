@@ -2,27 +2,29 @@
   <div class="wrapper">
     <div class="inner">
       <div class="grid gap-3">
-        <h1 class="text-3xl font-bold">OOO님 안녕하세요!</h1>
+        <h1 class="text-3xl font-bold">{{ name }}님 안녕하세요!</h1>
         <div>
-          <p>OOO의 구성원이 되기 위한 마지막 단계에요.</p>
+          <p>{{ officeName }}의 구성원이 되기 위한 마지막 단계에요.</p>
         </div>
       </div>
       <div class="input-list">
         <TextInput
           v-for="(field, key) in formData"
           :key="key"
-          v-model="field.value"
           :name="key"
-          :field="field"
+          v-model="field.value"
           :formData="formData"
-          @update:modelValue="handleInput"
+          :field="field"
+          :disabled="field.disabled"
+          @update:modelValue="formError = ''"
           @update:validate="handleUpdateValidate(formData, $event)"
         />
       </div>
       <button
         class="send-btn"
         :class="{ disabled: !formIsValid }"
-        @click="sendTempPassword"
+        :disabled="!formIsValid"
+        @click="signUp"
       >
         등록 완료
       </button>
@@ -31,7 +33,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref } from "vue"
+import { reactive, ref, onMounted, computed } from "vue"
 import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
@@ -40,9 +42,8 @@ import {
   confirmPasswordValidator,
   passwordSecurityValidator,
 } from "@/lib/validator"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 import { useStore } from "vuex"
-import axios from "axios"
 
 export default {
   name: "Signup",
@@ -51,19 +52,12 @@ export default {
   },
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const store = useStore()
 
-    const getOnBoardUser = async () => {
-      console.log("asdf")
-      try {
-        const res = await axios.get(`api/v1/on-board/user/soc4585@naver.com`)
-        console.log(res)
-        const { name, officeName, email, jobName } = res.data
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getOnBoardUser()
+    const officeId = ref("")
+    const officeName = ref("")
+    const name = ref("")
 
     const formData = reactive({
       email: {
@@ -72,12 +66,14 @@ export default {
         value: "",
         validators: [requiredValidator, emailValidator],
         errors: {},
+        disabled: true,
       },
       deptName: {
         label: "소속",
         value: "",
         validators: [requiredValidator],
         errors: {},
+        disabled: true,
       },
       jobName: {
         label: "직무",
@@ -85,6 +81,7 @@ export default {
         value: "",
         validators: [requiredValidator],
         errors: {},
+        disabled: true,
       },
       phone: {
         label: "휴대전화",
@@ -109,37 +106,66 @@ export default {
       },
     })
 
-    const formIsValid = ref(false)
-
-    const handleInput = value => {
-      formIsValid.value = formData.email.validators.every(validator => {
-        return validator(formData, "email", value).status
-      })
-    }
-
-    const sendTempPassword = async () => {
-      // api 요청
+    // onBoard에 올라가 있는 데이터 가져오기
+    onMounted(async () => {
       try {
-        await store.dispatch("auth/resetPassword", {
-          email: formData.email.value,
-        })
-        alert(
-          "이메일을 발송했습니다.\n임시비밀번호로 로그인 후 비밀번호를 꼭 바꿔주세요!"
+        const res = await store.dispatch(
+          "onboard/getInitData",
+          route.query.email
         )
-        router.push({
-          name: "Home",
-          params: { shouldLogin: true },
-        })
+        console.log(res)
+        if (res.status === 200) {
+          officeId.value = res.data.officeId
+          officeName.value = res.data.officeName
+          name.value = res.data.name
+          formData.email.value = res.data.email
+          formData.deptName.value = res.data.deptName
+          formData.jobName.value = res.data.jobName
+        }
       } catch (error) {
-        alert(error.message)
+        console.log(error)
+        // router.push({ name: "Home", params: { shouldLogin: true } })
       }
+    })
+
+    const formError = ref("")
+
+    const formIsFilled = computed(() => {
+      return Object.keys(formData).every(key => formData[key].value)
+    })
+
+    const formNoError = computed(() => {
+      return Object.keys(formData).every(key => {
+        return !Object.keys(formData[key].errors).length
+      })
+    })
+
+    const formIsValid = computed(() => {
+      return formIsFilled.value && formNoError.value
+    })
+
+    const signUp = async () => {
+      const submitData = {
+        email: formData.email.value,
+        deptName: formData.deptName.value,
+        jobName: formData.jobName.value,
+        // officeId: officeId.value,
+        officeName: officeName.value,
+        name: name.value,
+        password: formData.password.value,
+        phone: formData.phone.value,
+      }
+      console.log(submitData)
+      const res = await store.dispatch("auth/signUp", submitData)
     }
 
     return {
+      officeName,
+      name,
       formData,
       formIsValid,
-      handleInput,
-      sendTempPassword,
+      formError,
+      signUp,
       handleUpdateValidate,
     }
   },
