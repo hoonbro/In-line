@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/on-board")
@@ -26,22 +28,22 @@ public class OnBoardController {
     @PostMapping("/user")
     @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가하고 이메일을 보낸다.")
     public ResponseEntity<Void> registUserOnboard(@RequestBody UserRegistDto user) {
-        HttpStatus status = HttpStatus.CREATED;
+        HttpStatus httpStatus = HttpStatus.CREATED;
         boolean isDuplicate = userService.duplicateEmail(user.getEmail());
         if (isDuplicate) {
-            status = HttpStatus.CONFLICT;
-            log.error("구성원 이메일 중복");
+            httpStatus = HttpStatus.CONFLICT;
+            log.error("이미 등록된 구성원 이메일");
         }
         else{
             try {
                 onBoardService.registUserOnboard(user);
             }catch (Exception e){
                 log.error("가입 처리중인 이메일");
-                status = HttpStatus.BAD_REQUEST;
+                httpStatus = HttpStatus.BAD_REQUEST;
             }
 
         }
-        return new ResponseEntity<Void>(status);
+        return new ResponseEntity<Void>(httpStatus);
     }
 
     @GetMapping("/user/{email}")
@@ -68,5 +70,22 @@ public class OnBoardController {
             httpStatus = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<Void>(httpStatus);
+    }
+
+    @GetMapping("/{officeId}")
+    @ApiOperation(value = "관리자가 onBoard 테이블에서 구성원을 삭제한다.", response = List.class)
+    public ResponseEntity<List<OnBoardEntity>> getOnboardUsers(@PathVariable("officeId") Long officeId){
+        HttpStatus httpStatus = HttpStatus.OK;
+        List<OnBoardEntity> list = null;
+
+        try{
+            list = onBoardService.getOnboardUsers(officeId);
+            log.info("onboard list 반환 성공");
+        }catch (Exception e){
+            log.error("서버 에러");
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<List<OnBoardEntity>>(list, httpStatus);
     }
 }
