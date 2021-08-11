@@ -82,6 +82,7 @@ export default {
       room: room.value,
       name: store.state.auth.user.name,
       userId: store.state.auth.user.userId,
+      officeId: store.state.auth.user.officeId,
     })
 
     // 동명이인 처리 어떻게 할건지
@@ -92,6 +93,7 @@ export default {
         userName: state.name,
         roomName: state.room,
         roomId: props.roomId,
+        officeId: state.officeId,
       }
 
       sendMessage(message)
@@ -451,8 +453,8 @@ export default {
         @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
       }
 
-    .bar-part {
-      @apply flex fixed left-1/3 bottom-5;
+      .bar-part {
+        @apply flex fixed left-1/3 bottom-5;
 
         .mic-button {
           @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
