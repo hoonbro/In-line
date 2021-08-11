@@ -32,7 +32,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts">
+              <option v-for="dept in depts" :key="dept.deptId">
                 {{ dept.deptName }}
               </option>
             </select>
@@ -43,7 +43,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs">
+              <option v-for="job in jobs" :key="job.jobId">
                 {{ job.jobName }}
               </option>
             </select>
