@@ -20,7 +20,7 @@ public interface UserService {
 
     List<UserEntity> getUserList(Long officeId);
 
-    void updateUser(UserUpdateDto userUpdateDto);
+    UserEntity updateUser(UserUpdateDto userUpdateDto);
 
     void updatePassword(UserEntity userEntity, String password);
 
