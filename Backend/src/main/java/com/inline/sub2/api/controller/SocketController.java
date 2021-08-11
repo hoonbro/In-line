@@ -59,7 +59,7 @@ public class SocketController {
             participantDto.setOfficeId(chatDto.getOfficeId());
             participantDto.setUserName(chatDto.getUserName());
             ConcurrentMap<Long,ParticipantDto> participants = office.join(participantDto);
-//            map.put("chatDto",chatDto);
+            System.out.println("멤버 사이즈 : " + participants.size());
             map.put("type",chatDto.getType());
             map.put("members",participants);
         }
@@ -76,9 +76,12 @@ public class SocketController {
 
 
     @MessageMapping("/notification/{userId}")
-    @SendToUser("/queue/{userId}")
+    @SendTo("/queue/{userId}")
     public InviteDto invite(InviteDto inviteDto,@DestinationVariable("userId") Long userId) throws IOException {
-        System.out.println("여기들어오니? " + userId);
+        System.out.println("받는 userId ? :  " + userId);
+        System.out.println("보내는 userId ? :  " + inviteDto.getUserId());
+        System.out.println("보내는 userNmae ? :  " + inviteDto.getUserName());
+        System.out.println("roomId ? :  " + inviteDto.getRoomId());
         return inviteDto;
     }
 }
