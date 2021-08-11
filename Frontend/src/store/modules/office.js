@@ -94,7 +94,6 @@ export const office = {
           method: "get",
           url: "depts",
         })
-        console.log(res)
         commit("setDepts", res.data)
       } catch (error) {
         console.log(error)
@@ -107,7 +106,6 @@ export const office = {
           method: "get",
           url: "jobs",
         })
-        console.log(res)
         commit("setJobs", res.data)
       } catch (error) {
         console.log(error)
