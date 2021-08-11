@@ -67,7 +67,10 @@ const routes = [
       console.log(to)
       console.log(from)
       if (to.fullPath === "/rooms/") {
-        alert("잘못된 접근입니다.")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "잘못된 접근입니다.",
+        })
         next({ name: "Office" })
       } else {
         next()
@@ -88,7 +91,10 @@ const routes = [
     beforeEnter: (to, from, next) => {
       // 로그인 필수 X + 로그인 되어있다면 접근 금지
       if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
-        alert("잘못된 접근입니다.")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "잘못된 접근입니다.",
+        })
         next({ name: "Office" })
       } else {
         next()
