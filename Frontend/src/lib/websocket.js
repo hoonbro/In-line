@@ -39,7 +39,10 @@ export const connectStomp = (userId, officeId) => {
         res("성공")
       },
       error => {
-        alert("소켓 연결 실패!")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "소켓 연결이 끊겼어요.",
+        })
         stompClient.connected = false
         store.commit("socket/setStompClient", stompClient)
         rej("망했어요")
