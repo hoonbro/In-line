@@ -15,6 +15,7 @@
             :formData="formData"
             :field="field"
             @update:validate="handleUpdateValidate(formData, $event)"
+            @submit="submitForm"
           />
         </div>
         <button
@@ -83,12 +84,12 @@ export default {
     })
 
     const allFieldIsFilled = computed(() => {
-      return Object.keys(formData).every((key) => formData[key].value)
+      return Object.keys(formData).every(key => formData[key].value)
     })
 
     const allFieldDoesNotHaveError = computed(() => {
       return Object.keys(formData).every(
-        (key) => !Object.keys(formData[key].errors).length
+        key => !Object.keys(formData[key].errors).length
       )
     })
 
@@ -97,10 +98,11 @@ export default {
     })
 
     const submitForm = async () => {
+      if (!formIsValid.value) return
       const submitData = {
         officeId: store.state.auth.user.officeId,
       }
-      Object.keys(formData).forEach((key) => {
+      Object.keys(formData).forEach(key => {
         submitData[key] = formData[key].value
       })
       try {
@@ -112,10 +114,15 @@ export default {
           },
           data: submitData,
         })
-        alert("전송 성공")
+        store.commit("landing/addAlertModalList", {
+          message: "전송 성공",
+        })
         emit("close")
       } catch (error) {
-        alert("전송 실패")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "전송 실패",
+        })
         console.log(error)
       }
     }

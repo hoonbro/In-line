@@ -4,13 +4,11 @@
       <div class="profile-img-container">
         <div class="profile-img-wrapper">
           <img
-            :src="
-              profileImg
-                ? `/images/${profileImg}`
-                : `https://picsum.photos/seed/user-2-${userId}/100`
-            "
+            v-if="profileImg"
+            :src="`/images/${profileImg}`"
             alt="프로필 이미지"
           />
+          <span v-else>{{ profileForm.name.value[0] }}</span>
           <input
             type="file"
             accept="image/*"
@@ -162,23 +160,26 @@ export default {
     const onFileChange = async () => {
       const image = fileInputEl.value.files[0]
       const formData = new FormData()
-      formData.append("userId", store.state.auth.user.userId)
+      formData.append("userId", store.getters["auth/userId"])
       formData.append("file", image)
       try {
-        const res = await axios({
-          method: "PUT",
-          url: "/api/v1/users/profile",
-          data: formData,
-          headers: {
-            accessToken: store.state.auth.accessToken,
-            "Content-Type": "multipart/form-data",
-          },
+        const newProfileImage = await store.dispatch(
+          "auth/updateProfileImage",
+          formData
+        )
+        profileImg.value = newProfileImage
+        store.commit("office/updateMemberProfileImage", {
+          userId: store.getters["auth/userId"],
+          newProfileImage,
         })
-        console.log(res)
-        profileImg.value = res.data
-        console.log("이미지 업로드 성공")
+        store.commit("landing/addAlertModalList", {
+          message: "이미지 업로드 성공",
+        })
       } catch (error) {
-        console.log(error)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
     }
 
@@ -231,7 +232,7 @@ header {
   @apply mb-10 flex justify-center;
 
   .profile-img-wrapper {
-    @apply bg-green-200 w-32 h-32 rounded-full flex items-center justify-center relative;
+    @apply bg-blue-600 w-32 h-32 rounded-full flex items-center justify-center relative text-white text-lg font-bold;
 
     img {
       @apply w-full h-full object-cover rounded-full;

@@ -1,13 +1,11 @@
 <template>
   <div class="member" :class="{ online: member.connected }">
     <img
-      :src="
-        member.profileImage
-          ? `/images/${member.profileImage}`
-          : `https://picsum.photos/seed/user-2-${member.userId}/40`
-      "
+      v-if="member.profileImage"
+      :src="`/images/${member.profileImage}`"
       alt="프로필"
     />
+    <div class="fake-img" v-else>{{ member.name[0] }}</div>
     <div>
       <p class="name">{{ member.name }}</p>
       <p class="department">{{ member.deptEntity.deptName }}</p>
@@ -39,8 +37,13 @@ export default {
     @apply absolute z-10 top-2 bg-gray-400 left-2 w-2 h-2 rounded-full;
   }
 
-  img {
+  img,
+  .fake-img {
     @apply w-9 h-9 object-cover object-center rounded-full mr-2 relative;
+  }
+
+  .fake-img {
+    @apply bg-blue-600 flex justify-center items-center text-white font-bold;
   }
 
   p {

@@ -2,13 +2,11 @@
   <li class="user-list-item">
     <div class="profile-container">
       <img
-        :src="
-          member.profileImage
-            ? `/images/${member.profileImage}`
-            : `https://picsum.photos/seed/user-2-${member.userId}/40`
-        "
+        v-if="member.profileImage"
+        :src="`/images/${member.profileImage}`"
         alt="프로필 이미지"
       />
+      <span v-else>{{ member.name[0] }}</span>
     </div>
     <div class="infos">
       <p class="name">{{ member.name }}</p>
@@ -36,7 +34,11 @@ export default {
   }
 
   .profile-container {
-    @apply w-10 h-10 rounded-full overflow-hidden bg-green-400 flex items-center justify-center text-sm font-bold mr-8 text-white;
+    @apply w-10 h-10 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-sm font-bold mr-8 text-white;
+
+    img {
+      @apply w-full h-full object-cover;
+    }
   }
 
   .infos {

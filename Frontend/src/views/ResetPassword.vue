@@ -15,10 +15,12 @@
         :formData="formData"
         @update:modelValue="handleInput"
         @update:validate="handleUpdateValidate(formData, $event)"
+        @submit="sendTempPassword"
       />
       <button
         class="send-btn"
         :class="{ disabled: !formIsValid }"
+        :disabled="!formIsValid"
         @click="sendTempPassword"
       >
         임시 비밀번호 발송
@@ -28,7 +30,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref } from "vue"
+import { reactive, ref } from "vue"
 import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
@@ -59,13 +61,14 @@ export default {
 
     const formIsValid = ref(false)
 
-    const handleInput = (value) => {
-      formIsValid.value = formData.email.validators.every((validator) => {
+    const handleInput = value => {
+      formIsValid.value = formData.email.validators.every(validator => {
         return validator(formData, "email", value).status
       })
     }
 
     const sendTempPassword = async () => {
+      if (!formIsValid.value) return
       // api 요청
       try {
         await store.dispatch("auth/resetPassword", {
@@ -79,7 +82,10 @@ export default {
           params: { shouldLogin: true },
         })
       } catch (error) {
-        alert(error.message)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
     }
 

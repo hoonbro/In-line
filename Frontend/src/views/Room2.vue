@@ -77,7 +77,7 @@ export default {
 
   .video-chat {
     .video-part {
-      @apply grid grid-cols-5 m-12 bg-Teal-300;
+      @apply grid grid-cols-5 m-12 bg-teal-300;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;
