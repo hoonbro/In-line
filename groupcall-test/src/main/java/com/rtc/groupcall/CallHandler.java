@@ -75,7 +75,10 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomName(), user.getRoomId(), user.getOfficeId()).leave(user);
+        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId(), user.getOfficeId());
+        RoomEntity lobby = roomManager.getLobby(room.getOfficeId());
+        roomManager.moveUser(user.getUserId(), lobby.getRoomId());
+        room.leave(user);
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
