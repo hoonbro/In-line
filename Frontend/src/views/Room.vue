@@ -85,7 +85,7 @@ export default {
     const state = reactive({
       room: room.value,
       name: store.state.auth.user.name,
-      userId : store.state.auth.user.userId
+      userId: store.state.auth.user.userId,
     })
 
     // 동명이인 처리 어떻게 할건지
@@ -199,7 +199,7 @@ export default {
       let participant = new Participant(state.userId)
       participants[state.userId] = participant
       let video = participant.getVideoElement()
-      
+
       const options = {
         localVideo: video,
         mediaConstraints: constraints,
@@ -214,7 +214,7 @@ export default {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant))
         }
       )
-      
+
       msg.userId.forEach(receiveVideo)
     }
 
@@ -381,18 +381,16 @@ export default {
     const changeMic = () => {
       switchMic.value = !switchMic.value
       // console.log(switchMic.value)
-      participants[
+      participants[state.userId].rtcPeer.audioEnabled = !participants[
         state.userId
-      ].rtcPeer.audioEnabled = !participants[ state.userId].rtcPeer
-        .audioEnabled
+      ].rtcPeer.audioEnabled
     }
     const changeCam = () => {
       switchCam.value = !switchCam.value
       // console.log(switchCam.value)
-      participants[
-         state.userId
-      ].rtcPeer.videoEnabled = !participants[ state.userId].rtcPeer
-        .videoEnabled
+      participants[state.userId].rtcPeer.videoEnabled = !participants[
+        state.userId
+      ].rtcPeer.videoEnabled
     }
     console.log(state.userId)
 
