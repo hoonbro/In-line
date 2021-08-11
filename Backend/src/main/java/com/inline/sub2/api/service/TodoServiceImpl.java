@@ -28,10 +28,12 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoEntity registTodo(TodoEntity todoEntity) {
 //        todoEntity.setDay(new Date());
-        Date now = new Date();
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String nowDate = transFormat.format(now).split(" ")[0];
-        todoEntity.setDay(nowDate);
+        if(todoEntity.getDay() == null || todoEntity.getDay().equals("")) {
+            Date now = new Date();
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String nowDate = transFormat.format(now).split(" ")[0];
+            todoEntity.setDay(nowDate);
+        }
         return todoRepository.save(todoEntity);
     }
 
