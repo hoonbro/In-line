@@ -3,12 +3,14 @@
     <div class="wrapper">
       <div class="video-chat text-center">
         <!-- ------------------------------------------------------------------------- -->
-        <div id="participants" class="video-part">
-          <!-- 이 안에 participant가 들어온다 -->
-        </div>
+        <!-- <video id="screen-share" autoplay></video> -->
+        <!-- 이 안에 participant가 들어온다 -->
+        <div id="participants" class="video-part"></div>
         <!-- ------------------------------------------------------------------------- -->
 
         <div class="bar-part">
+          <!-- <button id="start" @click="startCapture()">start</button>
+          <button id="stop" @click="stopCapture()">stop</button> -->
           <div
             class="mic-button"
             @click="changeMic()"
@@ -50,13 +52,7 @@
 
 <script>
 import Video from "@/components/Room/Video.vue"
-import {
-  computed,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
-} from "@vue/runtime-core"
+import { onUnmounted, reactive, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import kurentoUtils from "kurento-utils"
@@ -295,7 +291,6 @@ export default {
       span.classList.add("w-full", "h-full", "bg-gray-200", "inline-block")
 
       let video = document.createElement("video")
-      video.classList.add("asdasd")
       let rtcPeer
 
       container.appendChild(video)
@@ -309,7 +304,7 @@ export default {
       // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
       video.id = "video-" + userId
       video.autoplay = true
-      video.controls = true
+      video.controls = false
 
       this.getElement = function() {
         return container
@@ -374,11 +369,37 @@ export default {
     // participant 끝
     // ===========================================================================
 
-    // console.log(store.state)
+    // -------------------------- 화면 공유 코드 --------------------------
+    // 화면 공유 시작
+    // async function startCapture() {
+    //   const videoElement = document.querySelector("#screen-share")
+    //   try {
+    //     const displayMediaOptions = {
+    //       audio: false,
+    //       video: { cursor: "always" },
+    //     }
+    //     const captureStream = await navigator.mediaDevices.getDisplayMedia(
+    //       displayMediaOptions
+    //     )
+    //     videoElement.srcObject = captureStream
+    //     // startButton.disabled = true
+    //     // stopButton.disabled = false
+    //   } catch (err) {
+    //     console.error(err)
+    //   }
+    // }
+
+    // // 화면 공유 중지
+    // function stopCapture() {
+    //   const videoElement = document.querySelector("#screen-share")
+    //   const tracks = videoElement.srcObject.getTracks()
+    //   tracks.forEach(track => track.stop())
+    //   videoElement.srcObject = null
+    //   // startButton.disabled = false
+    //   // stopButton.disabled = true
+    // }
 
     // -------------------------------------------------------------------------------
-    const videoList = 6
-
     // 여기서부터
     const switchMic = ref(true)
     const switchCam = ref(true)
@@ -399,18 +420,17 @@ export default {
     }
     console.log(state.userId)
 
-    // console.log(participants["이원우"].rtcPeer)
+    // console.log(participants[store.state.auth.user.name].rtcPeer)
 
     return {
-      videoList,
       switchMic,
       switchCam,
       changeMic,
       changeCam,
       leaveRoom,
       participants,
-
-      // muteMicrophone,
+      // startCapture,
+      // stopCapture,
     }
   },
 }
@@ -420,44 +440,31 @@ export default {
 .layout {
   @apply h-screen flex flex-col overflow-hidden;
 
-  // main {
-  //   apply h-full overflow-hidden flex;
-  // }
-}
-.wrapper {
-  @apply h-full overflow-hidden;
+  .wrapper {
+    @apply h-full overflow-hidden;
 
-  .video-chat {
-    width: 90%;
-    margin: auto;
+    .video-chat {
+      width: 90%;
+      margin: auto;
 
-    .user-name {
-    }
-
-    .participant {
-      // apply text-red-500;
-    }
-
-    .video-part {
-      @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
-    }
-    .video-part2 {
-      @apply grid grid-cols-4 m-12 bg-red-500;
-    }
+      .video-part {
+        @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
+      }
 
     .bar-part {
       @apply flex fixed left-1/3 bottom-5;
 
-      .mic-button {
-        @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
-      }
+        .mic-button {
+          @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
+        }
 
-      .cam-button {
-        @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
-      }
+        .cam-button {
+          @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
+        }
 
-      .close-button {
-        @apply flex bg-red-600 rounded-full h-10 w-10 text-white justify-center mx-2 place-items-center;
+        .close-button {
+          @apply flex bg-red-600 rounded-full h-10 w-10 text-white justify-center mx-2 place-items-center;
+        }
       }
     }
   }

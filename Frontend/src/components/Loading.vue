@@ -1,11 +1,13 @@
 <template>
-  <div>
-    <div id="loading">
-      Spinner 1
-      <div class="spinner"></div>
-    </div>
-
-    <div id="loading2">spinner 2</div>
+  <div class="lds-roller">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
   </div>
 </template>
 
@@ -20,52 +22,88 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#loading {
-  display: none;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
+.lds-roller {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
 }
-#loading .spinner {
-  box-sizing: border-box;
+.lds-roller div {
+  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  transform-origin: 40px 40px;
+}
+.lds-roller div:after {
+  content: " ";
+  display: block;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 64px;
-  height: 64px;
-  margin-top: -32px;
-  margin-left: -32px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  border: 8px solid transparent;
-  border-top-color: #f19022;
-  border-bottom-color: #f19022;
-  animation: spinner 0.8s ease infinite;
+  background: #fed;
+  margin: -4px 0 0 -4px;
 }
-
-#loading2 {
-  position: absolute;
-  top: 50px;
-  right: 0px;
-  width: 200px;
-  height: 100px;
-  border: 1px solid red;
+.lds-roller div:nth-child(1) {
+  animation-delay: -0.036s;
 }
-
-.spinner2::after {
-  content: "";
-  box-sizing: border-box;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 64px;
-  height: 64px;
-  margin-top: -32px;
-  margin-left: -32px;
-  border-radius: 50%;
-  border: 4px solid lightgrey;
-  border-top-color: blue;
-  animation: spinner 0.8s linear infinite;
+.lds-roller div:nth-child(1):after {
+  top: 63px;
+  left: 63px;
+}
+.lds-roller div:nth-child(2) {
+  animation-delay: -0.072s;
+}
+.lds-roller div:nth-child(2):after {
+  top: 68px;
+  left: 56px;
+}
+.lds-roller div:nth-child(3) {
+  animation-delay: -0.108s;
+}
+.lds-roller div:nth-child(3):after {
+  top: 71px;
+  left: 48px;
+}
+.lds-roller div:nth-child(4) {
+  animation-delay: -0.144s;
+}
+.lds-roller div:nth-child(4):after {
+  top: 72px;
+  left: 40px;
+}
+.lds-roller div:nth-child(5) {
+  animation-delay: -0.18s;
+}
+.lds-roller div:nth-child(5):after {
+  top: 71px;
+  left: 32px;
+}
+.lds-roller div:nth-child(6) {
+  animation-delay: -0.216s;
+}
+.lds-roller div:nth-child(6):after {
+  top: 68px;
+  left: 24px;
+}
+.lds-roller div:nth-child(7) {
+  animation-delay: -0.252s;
+}
+.lds-roller div:nth-child(7):after {
+  top: 63px;
+  left: 17px;
+}
+.lds-roller div:nth-child(8) {
+  animation-delay: -0.288s;
+}
+.lds-roller div:nth-child(8):after {
+  top: 56px;
+  left: 12px;
+}
+@keyframes lds-roller {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

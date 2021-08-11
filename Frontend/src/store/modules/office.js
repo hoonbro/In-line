@@ -47,6 +47,14 @@ export const office = {
         return { ...member, connected: false }
       })
     },
+    updateMemberProfileImage(state, { userId, newProfileImage }) {
+      console.log(newProfileImage)
+      state.members.forEach(member => {
+        if (member.userId === userId) {
+          member.profileImage = newProfileImage
+        }
+      })
+    },
     updateConnectionOfMembers(state, members) {
       const connectedMemberIdList = Object.keys(members).map(key => +key)
       console.log(connectedMemberIdList)
@@ -73,7 +81,8 @@ export const office = {
       return state.user
     },
     sortedMembersByOnline(state) {
-      return state.members.sort((a, b) => {
+      const members = [...state.members]
+      return members.sort((a, b) => {
         return a.connected === b.connected ? 0 : a.connected ? -1 : 1
       })
     },
@@ -85,10 +94,10 @@ export const office = {
           method: "get",
           url: "depts",
         })
-        console.log(res)
         commit("setDepts", res.data)
       } catch (error) {
         console.log(error)
+        throw Error("부서 목록을 불러오는 데 실패했습니다.")
       }
     },
     async getJobs({ commit }) {
@@ -97,10 +106,10 @@ export const office = {
           method: "get",
           url: "jobs",
         })
-        console.log(res)
         commit("setJobs", res.data)
       } catch (error) {
         console.log(error)
+        throw Error("역할 목록을 불러오는 데 실패했습니다.")
       }
     },
     async registerOffice({ rootState }, formData) {
@@ -140,7 +149,7 @@ export const office = {
             accessToken: rootState.auth.accessToken,
           },
         })
-        const notis = state.notifications.filter(noti => noti.id !== notiId)
+        const notis = state.notifications.filter(noti => noti.notiId !== notiId)
         commit("setNotifications", notis)
       } catch (error) {
         console.log(error)
@@ -192,7 +201,7 @@ export const office = {
             accessToken: rootState.auth.accessToken,
           },
         })
-        const todos = state.todos.filter(todo => todo.id !== todoId)
+        const todos = state.todos.filter(todo => todo.todoId !== todoId)
         commit("setTodos", todos)
       } catch (error) {
         console.log(error)
@@ -208,7 +217,7 @@ export const office = {
         },
       })
       const todos = state.todos.map(todo => {
-        if (todo.id === todoId) {
+        if (todo.todoId === todoId) {
           todo.done = !todo.done
         }
         return todo
@@ -270,7 +279,7 @@ export const office = {
         rooms.push(res.data)
         commit("setRooms", rooms)
       } catch (error) {
-        console.log(error)
+        throw Error("❌ 방 생성에 실패했습니다.")
       }
     },
     // --------------------------------------------------------------------------------
@@ -284,18 +293,16 @@ export const office = {
             accessToken: rootState.auth.accessToken,
           },
         })
-        // 얕은 카피
-        const rooms = [...state.rooms]
-
-        rooms.forEach(item => {
-          if (item.roomId === roomId) {
-            item.roomName = res.data.roomName
+        const rooms = state.rooms.map(room => {
+          console.log(room)
+          if (room.roomId === roomId) {
+            room.roomName = res.data.roomName
           }
+          return room
         })
         commit("setRooms", rooms)
-        // alert("회의실 수정이 완료됐습니다.")
       } catch (error) {
-        console.log(error)
+        throw Error("회의실을 수정하다 문제가 생겼어요.")
       }
     },
 
@@ -314,7 +321,7 @@ export const office = {
         const rooms = state.rooms.filter(room => room.roomId !== roomId)
         commit("setRooms", rooms)
       } catch (error) {
-        console.log(error)
+        throw Error("회의실을 삭제하던 중 문제가 발생했어요.")
       }
     },
   },

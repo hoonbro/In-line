@@ -6,6 +6,7 @@ import com.inline.sub2.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -27,8 +28,12 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoEntity registTodo(TodoEntity todoEntity) {
 //        todoEntity.setDay(new Date());
-
-
+        if(todoEntity.getDay() == null || todoEntity.getDay().equals("")) {
+            Date now = new Date();
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String nowDate = transFormat.format(now).split(" ")[0];
+            todoEntity.setDay(nowDate);
+        }
         return todoRepository.save(todoEntity);
     }
 

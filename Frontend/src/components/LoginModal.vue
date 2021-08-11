@@ -79,13 +79,14 @@ import {
   emailValidator,
   handleUpdateValidate,
 } from "@/lib/validator"
-import TextInput from "@/components/Members/TextInput.vue"
+import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
+import { connectStomp, enterOffice } from "@/lib/websocket"
 
 export default {
   name: "LoginModal",
   components: { Modal, TextInput },
-  setup(props, { emit }) {
+  setup() {
     const store = useStore()
     const router = useRouter()
 
@@ -119,7 +120,7 @@ export default {
     })
 
     const login = async () => {
-      if (!formDataIsValid) {
+      if (!formDataIsValid.value) {
         return
       }
       loading.value = true
@@ -128,13 +129,26 @@ export default {
         submitData[key] = formData[key].value
       })
       try {
+        // 로그인
         await store.dispatch("auth/login", submitData)
+        // 회원 목록 가져오기
+        await store.dispatch("office/getMembers")
+        // 소켓 연결
+        await connectStomp(
+          store.getters["auth/userId"],
+          store.getters["auth/officeId"]
+        )
+        // 사무실 입장
+        enterOffice(
+          store.getters["socket/stompClient"],
+          store.getters["auth/user"]
+        )
+
         if (willRememberEamil.value) {
           localStorage.setItem("email", formData.email.value)
         } else {
           localStorage.removeItem("email")
         }
-        emit("close")
         if (store.state.auth.shouldChangePassword) {
           router.push({
             name: "ChangePassword",
@@ -142,9 +156,13 @@ export default {
           })
         } else {
           router.push({ name: "Office" })
+          store.commit("landing/addAlertModalList", { message: "안녕하세요!" })
         }
       } catch (error) {
-        alert(error.message)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
       loading.value = false
     }
