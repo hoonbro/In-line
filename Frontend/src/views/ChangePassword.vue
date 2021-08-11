@@ -16,6 +16,7 @@
         :field="field"
         :formData="formData"
         @update:validate="handleUpdateValidate(formData, $event)"
+        @submit="changePassword"
       />
       <button
         class="change-btn"
@@ -77,18 +78,6 @@ export default {
       },
     })
 
-    const changePassword = async () => {
-      try {
-        await store.dispatch("auth/changePassword", {
-          currentPassword: formData.oldPassword.value,
-          newPassword: formData.password.value,
-        })
-        router.push({ name: "Office" })
-      } catch (error) {
-        alert(error.message)
-      }
-    }
-
     const formIsFilled = computed(() => {
       return Object.keys(formData).every(key => {
         return formData[key].value
@@ -108,6 +97,23 @@ export default {
     const formIsValid = computed(() => {
       return formIsFilled.value && formNoError.value && confirmIsValid.value
     })
+
+    const changePassword = async () => {
+      if (!formIsValid.value) return
+
+      try {
+        await store.dispatch("auth/changePassword", {
+          currentPassword: formData.oldPassword.value,
+          newPassword: formData.password.value,
+        })
+        router.push({ name: "Office" })
+      } catch (error) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
+      }
+    }
 
     return {
       formData,

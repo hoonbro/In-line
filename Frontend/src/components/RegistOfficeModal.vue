@@ -28,6 +28,7 @@
             :maxlength="field.maxlength"
             @update:modelValue="officeFormError = ''"
             @update:validate="handleUpdateValidate(officeFormData, $event)"
+            @submit="officeFormIsValid"
           />
 
           <div class="grid gap-1">
@@ -85,6 +86,7 @@
               :field="field"
               @update:modelValue="managerFormError = ''"
               @update:validate="handleUpdateValidate(managerFormData, $event)"
+              @submit="checkEmailIsValid"
             />
           </div>
           <div class="grid gap-1">
@@ -116,6 +118,7 @@
               :field="field"
               @update:modelValue="passwordFormError = ''"
               @update:validate="handleUpdateValidate(passwordFormData, $event)"
+              @submit="registerOffice"
             />
           </div>
           <div>
@@ -195,6 +198,7 @@ export default {
     })
 
     const checkOfficeNameIsValid = async () => {
+      if (!officeFormIsValid.value) return
       try {
         const res = await axios.get(
           `/api/v1/office/duplicate/${officeFormData.officeName.value}`
@@ -205,15 +209,23 @@ export default {
         if (error.response.status === 409) {
           officeFormError.value = "이미 회사로 등록된 이름이에요 😅"
         } else {
-          alert(error)
+          store.commit("landing/addAlertModalList", {
+            type: "error",
+            message: error,
+          })
+          // alert(error)
         }
       }
     }
     // ===============================================================
     // step 2
     // ===============================================================
-    store.dispatch("office/getDepts")
-    store.dispatch("office/getJobs")
+    try {
+      store.dispatch("office/getDepts")
+      store.dispatch("office/getJobs")
+    } catch (error) {
+      // store.commit()
+    }
     const depts = computed(() => store.state.office.depts)
     const jobs = computed(() => store.state.office.jobs)
 
@@ -277,6 +289,7 @@ export default {
     })
 
     const checkEmailIsValid = async () => {
+      if (!managerFormIsValid.value) return
       try {
         // true면 중복o -> 사용 불가능
         // false면 중복x -> 사용 가능
@@ -289,7 +302,11 @@ export default {
         if (error.response.status === 409) {
           managerFormError.value = "이미 존재하는 이메일이에요!"
         } else {
-          alert(error)
+          store.commit("landing/addAlertModalList", {
+            type: "error",
+            message: error,
+          })
+          // alert(error)
         }
       }
     }
@@ -360,6 +377,7 @@ export default {
     // 회사 등록 api 요청
     // ===============================================================
     const registerOffice = async () => {
+      if (!formIsValid.value) return
       const submitData = { term: term.value }
       Object.keys(formData.value).forEach(
         key => (submitData[key] = formData.value[key].value)
@@ -370,13 +388,10 @@ export default {
         alert("회사 등록을 완료했어요!")
         emit("close")
       } catch (error) {
-        console.log(error)
-        console.log(error.response)
-        if (error.response.status === 409) {
-          // managerFormError.value = "이미 존재하는 이메일이에요!"
-        } else {
-          alert(error)
-        }
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error,
+        })
       }
     }
 

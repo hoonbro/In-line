@@ -50,7 +50,10 @@ export default {
         await store.dispatch("office/getMembers")
 
         if (!stompClient.value || stompClient.value.connected === false) {
-          await connectStomp(store.getters["auth/officeId"])
+          await connectStomp(
+            store.getters["auth/userId"],
+            store.getters["auth/officeId"]
+          )
           enterOffice(stompClient.value, user.value)
         }
       }
