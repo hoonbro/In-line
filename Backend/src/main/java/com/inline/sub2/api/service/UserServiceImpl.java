@@ -127,8 +127,8 @@ public class UserServiceImpl implements UserService {
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
         UserEntity userEntity = userRepository.findByUserIdAndRetireDateIsNull(userUpdateDto.getUserId());
 
-        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),userEntity.getOfficeId());
-        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), userEntity.getOfficeId());
+        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),1l);
+        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), 1l);
 
         userEntity.setDeptId(deptEntity.getDeptId());
         userEntity.setJobId(jobEntity.getJobId());
