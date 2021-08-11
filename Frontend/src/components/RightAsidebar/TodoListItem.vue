@@ -14,7 +14,7 @@
     <hr class="border-gray-300" />
     <div class="inner-bottom">
       <p class="duedate">{{ todo.day }}</p>
-      <button class="delete-btn" @click="$emit('delete', todo.id)">
+      <button class="delete-btn" @click="$emit('delete', todo.todoId)">
         <span class="material-icons icon">close</span>
       </button>
     </div>
