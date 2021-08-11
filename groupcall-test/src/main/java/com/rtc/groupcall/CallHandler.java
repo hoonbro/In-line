@@ -2,6 +2,7 @@ package com.rtc.groupcall;
 
 import java.io.IOException;
 
+import com.rtc.groupcall.db.entity.RoomEntity;
 import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,9 @@ public class CallHandler extends TextWebSocketHandler {
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
-                final String senderName = jsonMessage.get("sender").getAsString();
-                final UserSession sender = registry.getByName(senderName);
+                final Long senderId = jsonMessage.get("sender").getAsLong();
+                final UserSession sender = registry.getById(senderId);
                 final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
-
                 user.receiveVideoFrom(sender, sdpOffer);
                 break;
             case "leaveRoom":
@@ -64,7 +64,7 @@ public class CallHandler extends TextWebSocketHandler {
                 if (user != null) {
                     IceCandidate cand = new IceCandidate(candidate.get("candidate").getAsString(),
                             candidate.get("sdpMid").getAsString(), candidate.get("sdpMLineIndex").getAsInt());
-                    user.addCandidate(cand, jsonMessage.get("name").getAsString());
+                    user.addCandidate(cand, jsonMessage.get("userId").getAsLong());
                 }
                 break;
             default:
@@ -75,23 +75,28 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomName(), user.getRoomId()).leave(user);
+        roomManager.getRoom(user.getRoomName(), user.getRoomId(), user.getOfficeId()).leave(user);
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
-        final String roomName = params.get("room").getAsString();
-        final String name = params.get("name").getAsString();
+        final String roomName = params.get("roomName").getAsString();
+        final String userName = params.get("userName").getAsString();
         final Long roomId = params.get("roomId").getAsLong();
+        final Long userId = params.get("userId").getAsLong();
+        final Long officeId = params.get("officeId").getAsLong();
 //        log.info(" {}님의 {} 접근 요청", name, roomName);
 
-        Room room = roomManager.getRoom(roomName, roomId);
-        final UserSession user = room.join(name, session);
+        Room room = roomManager.getRoom(roomName, roomId, officeId);
+        roomManager.moveUser(userId, roomId);
+        final UserSession user = room.join(officeId, userId, userName, session);
         registry.register(user);
     }
 
     private void leaveRoom(UserSession user) throws IOException {
-        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId());
+        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId(), user.getOfficeId());
         room.leave(user);
+        RoomEntity lobby = roomManager.getLobby(room.getOfficeId());
+        roomManager.moveUser(user.getUserId(), lobby.getRoomId());
 //        if (room.getParticipants().isEmpty()) {
 //            log.info("{}이 비었습니다.", room.getRoomName());
 ////            roomManager.removeRoom(room);

@@ -135,7 +135,8 @@ public class UserController {
         userUpdateDto.setUserId(userId);
         UserEntity userEntity = null;
         try {
-            userEntity = userService.updateUser(userUpdateDto);
+            userService.updateUser(userUpdateDto);
+            userEntity = userService.getUserId(userId);
             httpStatus = HttpStatus.CREATED;
             log.info("user정보 변경 성공");
         } catch (Exception e) {
