@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { reactive, ref } from "vue"
+import { computed, reactive, ref } from "vue"
 import TextInput from "@/components/TextInput.vue"
 import {
   requiredValidator,
