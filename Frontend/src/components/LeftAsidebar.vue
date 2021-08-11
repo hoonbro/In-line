@@ -103,7 +103,9 @@ export default {
           break
         }
         case "done": {
-          alert("오늘 업무는 종료되었습니다.")
+          store.commit("landing/addAlertModalList", {
+            message: "오늘 업무는 종료되었습니다.",
+          })
         }
       }
       // 초기화

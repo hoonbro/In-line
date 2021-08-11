@@ -1,14 +1,17 @@
 <template>
   <router-view />
+  <transition-group class="alertModalContainer" tag="div" name="list">
+    <AlertModal
+      v-for="modal in alertModalList"
+      :key="modal.created"
+      :message="modal.message"
+      :type="modal.type"
+    />
+  </transition-group>
 </template>
 
 <script>
-import {
-  computed,
-  onMounted,
-  onUnmounted,
-  watchEffect,
-} from "@vue/runtime-core"
+import { computed, onMounted, onUnmounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import {
   connectStomp,
@@ -16,13 +19,16 @@ import {
   exitOffice,
   disconnectStomp,
 } from "@/lib/websocket"
+import AlertModal from "@/components/Common/AlertModal.vue"
 
 export default {
-  components: {},
+  components: { AlertModal },
   setup() {
     const store = useStore()
     const user = computed(() => store.state.auth.user)
     const stompClient = computed(() => store.state.socket.stompClient)
+    // AlertModal
+    const alertModalList = computed(() => store.state.landing.alertModalList)
 
     onMounted(async () => {
       // 새로고침했을 때
@@ -58,7 +64,9 @@ export default {
       }
     })
 
-    return {}
+    return {
+      alertModalList,
+    }
   },
 }
 </script>
@@ -73,5 +81,30 @@ body {
 .backdrop {
   z-index: 999;
   @apply fixed inset-0 flex justify-center;
+}
+
+.alertModalContainer {
+  z-index: 1000;
+  @apply fixed top-6 right-6 flex flex-col gap-2;
+}
+
+.list-enter-active,
+.list-leave-active,
+.list-move {
+  @apply transition-all duration-1000;
+}
+
+.list-leave-active {
+  @apply absolute;
+}
+
+.list-enter-from {
+  transform: translateY(24px);
+  @apply opacity-0;
+}
+
+.list-leave-to {
+  transform: translateX(80px);
+  @apply opacity-0;
 }
 </style>

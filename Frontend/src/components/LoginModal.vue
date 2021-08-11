@@ -148,13 +148,13 @@ export default {
           })
         } else {
           router.push({ name: "Office" })
+          store.commit("landing/addAlertModalList", { message: "안녕하세요!" })
         }
       } catch (error) {
-        const modal = {
+        store.commit("landing/addAlertModalList", {
           type: "error",
           message: error.message,
-        }
-        store.commit("landing/addAlertModalList", modal)
+        })
       }
       loading.value = false
     }
