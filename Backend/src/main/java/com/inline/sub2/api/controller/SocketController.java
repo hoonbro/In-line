@@ -1,9 +1,6 @@
 package com.inline.sub2.api.controller;
 
-import com.inline.sub2.api.dto.ChatDto;
-import com.inline.sub2.api.dto.Office;
-import com.inline.sub2.api.dto.ParticipantDto;
-import com.inline.sub2.api.dto.SocketVO;
+import com.inline.sub2.api.dto.*;
 import com.inline.sub2.api.service.ChatService;
 import com.inline.sub2.api.service.CommuteService;
 import com.inline.sub2.api.service.OfficeManager;
@@ -14,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -61,7 +59,7 @@ public class SocketController {
             participantDto.setOfficeId(chatDto.getOfficeId());
             participantDto.setUserName(chatDto.getUserName());
             ConcurrentMap<Long,ParticipantDto> participants = office.join(participantDto);
-//            map.put("chatDto",chatDto);
+            System.out.println("멤버 사이즈 : " + participants.size());
             map.put("type",chatDto.getType());
             map.put("members",participants);
         }
@@ -74,5 +72,16 @@ public class SocketController {
         }
 
         return map;
+    }
+
+
+    @MessageMapping("/notification/{userId}")
+    @SendTo("/queue/{userId}")
+    public InviteDto invite(InviteDto inviteDto,@DestinationVariable("userId") Long userId) throws IOException {
+        System.out.println("받는 userId ? :  " + userId);
+        System.out.println("보내는 userId ? :  " + inviteDto.getUserId());
+        System.out.println("보내는 userNmae ? :  " + inviteDto.getUserName());
+        System.out.println("roomId ? :  " + inviteDto.getRoomId());
+        return inviteDto;
     }
 }

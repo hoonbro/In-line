@@ -43,13 +43,11 @@
 <script>
 import { computed, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
-import ConfirmModal from "@/components/Common/ConfirmModal.vue"
 import MemberListItem from "@/components/LeftAsidebar/MemberListItem.vue"
 
 export default {
   name: "LeftAsidebar",
   components: {
-    ConfirmModal,
     MemberListItem,
   },
   setup() {

@@ -47,6 +47,17 @@ export const office = {
         return { ...member, connected: false }
       })
     },
+    updateProfileOfMembers(state, newUser) {
+      state.members = state.members.map(member => {
+        if (member.userId === newUser.userId) {
+          return {
+            ...member,
+            ...newUser,
+          }
+        }
+        return member
+      })
+    },
     updateMemberProfileImage(state, { userId, newProfileImage }) {
       console.log(newProfileImage)
       state.members.forEach(member => {
@@ -95,6 +106,7 @@ export const office = {
           url: "depts",
         })
         commit("setDepts", res.data)
+        return res.data
       } catch (error) {
         console.log(error)
         throw Error("부서 목록을 불러오는 데 실패했습니다.")
@@ -107,6 +119,7 @@ export const office = {
           url: "jobs",
         })
         commit("setJobs", res.data)
+        return res.data
       } catch (error) {
         console.log(error)
         throw Error("역할 목록을 불러오는 데 실패했습니다.")

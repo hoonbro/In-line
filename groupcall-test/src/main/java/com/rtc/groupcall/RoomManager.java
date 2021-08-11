@@ -62,10 +62,8 @@ public class RoomManager {
     public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
         roomEntity.setRoomName(roomName);
         //map내용 수정
-        log.info(roomEntity.toString());
         Room room = rooms.get(roomEntity.getRoomId());
         room.setRoomName(roomName);
-        log.info(room.toString());
         rooms.put(roomEntity.getRoomId(), room);
         return roomRepository.save(roomEntity);
     }
@@ -92,7 +90,6 @@ public class RoomManager {
             room.setPipeline(kurento.createMediaPipeline());
         }
 //        log.info("{}을 찾음!, roomId = {}", roomName, roomId);
-        log.info(room.toString());
         return room;
     }
 

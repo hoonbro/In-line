@@ -4,6 +4,7 @@
       class="input-container"
       :class="{
         error: field.errors && Object.keys(field.errors).length,
+        disabled: disabled,
       }"
     >
       <input
@@ -17,7 +18,6 @@
         autocomplete="off"
         :maxlength="maxlength"
         :disabled="disabled"
-        :class="{ 'select-none': disabled }"
       />
       <label class="label" :class="{ active: labelActive }">
         {{ field.label }}
@@ -105,7 +105,7 @@ export default {
 
 <style scoped lang="scss">
 .input-container {
-  @apply w-full bg-gray-50 relative;
+  @apply w-full bg-gray-50 relative rounded-md;
 
   label {
     transform: translateY(-50%);
@@ -119,6 +119,17 @@ export default {
 
   input {
     @apply w-full pt-6 pb-2 px-4 bg-transparent z-10 relative outline-none rounded-md border border-gray-300 focus:border-blue-600;
+  }
+  &.disabled {
+    @apply bg-gray-300;
+
+    label {
+      @apply text-gray-800;
+    }
+
+    input {
+      @apply cursor-not-allowed;
+    }
   }
   &.error {
     @apply bg-red-50;
