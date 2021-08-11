@@ -32,7 +32,7 @@ import com.google.gson.JsonPrimitive;
 public class Room implements Closeable {
     private final Logger log = LoggerFactory.getLogger(Room.class);
 
-    private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Long, UserSession> participants = new ConcurrentHashMap<>();
     private MediaPipeline pipeline;
     private String roomName;
     private final Long roomId;
@@ -55,27 +55,28 @@ public class Room implements Closeable {
         this.close();
     }
 
-    public UserSession join(String userName, WebSocketSession session) throws IOException {
+    public UserSession join(Long userId, String userName, WebSocketSession session) throws IOException {
         log.info("ROOM {}: adding participant {}", this.roomName, userName);
-        final UserSession participant = new UserSession(userName, this.roomName, this.roomId, session, this.pipeline);
+        final UserSession participant = new UserSession(userId, userName, this.roomName, this.roomId, session, this.pipeline);
         joinRoom(participant);
-        participants.put(participant.getName(), participant);
+        participants.put(participant.getUserId(), participant);
         sendParticipantNames(participant);
         return participant;
     }
 
     public void leave(UserSession user) throws IOException {
-        log.info("{}님이 {}에서 나가셨습니다.", user.getName(), this.roomName);
-        this.removeParticipant(user.getName());
+        log.info("{}님이 {}에서 나가셨습니다.", user.getUserName(), this.roomName);
+        this.removeParticipant(user.getUserId(), user.getUserName());
         user.close();
     }
 
-    private Collection<String> joinRoom(UserSession newParticipant) throws IOException {
+    private Collection<Long> joinRoom(UserSession newParticipant) throws IOException {
         final JsonObject newParticipantMsg = new JsonObject();
         newParticipantMsg.addProperty("id", "newParticipantArrived");
-        newParticipantMsg.addProperty("name", newParticipant.getName());
+        newParticipantMsg.addProperty("userId", newParticipant.getUserId());
+        newParticipantMsg.addProperty("userName", newParticipant.getUserName());
 
-        final List<String> participantsList = new ArrayList<>(participants.values().size());
+        final List<Long> participantsList = new ArrayList<>(participants.values().size());
 //        log.info("ROOM {}: notifying other participants of new participant {}", roomName,
 //                newParticipant.getName());
 
@@ -83,52 +84,57 @@ public class Room implements Closeable {
             try {
                 participant.sendMessage(newParticipantMsg);
             } catch (final IOException e) {
-                log.debug("ROOM {}: participant {} could not be notified", roomName, participant.getName(), e);
+                log.debug("ROOM {}: participant {} could not be notified", roomName, participant.getUserName(), e);
             }
-            participantsList.add(participant.getName());
+            participantsList.add(participant.getUserId());
         }
 
         return participantsList;
     }
 
-    private void removeParticipant(String name) throws IOException {
-        participants.remove(name);
+    private void removeParticipant(Long userId, String userName) throws IOException {
+        participants.remove(userId);
 
 //        log.info("ROOM {}: notifying all users that {} is leaving the room", this.roomName, name);
 
-        final List<String> unnotifiedParticipants = new ArrayList<>();
+        final List<Long> unnotifiedParticipants = new ArrayList<>();
         final JsonObject participantLeftJson = new JsonObject();
         participantLeftJson.addProperty("id", "participantLeft");
-        participantLeftJson.addProperty("name", name);
+        participantLeftJson.addProperty("userId", userId);
+        participantLeftJson.addProperty("userName", userName);
         for (final UserSession participant : participants.values()) {
             try {
-                participant.cancelVideoFrom(name);
+                participant.cancelVideoFrom(userId);
                 participant.sendMessage(participantLeftJson);
             } catch (final IOException e) {
-                unnotifiedParticipants.add(participant.getName());
+                unnotifiedParticipants.add(participant.getUserId());
             }
         }
 
         if (!unnotifiedParticipants.isEmpty()) {
             log.debug("ROOM {}: The users {} could not be notified that {} left the room", this.roomName,
-                    unnotifiedParticipants, name);
+                    unnotifiedParticipants, userName);
         }
 
     }
 
     public void sendParticipantNames(UserSession user) throws IOException {
 
-        final JsonArray participantsArray = new JsonArray();
+        final JsonArray participantsId = new JsonArray();
+        final JsonArray participantsName = new JsonArray();
         for (final UserSession participant : this.getParticipants()) {
-            if (!participant.equals(user)) {
-                final JsonElement participantName = new JsonPrimitive(participant.getName());
-                participantsArray.add(participantName);
+            if (participant.getUserId() != user.getUserId()) {
+                final JsonElement userId = new JsonPrimitive(participant.getUserId());
+                final JsonElement userName = new JsonPrimitive(participant.getUserName());
+                participantsId.add(userId);
+                participantsName.add(userName);
             }
         }
 
         final JsonObject existingParticipantsMsg = new JsonObject();
         existingParticipantsMsg.addProperty("id", "existingParticipants");
-        existingParticipantsMsg.add("data", participantsArray);
+        existingParticipantsMsg.add("userId", participantsId);
+        existingParticipantsMsg.add("userName", participantsName);
 //        log.debug("PARTICIPANT {}: sending a list of {} participants", user.getName(),
 //                participantsArray.size());
         user.sendMessage(existingParticipantsMsg);
@@ -148,7 +154,7 @@ public class Room implements Closeable {
             try {
                 user.close();
             } catch (IOException e) {
-                log.debug("ROOM {}: Could not invoke close on participant {}", this.roomName, user.getName(),
+                log.debug("ROOM {}: Could not invoke close on participant {}", this.roomName, user.getUserName(),
                         e);
             }
         }

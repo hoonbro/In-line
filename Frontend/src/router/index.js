@@ -12,7 +12,7 @@ import Admin from "@/views/Admin.vue"
 import Room from "@/views/Room.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
-import InputTest from "@/views/InputTest.vue"
+import Signup from "@/views/Signup.vue"
 
 const routes = [
   {
@@ -59,9 +59,19 @@ const routes = [
     ],
   },
   {
-    path: "/rooms/",
+    path: "/rooms",
     component: RoomLayout,
     meta: { loginRequired: true },
+    beforeEnter: (to, from, next) => {
+      console.log(to)
+      console.log(from)
+      if (to.fullPath === "/rooms/" || to.fullPath.includes("1")) {
+        alert("잘못된 접근입니다.")
+        next({ name: "Office" })
+      } else {
+        next()
+      }
+    },
     children: [
       {
         path: "/rooms/:roomId",
@@ -72,7 +82,7 @@ const routes = [
     ],
   },
   {
-    path: "/auth/",
+    path: "/auth",
     component: AuthLayout,
     children: [
       {
@@ -86,10 +96,15 @@ const routes = [
         component: ChangePassword,
         meta: { loginRequired: true },
       },
+    ],
+  },
+  {
+    path: "/onboarding",
+    component: AuthLayout,
+    children: [
       {
-        path: "test",
-        name: "InputTest",
-        component: InputTest,
+        path: "signup",
+        component: Signup,
       },
     ],
   },

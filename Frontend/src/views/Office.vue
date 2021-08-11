@@ -1,15 +1,10 @@
 <template>
   <div class="office">
-    <!-- <div class="rooms-row">
-      <div class="rooms-container basic">
-        <RoomLink :title="'전체회의'" :roomId="1" :large="true" />
-        <RoomLink :title="'전체회의'" :roomId="2" :large="true" />
-      </div>
-    </div> -->
     <div class="rooms-row">
       <div class="rooms-container">
         <RoomLink
           v-for="room in displayRoomList"
+          :key="room.roomId"
           :title="room.roomName"
           :roomId="room.roomId"
         />
@@ -85,7 +80,7 @@ export default {
       @apply text-2xl font-bold;
     }
     .rooms-container {
-      @apply w-full grid grid-cols-2 gap-8 lg:grid-cols-3;
+      @apply w-full grid grid-cols-1 lg:grid-cols-2 gap-8 xl:grid-cols-3;
       &.basic {
         @apply grid-cols-2;
       }
@@ -94,7 +89,7 @@ export default {
   .button-group {
     @apply flex justify-end;
     button {
-      @apply w-40 h-9 bg-blue-800 text-white rounded-xl mr-0;
+      @apply w-40 py-2 px-4 bg-blue-800 text-white rounded-lg mr-0;
     }
   }
 }

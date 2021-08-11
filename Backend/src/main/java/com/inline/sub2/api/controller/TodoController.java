@@ -34,7 +34,7 @@ public class TodoController {
 
         try{
             list = todoService.UserTodoList(userId);
-            System.out.println(list);
+//            System.out.println(list);
         }
         catch(Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -92,25 +92,18 @@ public class TodoController {
         return new ResponseEntity<Void>(httpStatus);
     }
 
-    @PutMapping("/done")
-    @ApiOperation(value = "todo가 진행중이라면 종료, 종료라면 진행중으로 상태를 바꾼다.")
-    public ResponseEntity<Void> taskTodo(@RequestBody TodoEntity todoEntity) {
+    @PutMapping("/done/{todoId}")
+    @ApiOperation(value = "todo가 진행중이라면 종료, 종료라면 진행중으로 상태를 바꾼다.", response = TodoEntity.class)
+    public ResponseEntity<TodoEntity> taskTodo(@PathVariable(value = "todoId") Long todoId) {
         HttpStatus httpStatus = HttpStatus.CREATED;
-
+        TodoEntity todoEntity = new TodoEntity();
         try{
-             TodoEntity todoEntity2 = todoService.findUserIdByTodoId(todoEntity.getTodoId());
-
-             if(todoEntity.getUserId() == todoEntity2.getUserId()) {
-                 todoService.taskTodo(todoEntity.getTodoId());
-             }
-             else {
-                 httpStatus = HttpStatus.UNAUTHORIZED;
-             }
+            todoEntity = todoService.taskTodo(todoId);
         }
         catch(Exception e) {
             httpStatus = HttpStatus.UNAUTHORIZED;
         }
-        return new ResponseEntity<Void>(httpStatus);
+        return new ResponseEntity<TodoEntity>(todoEntity, httpStatus);
     }
 }
 

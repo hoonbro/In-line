@@ -1,33 +1,23 @@
 import axios from "axios"
-import { auth } from "./auth"
 
 const notiAPI = axios.create({
   baseURL: `/api/v1/notifications`,
-  headers: {
-    accessToken: auth.state.accessToken,
-  },
 })
 
 const todoAPI = axios.create({
   baseURL: `/api/v1/todos`,
-  headers: {
-    accessToken: auth.state.accessToken,
-  },
 })
 
 const userAPI = axios.create({
   baseURL: `/api/v1/users`,
-  headers: {
-    accessToken: auth.state.accessToken,
-  },
 })
 
 const roomAPI = axios.create({
-  // 이따 옴
-  baseURL: `/rooms`,
-  headers: {
-    accessToken: auth.state.accessToken,
-  },
+  // Local test URL
+  // baseURL: `http://i5d207.p.ssafy.io:8997/rooms`,
+
+  // deploy URL
+  baseURL: `https://i5d207.p.ssafy.io:8995/rooms`,
 })
 
 const officeAPI = axios.create({
@@ -42,6 +32,8 @@ export const office = {
     todos: [],
     members: [],
     rooms: [],
+    depts: [],
+    jobs: [],
   },
   mutations: {
     setNotifications(state, notis) {
@@ -51,34 +43,102 @@ export const office = {
       state.todos = todos
     },
     setMembers(state, members) {
-      state.members = members
+      state.members = members.map(member => {
+        return { ...member, connected: false }
+      })
+    },
+    updateConnectionOfMembers(state, members) {
+      const connectedMemberIdList = Object.keys(members).map(key => +key)
+      console.log(connectedMemberIdList)
+      state.members.forEach(member => {
+        if (connectedMemberIdList.includes(member.userId)) {
+          member.connected = true
+        } else {
+          member.connected = false
+        }
+      })
     },
     setRooms(state, rooms) {
       state.rooms = rooms
+    },
+    setDepts(state, depts) {
+      state.depts = depts
+    },
+    setJobs(state, jobs) {
+      state.jobs = jobs
     },
   },
   getters: {
     user(state) {
       return state.user
     },
+    sortedMembersByOnline(state) {
+      return state.members.sort((a, b) => {
+        return a.connected === b.connected ? 0 : a.connected ? -1 : 1
+      })
+    },
   },
   actions: {
-    async registerOffice(context, formData) {
-      return officeAPI.post("", formData)
-    },
-    async getNotifications({ commit }) {
+    async getDepts({ commit }) {
       try {
-        const res = await notiAPI()
+        const res = await officeAPI({
+          method: "get",
+          url: "depts",
+        })
+        console.log(res)
+        commit("setDepts", res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getJobs({ commit }) {
+      try {
+        const res = await officeAPI({
+          method: "get",
+          url: "jobs",
+        })
+        console.log(res)
+        commit("setJobs", res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async registerOffice({ rootState }, formData) {
+      try {
+        const res = await officeAPI({
+          method: "post",
+          url: "",
+          data: formData,
+        })
+        console.log(res)
+        return res
+      } catch (error) {
+        console.log("error:", error)
+        throw Error("회사등록 실패")
+      }
+    },
+    async getNotifications({ commit, rootState }) {
+      try {
+        const res = await notiAPI({
+          method: "GET",
+          url: "",
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
+        })
         commit("setNotifications", res.data)
       } catch (error) {
         console.log(error)
       }
     },
-    async deleteNotification({ commit, state }, notiId) {
+    async deleteNotification({ commit, state, rootState }, notiId) {
       try {
         await notiAPI({
-          url: `/${notiId}`,
           method: "DELETE",
+          url: `/${notiId}`,
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
         const notis = state.notifications.filter(noti => noti.id !== notiId)
         commit("setNotifications", notis)
@@ -86,11 +146,16 @@ export const office = {
         console.log(error)
       }
     },
-    async getTodos({ commit }) {
+    async getTodos({ commit, rootState }) {
       try {
         const res = await todoAPI({
+          method: "",
+          url: "",
           params: {
-            userId: auth.state.user.userId,
+            userId: rootState.auth.user.userId,
+          },
+          headers: {
+            accessToken: rootState.auth.accessToken,
           },
         })
         commit("setTodos", res.data)
@@ -98,14 +163,17 @@ export const office = {
         console.log(error)
       }
     },
-    async createTodo({ commit, state }, todoData) {
+    async createTodo({ commit, state, rootState }, todoData) {
       try {
         const res = await todoAPI({
           method: "POST",
           data: {
-            officeId: auth.state.user.officeId,
-            userId: auth.state.user.userId,
+            officeId: rootState.auth.user.officeId,
+            userId: rootState.auth.user.userId,
             ...todoData,
+          },
+          headers: {
+            accessToken: rootState.auth.accessToken,
           },
         })
         const todos = [...state.todos]
@@ -115,11 +183,14 @@ export const office = {
         console.log(error)
       }
     },
-    async deleteTodo({ commit, state }, todoId) {
+    async deleteTodo({ commit, state, rootState }, todoId) {
       try {
         await todoAPI({
-          url: `/${todoId}`,
           method: "DELETE",
+          url: `/${todoId}`,
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
         const todos = state.todos.filter(todo => todo.id !== todoId)
         commit("setTodos", todos)
@@ -127,12 +198,13 @@ export const office = {
         console.log(error)
       }
     },
-    async toggleTodoDone({ commit, state }, { todoId, currentDone }) {
+    async toggleTodoDone({ commit, state, rootState }, todoId) {
+      console.log(todoId)
       await todoAPI({
+        method: "PUT",
         url: `/${todoId}`,
-        method: "PATCH",
-        data: {
-          done: !currentDone,
+        headers: {
+          accessToken: rootState.auth.accessToken,
         },
       })
       const todos = state.todos.map(todo => {
@@ -144,44 +216,55 @@ export const office = {
       commit("setTodos", todos)
     },
     async getMembers({ commit, rootState }) {
-      console.log(rootState)
       try {
         const res = await userAPI({
           params: {
             officeId: rootState.auth.user.officeId,
           },
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
-        console.log(res)
         commit("setMembers", res.data)
       } catch (error) {
         console.log(error)
       }
     },
-    getMember(context, userId) {
+    getMember({ rootState }, userId) {
       return userAPI({
         url: `/${userId}`,
+        headers: {
+          accessToken: rootState.auth.accessToken,
+        },
       })
     },
-    // Rooms
-    // --------------------------------------------------------------------------------
-    async getRooms({ commit }, officeId) {
+
+    async getRooms({ commit, rootState }, officeId) {
       try {
-        const res = await axios({
-          url: `http://i5d207.p.ssafy.io:8998/rooms?officeId=${officeId}`,
+        const res = await roomAPI({
           method: "GET",
+          params: {
+            officeId,
+          },
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
         commit("setRooms", res.data)
-        console.log(res.data)
       } catch (error) {
-        console.log(error)
+        console.dir(error)
       }
     },
     // --------------------------------------------------------------------------------
-    async createRoom({ commit, state }, roomData) {
+    async createRoom({ commit, state, rootState }, roomData) {
       try {
         const res = await roomAPI({
           method: "POST",
+          url: ``,
           data: roomData,
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
         const rooms = [...state.rooms]
         rooms.push(res.data)
@@ -191,19 +274,22 @@ export const office = {
       }
     },
     // --------------------------------------------------------------------------------
-    async editRoom({ commit, state }, { room, roomId }) {
+    async editRoom({ commit, state, rootState }, { room, roomId }) {
       try {
         const res = await roomAPI({
-          url: `/${roomId}`,
           method: "PUT",
-          data: { name: room.name },
+          url: `/${roomId}`,
+          data: { roomName: room.name },
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
         // 얕은 카피
         const rooms = [...state.rooms]
 
         rooms.forEach(item => {
-          if (item.id === roomId) {
-            item.name = room.name
+          if (item.roomId === roomId) {
+            item.roomName = res.data.roomName
           }
         })
         commit("setRooms", rooms)
@@ -213,16 +299,19 @@ export const office = {
       }
     },
 
-    async deleteRoom({ commit, state }, roomId) {
+    async deleteRoom({ commit, state, rootState }, roomId) {
       try {
         await roomAPI({
-          url: `/${roomId}`,
           method: "DELETE",
+          url: `/${roomId}`,
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
         })
         // DB에서는 삭제됐으나 front에서는 삭제가 안된 상태로 렌더링 되므로
         // filter를 이용해서 렌더링에서 제외시켜버린다
         console.log(`${roomId}번 회의실이 삭제됨니덩`)
-        const rooms = state.rooms.filter(room => room.id !== roomId)
+        const rooms = state.rooms.filter(room => room.roomId !== roomId)
         commit("setRooms", rooms)
       } catch (error) {
         console.log(error)

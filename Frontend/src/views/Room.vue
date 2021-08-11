@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <div class="wrapper">
-      <div class="video-chat">
+      <div class="video-chat text-center">
         <!-- ------------------------------------------------------------------------- -->
         <div id="participants" class="video-part">
           <!-- 이 안에 participant가 들어온다 -->
@@ -63,30 +63,39 @@ import kurentoUtils from "kurento-utils"
 
 export default {
   name: "Room",
+  userId: "",
   components: {
     Video,
   },
   props: {
     roomId: [String || Number],
   },
-  setup() {
+  // props한거 쓰고싶으면 인자로 넣어줘야함
+  setup(props) {
     const store = useStore()
 
     const router = useRouter()
 
+    const room = ref("")
+    store.state.office.rooms.forEach(item => {
+      if (item.roomId == props.roomId) {
+        room.value = item.roomName
+      }
+    })
     const state = reactive({
-      room: "전체 회의방",
+      room: room.value,
       name: store.state.auth.user.name,
+      userId: store.state.auth.user.userId,
     })
 
+    // 동명이인 처리 어떻게 할건지
     const register = () => {
       const message = {
         id: "joinRoom",
-        // 얘가 닉네임
-        name: state.name,
-        //
-        room: state.room,
-        roomId: 2,
+        userId: state.userId,
+        userName: state.name,
+        roomName: state.room,
+        roomId: props.roomId,
       }
 
       sendMessage(message)
@@ -94,7 +103,7 @@ export default {
 
     onUnmounted(() => leaveRoom())
 
-    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
+    let ws = new WebSocket(`wss://13.124.47.223:8997/groupcall`)
 
     ws.onopen = function(event) {
       register()
@@ -106,7 +115,7 @@ export default {
       ws.send(jsonMessage)
     }
 
-    const participants = {}
+    const participants = reactive({})
 
     // window.onbeforeunload = function() {
     //   ws.close()
@@ -130,7 +139,7 @@ export default {
           receiveVideoResponse(parsedMessage)
           break
         case "iceCandidate":
-          participants[parsedMessage.name].rtcPeer.addIceCandidate(
+          participants[parsedMessage.userId].rtcPeer.addIceCandidate(
             parsedMessage.candidate,
             function(error) {
               if (error) {
@@ -146,11 +155,11 @@ export default {
     }
 
     function onNewParticipant(request) {
-      receiveVideo(request.name)
+      receiveVideo(request.userId)
     }
 
     function receiveVideoResponse(result) {
-      participants[result.name].rtcPeer.processAnswer(
+      participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function(error) {
           if (error) return console.error(error)
@@ -172,24 +181,23 @@ export default {
 
     function onExistingParticipants(msg) {
       let constraints = {
-        // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
         audio: true,
         video: {
           mandatory: {
-            // minWidth: 1000,
-            maxWidth: 420,
-            minWidth: 420,
-            // minHeight: 400,
-            // maxHeight: 2000,
-            maxFrameRate: 20,
-            minFrameRate: 20,
+            minWidth: 450,
+            maxWidth: 450,
+            minHeight: 320,
+            maxHeight: 320,
+            maxFrameRate: 15,
+            minFrameRate: 15,
           },
         },
       }
 
       console.log(state.name + " registered in room " + state.room)
-      let participant = new Participant(state.name)
-      participants[state.name] = participant
+      console.log(msg)
+      let participant = new Participant(state.userId)
+      participants[state.userId] = participant
       let video = participant.getVideoElement()
 
       const options = {
@@ -207,7 +215,7 @@ export default {
         }
       )
 
-      msg.data.forEach(receiveVideo)
+      msg.userId.forEach(receiveVideo)
     }
 
     // 얘도 떠날때임
@@ -225,9 +233,9 @@ export default {
       router.push({ name: "Office" })
     }
 
-    function receiveVideo(sender) {
-      let participant = new Participant(sender)
-      participants[sender] = participant
+    function receiveVideo(userId) {
+      let participant = new Participant(userId)
+      participants[userId] = participant
       let video = participant.getVideoElement()
 
       let options = {
@@ -247,17 +255,16 @@ export default {
     }
     //  떠날때임
     function onParticipantLeft(request) {
-      console.log("Participant " + request.name + " left")
-      let participant = participants[request.name]
+      console.log("Participant " + request.userId + " left")
+      let participant = participants[request.userId]
       participant.dispose()
-      delete participants[request.name]
+      delete participants[request.userId]
     }
 
     // ===========================================================================
     // participant 시작
     // ===========================================================================
 
-    // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
     const PARTICIPANT_MAIN_CLASS = "participant main"
     const PARTICIPANT_CLASS = "participant"
 
@@ -270,19 +277,20 @@ export default {
      * @return
      */
 
-    function Participant(name) {
-      this.name = name
+    function Participant(userId) {
+      this.userId = userId
       let container = document.createElement("div")
       // PARTICIPANT_MAIN_CLASS가 없을 때
       container.className = isPresentMainParticipant()
         ? PARTICIPANT_CLASS
         : PARTICIPANT_MAIN_CLASS
-      container.classList.add("text-center", "pointer-events-none")
-      container.id = name
+      container.classList.add("pointer-events-none")
+      container.id = userId
       let span = document.createElement("span")
-      span.classList.add("text-blue-500", "w-12", "h-8", "bg-gray-50")
+      span.classList.add("w-full", "h-full", "bg-gray-200", "inline-block")
 
       let video = document.createElement("video")
+      video.classList.add("asdasd")
       let rtcPeer
 
       container.appendChild(video)
@@ -290,11 +298,11 @@ export default {
       container.onclick = switchContainerClass
       document.getElementById("participants").appendChild(container)
 
-      span.appendChild(document.createTextNode(name))
+      span.appendChild(document.createTextNode(userId))
 
       // 이 부분이 video-id가 됨
       // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
-      video.id = "video-" + name
+      video.id = "video-" + userId
       video.autoplay = true
       video.controls = true
 
@@ -330,7 +338,11 @@ export default {
       this.offerToReceiveVideo = function(error, offerSdp, wp) {
         if (error) return console.error("sdp offer error")
         console.log("Invoking SDP offer callback function")
-        var msg = { id: "receiveVideoFrom", sender: name, sdpOffer: offerSdp }
+        var msg = {
+          id: "receiveVideoFrom",
+          sender: userId,
+          sdpOffer: offerSdp,
+        }
         sendMessage(msg)
       }
 
@@ -340,7 +352,7 @@ export default {
         var message = {
           id: "onIceCandidate",
           candidate: candidate,
-          name: name,
+          userId: userId,
         }
         sendMessage(message)
       }
@@ -348,7 +360,7 @@ export default {
       Object.defineProperty(this, "rtcPeer", { writable: true })
 
       this.dispose = function() {
-        console.log("Disposing participant " + this.name)
+        console.log("Disposing participant " + this.userId)
         this.rtcPeer.dispose()
         container.parentNode.removeChild(container)
       }
@@ -356,6 +368,8 @@ export default {
     // ===========================================================================
     // participant 끝
     // ===========================================================================
+
+    // console.log(store.state)
 
     // -------------------------------------------------------------------------------
     const videoList = 6
@@ -366,14 +380,21 @@ export default {
 
     const changeMic = () => {
       switchMic.value = !switchMic.value
-      console.log(switchMic.value)
-      // participants[name].rtcPeer.videoEnabled = false
+      // console.log(switchMic.value)
+      participants[state.userId].rtcPeer.audioEnabled = !participants[
+        state.userId
+      ].rtcPeer.audioEnabled
     }
     const changeCam = () => {
       switchCam.value = !switchCam.value
-      console.log(switchCam.value)
+      // console.log(switchCam.value)
+      participants[state.userId].rtcPeer.videoEnabled = !participants[
+        state.userId
+      ].rtcPeer.videoEnabled
     }
-    // 여기까지 마이크, 캠 껐다 켰다하기
+    console.log(state.userId)
+
+    // console.log(participants["이원우"].rtcPeer)
 
     return {
       videoList,
@@ -382,6 +403,9 @@ export default {
       changeMic,
       changeCam,
       leaveRoom,
+      participants,
+
+      // muteMicrophone,
     }
   },
 }
@@ -400,7 +424,6 @@ export default {
 
   .video-chat {
     width: 90%;
-
     margin: auto;
 
     .user-name {
@@ -411,18 +434,10 @@ export default {
     }
 
     .video-part {
-      @apply grid grid-cols-3 mx-16 mt-20;
+      @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;
-    }
-
-    .video-part3 {
-      @apply grid lg:grid-cols-3 md:grid-cols-2 mx-40 mt-28 gap-5;
-      // grid-column: 1/3;
-    }
-    .video-part4 {
-      @apply grid grid-cols-2 m-12 bg-black;
     }
 
     .bar-part {
@@ -459,6 +474,10 @@ export default {
 // .main {
 //   border: 3px solid red;
 // }
+
+.asdasd:hover {
+  border: 3px solid red;
+}
 
 .main {
   border: 5px solid blue;

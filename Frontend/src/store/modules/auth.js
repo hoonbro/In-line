@@ -4,25 +4,33 @@ const authAPI = axios.create({
   baseURL: "/api/v1/users",
 })
 
+const commuteAPI = axios.create({
+  baseURL: "/api/v1/commute",
+})
+
 export const auth = {
   namespaced: true,
   state: {
-    user: {},
-    accessToken:
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhc2RmQGFzZGYuYXNkZiIsImV4cCI6MTYyODc1NjM5Mn0.7qOf3aR0qTCOVqt7M6mk9F2TN_wuP335fsO63K0ay-I",
+    user: null,
+    accessToken: "",
+    commute: null,
     // 임시비밀번호 메일이 발송되면 이 state가 true로 바뀜
     // 비밀번호를 변경하면 이 state가 false로 바뀜
     // 이 state가 true이면 로그인 후, 비밀번호 변경 페이지로 이동
     shouldChangePassword: false,
   },
   mutations: {
-    setToken(state, payload) {
-      state.accessToken = payload
-      localStorage.setItem("accessToken", payload)
+    setToken(state, accessToken) {
+      state.accessToken = accessToken
+      localStorage.setItem("accessToken", accessToken)
     },
-    setUser(state, payload) {
-      state.user = payload
-      localStorage.setItem("user", JSON.stringify(payload))
+    setUser(state, userData) {
+      state.user = userData
+      localStorage.setItem("user", JSON.stringify(userData))
+    },
+    setCommute(state, commuteData) {
+      state.commute = commuteData
+      localStorage.setItem("commute", JSON.stringify(commuteData))
     },
     setShouldChangePassword(state, data) {
       // data : boolean type
@@ -35,10 +43,11 @@ export const auth = {
         const res = await authAPI.post("/login", formData)
         commit("setToken", res.data.accessToken)
         commit("setUser", res.data.userDto)
+        commit("setCommute", res.data.commuteEntity)
       } catch (error) {
         const { status } = error.response
         switch (status) {
-          case 404: {
+          case 400: {
             throw Error("이 이메일로 가입한 계정을 찾을 수 없어요.")
           }
           case 401: {
@@ -63,7 +72,7 @@ export const auth = {
         throw Error("이메일 전송에 실패했습니다")
       }
     },
-    async changePassword({ commit }, passwordForm) {
+    async changePassword({ commit, state }, passwordForm) {
       try {
         console.log(passwordForm)
         const res = await axios({
@@ -71,7 +80,7 @@ export const auth = {
           url: "/api/v1/users/change-password",
           data: passwordForm,
           headers: {
-            accessToken: `${localStorage.getItem("accessToken")}`,
+            accessToken: state.accessToken,
           },
         })
         console.log(res)
@@ -82,6 +91,47 @@ export const auth = {
         throw Error("비밀번호 변경에 실패했습니다")
       }
     },
+    async commuteIn({ commit, state }) {
+      try {
+        const res = await commuteAPI({
+          method: "PUT",
+          url: `/${state.commute.commuteId}/in`,
+          headers: {
+            accessToken: state.accessToken,
+          },
+        })
+        console.log(res)
+        const commuteData = {
+          ...state.commute,
+          comeIn: res.data,
+        }
+        commit("setCommute", commuteData)
+      } catch (error) {
+        throw Error(error)
+      }
+    },
+    async commuteOut({ commit, state }) {
+      try {
+        const res = await commuteAPI({
+          method: "PUT",
+          url: `/${state.commute.commuteId}/out`,
+          headers: {
+            accessToken: state.accessToken,
+          },
+        })
+        const commuteData = {
+          ...state.commute,
+          comeOut: res.data,
+        }
+        commit("setCommute", commuteData)
+      } catch (error) {
+        throw Error(error)
+      }
+    },
   },
-  getters: {},
+  getters: {
+    isAdmin(state) {
+      return state.user.auth === "ROLE_ADMIN"
+    },
+  },
 }

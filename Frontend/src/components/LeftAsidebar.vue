@@ -2,7 +2,7 @@
   <aside>
     <div class="infos">
       <p class="hello-message">
-        김병훈님,
+        {{ userName }}님,
         <br />
         안녕하세요! 🙌
       </p>
@@ -12,7 +12,7 @@
         <button
           class="work-btn"
           :class="{
-            start: workType === 'start',
+            beforeStart: workType === 'beforeStart',
             doing: workType === 'doing',
             done: workType === 'done',
           }"
@@ -21,7 +21,7 @@
           <span class="material-icons-outlined icon">
             alarm
           </span>
-          <span v-if="workType === 'start'">업무 시작</span>
+          <span v-if="workType === 'beforeStart'">업무 시작</span>
           <span v-else-if="workType === 'doing'">업무 중</span>
           <span v-else>업무 종료</span>
         </button>
@@ -29,18 +29,18 @@
     </div>
     <hr />
     <div class="members">
-      <div class="member online" v-for="i in 4" :key="i">
-        <img :src="`https://picsum.photos/seed/user-1-${i}/40`" alt="프로필" />
+      <div class="member" v-for="member in members" :key="member.userId">
+        <img
+          :src="
+            member.profileImage
+              ? `/images/${member.profileImage}`
+              : `https://picsum.photos/seed/user-2-${member.userId}/40`
+          "
+          alt="프로필"
+        />
         <div>
-          <p class="name">김병훈</p>
-          <p class="department">Develop</p>
-        </div>
-      </div>
-      <div class="member" v-for="i in 10" :key="i">
-        <img :src="`https://picsum.photos/seed/user-2-${i}/40`" alt="프로필" />
-        <div>
-          <p class="name">김병훈</p>
-          <p class="department">Develop</p>
+          <p class="name">{{ member.name }}</p>
+          <p class="department">{{ member.deptEntity.deptName }}</p>
         </div>
       </div>
     </div>
@@ -48,20 +48,52 @@
 </template>
 
 <script>
-import { ref } from "@vue/reactivity"
+import { computed } from "@vue/runtime-core"
+import { useStore } from "vuex"
 export default {
   name: "LeftAsidebar",
   setup() {
-    const workType = ref("start")
+    const store = useStore()
+    const userName = computed(() => store.state.auth.user.name)
+    const members = computed(() => store.state.office.members)
+    const commute = computed(() => store.state.auth.commute)
+    const workType = computed(() => {
+      if (!commute.value.comeIn) {
+        return "beforeStart"
+      } else if (!commute.value.comeOut) {
+        return "doing"
+      } else {
+        return "done"
+      }
+    })
 
     const changeWorkType = () => {
-      const workTypes = ["start", "doing", "done"]
-      const current = workTypes.findIndex(item => {
-        return item === workType.value
-      })
-      workType.value = workTypes[(current + 1) % 3]
+      const now = new Date(Date.now())
+      const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
+      let confirmRes = null
+      switch (workType.value) {
+        case "beforeStart": {
+          confirmRes = confirm(`현재 시간: ${currentTime}\n출근하시겠습니까?`)
+          if (confirmRes) {
+            store.dispatch("auth/commuteIn")
+          }
+          break
+        }
+        case "doing": {
+          confirmRes = confirm(`현재 시간: ${currentTime}\n퇴근하시겠습니까?`)
+          if (confirmRes) {
+            store.dispatch("auth/commuteOut")
+          }
+          break
+        }
+        case "done": {
+          alert("오늘 업무는 종료되었습니다.")
+        }
+      }
     }
     return {
+      userName,
+      members,
       workType,
       changeWorkType,
     }
@@ -102,7 +134,7 @@ aside {
           @apply mr-2;
         }
 
-        &.start {
+        &.beforeStart {
           @apply border-blue-600 text-blue-600 bg-blue-100;
         }
 
