@@ -23,7 +23,7 @@
     <div class="todo-list">
       <TodoListItem
         v-for="todo in todos"
-        :key="todo.id"
+        :key="todo.todoId"
         :todo="todo"
         @toggleComplete="handleToggleComplete"
         @delete="deleteTodo"

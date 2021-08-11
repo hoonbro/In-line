@@ -1,19 +1,17 @@
 <template>
   <Modal>
     <template v-slot:modal-body>
-      <div class="grid gap-5 mb-10">
-        <div class="flex justify-between">
-          <button v-if="step > 1" @click="step -= 1">
-            <span class="material-icons-outlined">
-              arrow_back
-            </span>
-          </button>
-          <h1 class="text-3xl font-bold">회사 등록</h1>
-          <div
-            class="py-1 px-4 flex justify-center items-center rounded-full bg-blue-400 text-sm text-white"
-          >
-            {{ step }} / 3
+      <div class="header">
+        <div class="upper">
+          <div class="left">
+            <button v-if="step > 1" @click="step -= 1">
+              <span class="material-icons-outlined">
+                arrow_back
+              </span>
+            </button>
+            <h1>회사 등록</h1>
           </div>
+          <div class="step">{{ step }} / 3</div>
         </div>
         <p>인-라인에 오신 것을 환영합니다.</p>
       </div>
@@ -62,7 +60,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts">
+              <option v-for="dept in depts" :key="dept.deptId">
                 {{ dept.deptName }}
               </option>
             </select>
@@ -74,7 +72,7 @@
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs">
+              <option v-for="job in jobs" :key="job.jobId">
                 {{ job.jobName }}
               </option>
             </select>
@@ -88,16 +86,6 @@
               @update:modelValue="managerFormError = ''"
               @update:validate="handleUpdateValidate(managerFormData, $event)"
             />
-            <!-- <TextInput
-              v-for="(field, key) in managerFormData"
-              :key="key"
-              v-model="field.value"
-              :name="key"
-              :formData="managerFormData"
-              :field="field"
-              @update:modelValue="managerFormError = ''"
-              @update:validate="handleUpdateValidate(managerFormData, $event)"
-            /> -->
           </div>
           <div class="grid gap-1">
             <button
@@ -419,40 +407,49 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.backdrop {
-  background: rgba(46, 46, 51, 0.6);
-  @apply fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center;
-  z-index: 5;
+.header {
+  @apply grid gap-4 mb-10;
 
-  .modal-container {
-    @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg p-10 grid gap-10;
+  .upper {
+    @apply flex justify-between items-start;
 
-    .input-list {
-      @apply grid gap-4 w-full;
+    .left {
+      @apply flex flex-col items-start gap-1;
 
-      .regist-btn {
-        @apply bg-blue-600 rounded-xl py-3 text-white font-medium;
-
-        &.disabled {
-          @apply bg-gray-400;
-        }
-
-        &.error {
-          @apply bg-red-600;
-        }
-      }
-
-      .select-box {
-        @apply w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600;
-      }
-      .selectLabel {
-        @apply text-gray-600;
-      }
-
-      .submit-error {
-        @apply text-red-600 text-sm font-medium mx-auto;
+      h1 {
+        @apply text-3xl font-bold;
       }
     }
+  }
+  .step {
+    @apply py-1 px-4 flex justify-center items-center rounded-full bg-blue-400 text-sm text-white;
+  }
+}
+
+.input-list {
+  @apply grid gap-4 w-full;
+
+  .regist-btn {
+    @apply bg-blue-600 rounded-xl py-3 text-white font-medium;
+
+    &.disabled {
+      @apply bg-gray-400;
+    }
+
+    &.error {
+      @apply bg-red-600;
+    }
+  }
+
+  .select-box {
+    @apply w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600;
+  }
+  .selectLabel {
+    @apply text-gray-600;
+  }
+
+  .submit-error {
+    @apply text-red-600 text-sm font-medium mx-auto;
   }
 }
 </style>

@@ -88,6 +88,7 @@ export const office = {
         commit("setDepts", res.data)
       } catch (error) {
         console.log(error)
+        throw Error("부서 목록을 불러오는 데 실패했습니다.")
       }
     },
     async getJobs({ commit }) {
@@ -99,6 +100,7 @@ export const office = {
         commit("setJobs", res.data)
       } catch (error) {
         console.log(error)
+        throw Error("역할 목록을 불러오는 데 실패했습니다.")
       }
     },
     async registerOffice({ rootState }, formData) {
@@ -138,7 +140,7 @@ export const office = {
             accessToken: rootState.auth.accessToken,
           },
         })
-        const notis = state.notifications.filter(noti => noti.id !== notiId)
+        const notis = state.notifications.filter(noti => noti.notiId !== notiId)
         commit("setNotifications", notis)
       } catch (error) {
         console.log(error)
@@ -190,7 +192,7 @@ export const office = {
             accessToken: rootState.auth.accessToken,
           },
         })
-        const todos = state.todos.filter(todo => todo.id !== todoId)
+        const todos = state.todos.filter(todo => todo.todoId !== todoId)
         commit("setTodos", todos)
       } catch (error) {
         console.log(error)
@@ -206,7 +208,7 @@ export const office = {
         },
       })
       const todos = state.todos.map(todo => {
-        if (todo.id === todoId) {
+        if (todo.todoId === todoId) {
           todo.done = !todo.done
         }
         return todo
