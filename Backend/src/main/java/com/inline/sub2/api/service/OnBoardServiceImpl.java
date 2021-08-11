@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class OnBoardServiceImpl implements OnBoardService{
@@ -66,6 +68,7 @@ public class OnBoardServiceImpl implements OnBoardService{
     public UserRegistDto clickEmail(String email) {
         OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
 
+        OfficeEntity officeEntity = officeService.getOfficeName(onBoardEntity.getOfficeId());
         String jobName = jobService.getJobName(onBoardEntity.getJobId()).getJobName();
         String deptName = deptService.getDeptName(onBoardEntity.getDeptId()).getDeptName();
 
@@ -76,6 +79,7 @@ public class OnBoardServiceImpl implements OnBoardService{
         userRegistDto.setDeptId(onBoardEntity.getDeptId());
         userRegistDto.setJobId(onBoardEntity.getJobId());
         userRegistDto.setOfficeId(onBoardEntity.getOfficeId());
+        userRegistDto.setOfficeName(officeEntity.getOfficeName());
         userRegistDto.setJobName(jobName);
         userRegistDto.setDeptName(deptName);
         return userRegistDto;
@@ -85,11 +89,13 @@ public class OnBoardServiceImpl implements OnBoardService{
     @Transactional
     public void deleteUserOnboard(String email) {
 //        UserEntity userEntity = userService.getUserByEmail(email);
-        System.out.println("여기1");
         OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
         System.out.println(onBoardEntity.getName());
         onBoardRepository.delete(onBoardEntity);
+    }
 
-
+    @Override
+    public List<OnBoardEntity> getOnboardUsers(Long officeId) {
+        return onBoardRepository.findAllByOfficeId(officeId);
     }
 }
