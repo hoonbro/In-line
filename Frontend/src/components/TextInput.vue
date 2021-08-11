@@ -1,5 +1,5 @@
 <template>
-  <div class="grid gap-1">
+  <div class="grid gap-1" ref="root">
     <div
       class="input-container"
       :class="{
@@ -13,6 +13,7 @@
         @input="handleInput"
         @focus="labelActive = true"
         @blur="handleBlur"
+        @keydown.enter="$emit('submit')"
         autocomplete="off"
         :maxlength="maxlength"
         :disabled="disabled"
@@ -42,7 +43,7 @@
 <script>
 import { ref } from "@vue/reactivity"
 export default {
-  name: "TextInput2",
+  name: "TextInput",
   props: {
     modelValue: {
       type: String,
@@ -61,8 +62,9 @@ export default {
       default: false,
     },
   },
-  emits: ["update:modelValue", "update:validate"],
+  emits: ["update:modelValue", "update:validate", "submit"],
   setup(props, { emit }) {
+    const root = ref(null)
     const labelActive = ref(Boolean(props.modelValue))
     const input = ref(null)
 
@@ -74,7 +76,10 @@ export default {
     }
 
     const handleBlur = () => {
-      validate()
+      // Input에 클릭한 후 모달을 끌 때, validate가 실행되는 것을 방지
+      if (root.value) {
+        validate()
+      }
       labelActive.value = props.modelValue ? true : false
     }
 
@@ -88,6 +93,7 @@ export default {
     }
 
     return {
+      root,
       input,
       labelActive,
       handleBlur,

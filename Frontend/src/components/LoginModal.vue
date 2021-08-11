@@ -79,14 +79,14 @@ import {
   emailValidator,
   handleUpdateValidate,
 } from "@/lib/validator"
-import TextInput from "@/components/Members/TextInput.vue"
+import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
-import { connectStomp } from "@/lib/websocket"
+import { connectStomp, enterOffice } from "@/lib/websocket"
 
 export default {
   name: "LoginModal",
   components: { Modal, TextInput },
-  setup(props, { emit }) {
+  setup() {
     const store = useStore()
     const router = useRouter()
 
@@ -120,7 +120,7 @@ export default {
     })
 
     const login = async () => {
-      if (!formDataIsValid) {
+      if (!formDataIsValid.value) {
         return
       }
       loading.value = true
@@ -134,7 +134,15 @@ export default {
         // 회원 목록 가져오기
         await store.dispatch("office/getMembers")
         // 소켓 연결
-        await connectStomp(store.state.auth.user.officeId)
+        await connectStomp(
+          store.getters["auth/userId"],
+          store.getters["auth/officeId"]
+        )
+        // 사무실 입장
+        enterOffice(
+          store.getters["socket/stompClient"],
+          store.getters["auth/user"]
+        )
 
         if (willRememberEamil.value) {
           localStorage.setItem("email", formData.email.value)
