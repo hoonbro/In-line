@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class OnBoardServiceImpl implements OnBoardService{
@@ -39,7 +41,7 @@ public class OnBoardServiceImpl implements OnBoardService{
 
     @Override
     @Transactional
-    public OnBoardEntity registUserOnboard(UserRegistDto user) {
+    public void registUserOnboard(UserRegistDto user) {
         OfficeEntity officeEntity = officeService.getOfficeName(user.getOfficeId());
         DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), 1l); //부서 번호 조회
         JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l); //직책 번호 조회
@@ -55,18 +57,18 @@ public class OnBoardServiceImpl implements OnBoardService{
         onBoardEntity.setName(user.getName());
         onBoardEntity.setOfficeId(user.getOfficeId());
         onBoardEntity.setDeptId(user.getDeptId());
+        onBoardRepository.save(onBoardEntity);
 
         //구성원에게 이메일 발송
         emailService.sendEmail(user);
         log.info("구성원에게 이메일 발송 성공");
-
-        return onBoardRepository.save(onBoardEntity);
     }
 
     @Override
     public UserRegistDto clickEmail(String email) {
         OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
 
+        OfficeEntity officeEntity = officeService.getOfficeName(onBoardEntity.getOfficeId());
         String jobName = jobService.getJobName(onBoardEntity.getJobId()).getJobName();
         String deptName = deptService.getDeptName(onBoardEntity.getDeptId()).getDeptName();
 
@@ -77,6 +79,7 @@ public class OnBoardServiceImpl implements OnBoardService{
         userRegistDto.setDeptId(onBoardEntity.getDeptId());
         userRegistDto.setJobId(onBoardEntity.getJobId());
         userRegistDto.setOfficeId(onBoardEntity.getOfficeId());
+        userRegistDto.setOfficeName(officeEntity.getOfficeName());
         userRegistDto.setJobName(jobName);
         userRegistDto.setDeptName(deptName);
         return userRegistDto;
@@ -86,11 +89,13 @@ public class OnBoardServiceImpl implements OnBoardService{
     @Transactional
     public void deleteUserOnboard(String email) {
 //        UserEntity userEntity = userService.getUserByEmail(email);
-        System.out.println("여기1");
         OnBoardEntity onBoardEntity = onBoardRepository.findByEmail(email);
         System.out.println(onBoardEntity.getName());
         onBoardRepository.delete(onBoardEntity);
+    }
 
-
+    @Override
+    public List<OnBoardEntity> getOnboardUsers(Long officeId) {
+        return onBoardRepository.findAllByOfficeId(officeId);
     }
 }

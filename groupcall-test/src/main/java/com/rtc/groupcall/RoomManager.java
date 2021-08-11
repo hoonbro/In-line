@@ -6,7 +6,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.rtc.groupcall.api.dto.RoomDto;
 import com.rtc.groupcall.db.entity.RoomEntity;
+import com.rtc.groupcall.db.entity.UserEntity;
 import com.rtc.groupcall.db.repository.RoomRepository;
+import com.rtc.groupcall.db.repository.UserRepository;
 import org.kurento.client.KurentoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +32,16 @@ public class RoomManager {
     @Autowired
     RoomRepository roomRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     private final ConcurrentMap<Long, Room> rooms = new ConcurrentHashMap<>();
 
     public RoomEntity getRoom(Long roomId){
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException());
     }
+
 
     public List<RoomEntity> getRooms(Long OfficeId){
         List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
@@ -44,7 +50,7 @@ public class RoomManager {
             if(rooms.get(r.getRoomId()) != null)
                 continue;
 
-            rooms.put(r.getRoomId(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), r.getRoomId()));
+            rooms.put(r.getRoomId(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), r.getRoomId(), r.getOfficeId()));
         }
 
         return roomRepository.findAllByOfficeId(OfficeId);
@@ -56,16 +62,15 @@ public class RoomManager {
                 .officeId(roomDto.getOfficeId())
                 .userId(roomDto.getUserId())
                 .build();
+        rooms.put(roomDto.getRoomId(),  new Room(roomDto.getRoomName(), kurento.createMediaPipeline(), roomDto.getRoomId(), roomDto.getOfficeId()));
         return roomRepository.save(roomEntity);
     }
 
     public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
         roomEntity.setRoomName(roomName);
         //map내용 수정
-        log.info(roomEntity.toString());
         Room room = rooms.get(roomEntity.getRoomId());
         room.setRoomName(roomName);
-        log.info(room.toString());
         rooms.put(roomEntity.getRoomId(), room);
         return roomRepository.save(roomEntity);
     }
@@ -79,20 +84,27 @@ public class RoomManager {
 //        log.info("Room {} removed and closed, roomId = {}", room.getRoomName(), room.getRoomId());
     }
 
-    public Room getRoom(String roomName, Long roomId) {
+    public RoomEntity getLobby(Long officeId){
+        return roomRepository.findByOfficeIdAndRoomName(officeId, "로비");
+    }
+
+    public void moveUser(Long userId, Long roomId){
+        userRepository.moveUser(userId, roomId);
+    }
+
+    public Room getRoom(String roomName, Long roomId, Long officeId) {
 //        log.info("{}찾기 시도, roomId = {}", roomName, roomId);
         Room room = rooms.get(roomId);
 
         if (room == null) {
 //            log.info("{}이/가 없다, 새로 생성!", roomName);
-            room = new Room(roomName, kurento.createMediaPipeline(), roomId);
+            room = new Room(roomName, kurento.createMediaPipeline(), roomId, officeId);
             rooms.put(roomId, room);
         }else if(room.getPipeline() == null){
 //            log.info("{}에 pipeline이 없다!. create pipeline!", roomName);
             room.setPipeline(kurento.createMediaPipeline());
         }
 //        log.info("{}을 찾음!, roomId = {}", roomName, roomId);
-        log.info(room.toString());
         return room;
     }
 

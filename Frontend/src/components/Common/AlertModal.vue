@@ -22,15 +22,19 @@ export default {
 
 <style scoped lang="scss">
 .modal-container {
-  width: 260px;
-  @apply font-bold text-white p-4 shadow-md rounded select-none;
+  width: 300px;
+  @apply p-4 shadow-md rounded select-none;
 
   &.success {
-    @apply bg-blue-400;
+    @apply bg-blue-500 text-white font-bold;
   }
 
   &.error {
-    @apply bg-red-400;
+    @apply bg-red-400 text-white font-bold;
+  }
+
+  &.warning {
+    @apply bg-yellow-400 text-gray-900 font-bold;
   }
 }
 </style>

@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 public class InviteDto {
     private Long roomId;
+    private Long userId;
     private String userName; // 보낸 사람 이름
 }

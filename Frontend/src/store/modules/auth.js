@@ -77,7 +77,7 @@ export const auth = {
       } catch (error) {
         console.log(error)
         console.log(error.response.status)
-        throw Error("이메일 전송에 실패했습니다")
+        throw Error("🥲 이메일 전송에 실패했습니다.")
       }
     },
     async changePassword({ commit, state }, passwordForm) {
@@ -97,10 +97,10 @@ export const auth = {
         const { status } = error.response
         switch (status) {
           case 401: {
-            throw Error("401: 이전 비밀번호를 다시 확인해주세요.")
+            throw Error("🤨 이전 비밀번호를 다시 확인해주세요.")
           }
           default: {
-            throw Error("무슨 문제가 생긴 것 같은데, 저도 잘 모르겠네요 0ㅅ0")
+            throw Error("🥲 무슨 문제가 생긴 것 같은데, 저도 잘 모르겠네요 0ㅅ0")
           }
         }
       }
@@ -142,6 +142,39 @@ export const auth = {
         throw Error(error)
       }
     },
+    async updateProfileImage({ state }, formData) {
+      try {
+        const { data: newProfileImg } = await authAPI({
+          method: "PUT",
+          url: "/profile",
+          data: formData,
+          headers: {
+            accessToken: state.accessToken,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        console.log(newProfileImg)
+        return newProfileImg
+      } catch (error) {
+        console.log(error)
+        throw Error("이미지 업로드에 실패했습니다.")
+      }
+    },
+    async updateProfile({ commit, state }, { userId, form }) {
+      try {
+        const res = await authAPI({
+          method: "PUT",
+          url: `/${userId}`,
+          data: form,
+          headers: {
+            accessToken: state.accessToken,
+          },
+        })
+        return res.data
+      } catch (error) {
+        throw Error("프로필 수정에 실패했어요.")
+      }
+    },
   },
   getters: {
     isAdmin(state) {
@@ -152,6 +185,12 @@ export const auth = {
     },
     accessToken(state) {
       return state.accessToken
+    },
+    userId(state) {
+      return state.user.userId
+    },
+    user(state) {
+      return state.user
     },
   },
 }

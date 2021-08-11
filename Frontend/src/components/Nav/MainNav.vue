@@ -10,13 +10,19 @@
       로그아웃
     </button>
   </nav>
+  <ConfirmModal
+    ref="modalEl"
+    :content="['로그아웃 하시겠습니까?']"
+    :confirmButton="'네'"
+    :cancelButton="'아니요'"
+  />
 </template>
 
 <script>
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
 import { disconnectStomp, exitOffice } from "@/lib/websocket"
-import { computed } from "@vue/runtime-core"
+import { computed, ref } from "@vue/runtime-core"
 
 export default {
   name: "MainNav",
@@ -25,9 +31,11 @@ export default {
     const store = useStore()
     const stompClient = computed(() => store.state.socket.stompClient)
     const user = computed(() => store.state.auth.user)
+    const modalEl = ref(null)
 
     const logout = async () => {
-      const yes = confirm("로그아웃 하시겠습니까?")
+      modalEl.value.isVisible = true
+      const yes = await modalEl.value.show()
       if (yes) {
         store.commit("auth/setToken", "")
         exitOffice(stompClient.value, user.value)
@@ -38,6 +46,7 @@ export default {
 
     return {
       logout,
+      modalEl,
     }
   },
 }

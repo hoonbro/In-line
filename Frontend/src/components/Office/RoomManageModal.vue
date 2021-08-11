@@ -78,6 +78,7 @@
             :formData="formData"
             :maxlength="field.maxlength"
             @update:validate="handleUpdateValidate(formData, $event)"
+            @submit="createRoom"
           />
         </div>
         <div class="flex flex-col gap-2">
@@ -94,7 +95,7 @@
               class="create-btn active"
               :class="{ disabled: !createFormIsValid }"
               :disabled="!createFormIsValid"
-              @click="createRoom()"
+              @click="createRoom"
             >
               회의실 추가하기
             </button>
@@ -162,10 +163,11 @@ export default {
 
     // 방 생성할 때 최대 길이 제한 걸어야 함 (Ok)
     const createRoom = async () => {
-      // 회의실 이름이 비어있으면 alert 출력하고
-      if (!formData.name.value) {
-        alert("회의실 이름은 공백으로 할 수 없습니다.")
-        // 멈춰!
+      if (!createFormIsValid.value) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "회의실 이름은 공백으로 할 수 없습니다.",
+        })
         return
       }
       try {
@@ -175,8 +177,14 @@ export default {
         }
         await store.dispatch("office/createRoom", room)
         activeCreate.value = !activeCreate.value
+        store.commit("landing/addAlertModalList", {
+          message: "회의실이 추가되었습니다!",
+        })
       } catch (error) {
-        console.log(error)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
     }
 
@@ -187,7 +195,10 @@ export default {
 
     const editRoom = async roomId => {
       if (!newName.value) {
-        alert("회의실 이름은 공백으로 할 수 없습니다.")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "회의실 이름은 공백으로 할 수 없습니다.",
+        })
         return
       }
       try {
@@ -195,15 +206,31 @@ export default {
           name: newName.value,
         }
         await store.dispatch("office/editRoom", { room, roomId })
+        store.commit("landing/addAlertModalList", {
+          message: "회의실 수정이 완료되었습니다!",
+        })
       } catch (error) {
-        console.log(error)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
       activeEdit.value = ""
     }
 
-    const deleteRoom = (roomId, roomName) => {
+    const deleteRoom = async (roomId, roomName) => {
       if (confirm(`회의실 이름: ${roomName}\n회의실을 삭제하시겠어요?`)) {
-        store.dispatch("office/deleteRoom", roomId)
+        try {
+          await store.dispatch("office/deleteRoom", roomId)
+          store.commit("landing/addAlertModalList", {
+            message: `${roomId}번 회의실이 삭제되었습니다!`,
+          })
+        } catch (error) {
+          store.commit("landing/addAlertModalList", {
+            type: "error",
+            message: error.message,
+          })
+        }
       }
     }
 

@@ -54,6 +54,7 @@
               :formData="formData"
               :field="field"
               @update:validate="handleUpdateValidate(formData, $event)"
+              @submit="submitForm"
             />
           </div>
         </div>
@@ -170,6 +171,11 @@ export default {
         alert(`${submitData.name}(${submitData.email})님께 메일을 보냈습니다!`)
       } catch (error) {
         formError.value = error.message
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "전송 실패",
+        })
+        console.log(error)
       }
       loading.value = false
     }
