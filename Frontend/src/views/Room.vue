@@ -103,7 +103,7 @@ export default {
 
     onUnmounted(() => leaveRoom())
 
-    let ws = new WebSocket(`wss://13.124.47.223:8997/groupcall`)
+    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
 
     ws.onopen = function(event) {
       register()
@@ -155,7 +155,7 @@ export default {
     }
 
     function onNewParticipant(request) {
-      receiveVideo(request.userId)
+      receiveVideo(request.userId, request.userName)
     }
 
     function receiveVideoResponse(result) {
@@ -188,15 +188,15 @@ export default {
             maxWidth: 450,
             minHeight: 320,
             maxHeight: 320,
-            maxFrameRate: 15,
-            minFrameRate: 15,
+            maxFrameRate: 30,
+            minFrameRate: 30,
           },
         },
       }
 
       console.log(state.name + " registered in room " + state.room)
       console.log(msg)
-      let participant = new Participant(state.userId)
+      let participant = new Participant(state.userId, state.name + "(나)")
       participants[state.userId] = participant
       let video = participant.getVideoElement()
 
@@ -215,7 +215,12 @@ export default {
         }
       )
 
-      msg.userId.forEach(receiveVideo)
+      // msg.forEach(receiveVideo(msg.userId, msg.userName))
+      var len = msg.userId.length
+      for (let i = 0; i < len; i++) {
+        receiveVideo(msg.userId[i], msg.userName[i])
+      }
+      // msg.userId.forEach(receiveVideo)
     }
 
     // 얘도 떠날때임
@@ -233,8 +238,8 @@ export default {
       router.push({ name: "Office" })
     }
 
-    function receiveVideo(userId) {
-      let participant = new Participant(userId)
+    function receiveVideo(userId, userName) {
+      let participant = new Participant(userId, userName)
       participants[userId] = participant
       let video = participant.getVideoElement()
 
@@ -277,7 +282,7 @@ export default {
      * @return
      */
 
-    function Participant(userId) {
+    function Participant(userId, userName) {
       this.userId = userId
       let container = document.createElement("div")
       // PARTICIPANT_MAIN_CLASS가 없을 때
@@ -298,7 +303,7 @@ export default {
       container.onclick = switchContainerClass
       document.getElementById("participants").appendChild(container)
 
-      span.appendChild(document.createTextNode(userId))
+      if (userName != null) span.appendChild(document.createTextNode(userName))
 
       // 이 부분이 video-id가 됨
       // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
@@ -441,7 +446,7 @@ export default {
     }
 
     .bar-part {
-      @apply flex fixed left-1/3 bottom-10;
+      @apply flex fixed left-1/3 bottom-5;
 
       .mic-button {
         @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
@@ -456,30 +461,8 @@ export default {
       }
     }
   }
-
-  // .people-list {
-  //   @apply bg-white w-full h-full;
-  //   display: none;
-  // }
-  // .icon-list {
-  //   .icon {
-  //     @apply p-4 inline-block justify-center cursor-pointer;
-  //   }
-  // }
 }
 .side-bar ul li.active {
   @apply text-blue-700;
-}
-
-// .main {
-//   border: 3px solid red;
-// }
-
-.asdasd:hover {
-  border: 3px solid red;
-}
-
-.main {
-  border: 5px solid blue;
 }
 </style>
