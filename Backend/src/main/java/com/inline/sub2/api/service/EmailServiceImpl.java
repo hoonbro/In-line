@@ -41,11 +41,11 @@ public class EmailServiceImpl implements EmailService {
                     "      <span>인-라인</span>\n" +
                     "    </div>\n" +
                     "    <div class=\"msg\">\n" +
-                    "      <span>" + user.getOfficeName() + "에서 구성원 등록 메일을 보냈습니다.</span><br>\n" +
-                    "      <span>" + user.getName() +"님으로 구성원 등록을 진행하시겠습니까?</span>\n" +
+                    "      <span><b>" + user.getOfficeName() + "</b>에서 구성원 등록 메일을 보냈습니다.</span><br>\n" +
+                    "      <span><b>" + user.getName() +"</b>님으로 구성원 등록을 진행하시겠습니까?</span>\n" +
                     "      <br><br>\n" +
                     "      <div class=\"button-list\">\n" +
-                    "        <button type=\"button\" onclick=\"location.href = 'https://i5d207.p.ssafy.io/onboarding/signup?email='" + user.getEmail() +"\">인라인 시작하기</button>\n" +
+                    "        <a href='https://i5d207.p.ssafy.io/onboarding/signup?email="  + user.getEmail() +"'\">인라인 시작하기</a>\n" +
                     "      </div>\n" +
                     "      <br>\n" +
                     "      <hr>\n" +
