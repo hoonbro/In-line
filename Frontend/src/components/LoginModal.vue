@@ -81,6 +81,7 @@ import {
 } from "@/lib/validator"
 import TextInput from "@/components/Members/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
+import { connectStomp } from "@/lib/websocket"
 
 export default {
   name: "LoginModal",
@@ -128,13 +129,18 @@ export default {
         submitData[key] = formData[key].value
       })
       try {
+        // 로그인
         await store.dispatch("auth/login", submitData)
+        // 회원 목록 가져오기
+        await store.dispatch("office/getMembers")
+        // 소켓 연결
+        await connectStomp(store.state.auth.user.officeId)
+
         if (willRememberEamil.value) {
           localStorage.setItem("email", formData.email.value)
         } else {
           localStorage.removeItem("email")
         }
-        emit("close")
         if (store.state.auth.shouldChangePassword) {
           router.push({
             name: "ChangePassword",
@@ -142,9 +148,13 @@ export default {
           })
         } else {
           router.push({ name: "Office" })
+          store.commit("landing/addAlertModalList", { message: "안녕하세요!" })
         }
       } catch (error) {
-        alert(error.message)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
       loading.value = false
     }

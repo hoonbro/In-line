@@ -7,30 +7,34 @@ export const connectStomp = officeId => {
   const socket = new SockJS(serverURL)
   let stompClient = Stomp.over(socket)
   let subscription
-  stompClient.connect(
-    {},
-    frame => {
-      stompClient.connected = true
-      store.commit("socket/setStompClient", stompClient)
-      subscription = stompClient.subscribe(`/sub/${officeId}`, res => {
-        console.group("subscription")
-        const data = JSON.parse(res.body)
-        if (data.type === "CHAT") {
-          store.commit("socket/addOfficeChat", data.chatDto)
-        } else if (data.type === "ENTER" || data.type === "EXIT") {
-          console.log(data.members)
-          store.commit("office/updateConnectionOfMembers", data.members)
-        }
-        console.groupEnd()
-      })
-      store.commit("socket/setSubscription", subscription)
-    },
-    error => {
-      alert("소켓 연결 실패!")
-      stompClient.connected = false
-      store.commit("socket/setStompClient", stompClient)
-    }
-  )
+  return new Promise((res, rej) => {
+    stompClient.connect(
+      {},
+      frame => {
+        stompClient.connected = true
+        store.commit("socket/setStompClient", stompClient)
+        subscription = stompClient.subscribe(`/sub/${officeId}`, res => {
+          console.group("subscription")
+          const data = JSON.parse(res.body)
+          if (data.type === "CHAT") {
+            store.commit("socket/addOfficeChat", data.chatDto)
+          } else if (data.type === "ENTER" || data.type === "EXIT") {
+            console.log(data.members)
+            store.commit("office/updateConnectionOfMembers", data.members)
+          }
+          console.groupEnd()
+        })
+        store.commit("socket/setSubscription", subscription)
+        res("성공")
+      },
+      error => {
+        alert("소켓 연결 실패!")
+        stompClient.connected = false
+        store.commit("socket/setStompClient", stompClient)
+        rej("망했어요")
+      }
+    )
+  })
 }
 
 export const disconnectStomp = () => {

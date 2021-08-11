@@ -1,14 +1,17 @@
 <template>
   <Modal>
     <template v-slot:modal-body>
-      <div class="grid gap-5 mb-10">
-        <div class="flex justify-between">
-          <h1 class="text-3xl font-bold">회사 등록</h1>
-          <div
-            class="py-1 px-4 flex justify-center items-center rounded-full bg-blue-400 text-sm text-white"
-          >
-            {{ step }} / 2
+      <div class="header">
+        <div class="upper">
+          <div class="left">
+            <button v-if="step > 1" @click="step -= 1">
+              <span class="material-icons-outlined">
+                arrow_back
+              </span>
+            </button>
+            <h1>회사 등록</h1>
           </div>
+          <div class="step">{{ step }} / 3</div>
         </div>
         <p>인-라인에 오신 것을 환영합니다.</p>
       </div>
@@ -47,17 +50,17 @@
         </div>
       </div>
       <!-- step 2 : 관리자 정보 입력 -->
-      <div v-else>
+      <div v-else-if="step === 2">
         <div class="input-list">
           <div v-for="(field, key) in managerFormData" :key="key">
             <select
               v-if="key === 'deptName'"
               v-model="field.value"
-              class="w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600"
+              class="select-box"
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts">
+              <option v-for="dept in depts" :key="dept.deptId">
                 {{ dept.deptName }}
               </option>
             </select>
@@ -65,11 +68,11 @@
             <select
               v-else-if="key === 'jobName'"
               v-model="field.value"
-              class="w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600"
+              class="select-box"
               :class="{ selectLabel: !field.value }"
             >
               <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs">
+              <option v-for="job in jobs" :key="job.jobId">
                 {{ job.jobName }}
               </option>
             </select>
@@ -83,16 +86,37 @@
               @update:modelValue="managerFormError = ''"
               @update:validate="handleUpdateValidate(managerFormData, $event)"
             />
-            <!-- <TextInput
-              v-for="(field, key) in managerFormData"
-              :key="key"
+          </div>
+          <div class="grid gap-1">
+            <button
+              class="regist-btn"
+              :class="{
+                disabled: !managerFormIsValid,
+                error: managerFormError,
+              }"
+              :disabled="!managerFormIsValid"
+              @click="checkEmailIsValid"
+            >
+              다음 단계로
+            </button>
+            <p class="submit-error">
+              {{ managerFormError }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- step 3 : 비밀번호 입력 -->
+      <div v-else>
+        <div class="input-list">
+          <div v-for="(field, key) in passwordFormData" :key="key">
+            <TextInput
               v-model="field.value"
               :name="key"
-              :formData="managerFormData"
+              :formData="passwordFormData"
               :field="field"
-              @update:modelValue="managerFormError = ''"
-              @update:validate="handleUpdateValidate(managerFormData, $event)"
-            /> -->
+              @update:modelValue="passwordFormError = ''"
+              @update:validate="handleUpdateValidate(passwordFormData, $event)"
+            />
           </div>
           <div>
             <input
@@ -109,14 +133,14 @@
           <div class="grid gap-1">
             <button
               class="regist-btn"
-              :class="{ disabled: !formIsValid, error: managerFormError }"
+              :class="{ disabled: !formIsValid, error: passwordFormError }"
               :disabled="!formIsValid"
               @click="registerOffice"
             >
               회사 등록하기
             </button>
             <p class="submit-error">
-              {{ managerFormError }}
+              {{ passwordFormError }}
             </p>
           </div>
         </div>
@@ -145,13 +169,11 @@ export default {
   setup(props, { emit }) {
     const store = useStore()
 
-    store.dispatch("office/getDepts")
-    store.dispatch("office/getJobs")
-
-    const depts = computed(() => store.state.office.depts)
-    const jobs = computed(() => store.state.office.jobs)
-
     const step = ref(1)
+
+    // ===============================================================
+    // step 1
+    // ===============================================================
     const officeFormData = reactive({
       officeName: {
         label: "회사 이름",
@@ -162,7 +184,39 @@ export default {
         maxlength: 20,
       },
     })
+
     const officeFormError = ref("")
+
+    const officeFormIsValid = computed(() => {
+      return Boolean(
+        officeFormData.officeName.value &&
+          !Object.keys(officeFormData.officeName.errors).length
+      )
+    })
+
+    const checkOfficeNameIsValid = async () => {
+      try {
+        const res = await axios.get(
+          `/api/v1/office/duplicate/${officeFormData.officeName.value}`
+        )
+        console.log(res)
+        step.value = 2
+      } catch (error) {
+        if (error.response.status === 409) {
+          officeFormError.value = "이미 회사로 등록된 이름이에요 😅"
+        } else {
+          alert(error)
+        }
+      }
+    }
+    // ===============================================================
+    // step 2
+    // ===============================================================
+    store.dispatch("office/getDepts")
+    store.dispatch("office/getJobs")
+    const depts = computed(() => store.state.office.depts)
+    const jobs = computed(() => store.state.office.jobs)
+
     const managerFormData = reactive({
       email: {
         label: "담당자 이메일",
@@ -198,6 +252,51 @@ export default {
         validators: [requiredValidator],
         errors: {},
       },
+    })
+
+    const managerFormError = ref("")
+
+    const managerFormIsFilled = computed(() => {
+      return Object.keys(managerFormData).every(
+        key => managerFormData[key].value
+      )
+    })
+
+    const managerFormNoError = computed(() => {
+      return Object.keys(managerFormData).every(key => {
+        return !Object.keys(managerFormData[key].errors).length
+      })
+    })
+
+    const managerFormIsValid = computed(() => {
+      return (
+        officeFormIsValid.value &&
+        managerFormIsFilled.value &&
+        managerFormNoError.value
+      )
+    })
+
+    const checkEmailIsValid = async () => {
+      try {
+        // true면 중복o -> 사용 불가능
+        // false면 중복x -> 사용 가능
+        const res = await axios.get(
+          `api/v1/users/duplicate/${managerFormData.email.value}`
+        )
+        console.log(res)
+        step.value = 3
+      } catch (error) {
+        if (error.response.status === 409) {
+          managerFormError.value = "이미 존재하는 이메일이에요!"
+        } else {
+          alert(error)
+        }
+      }
+    }
+    // ===============================================================
+    // step 3
+    // ===============================================================
+    const passwordFormData = reactive({
       password: {
         label: "담당자 비밀번호",
         type: "password",
@@ -213,43 +312,37 @@ export default {
         errors: {},
       },
     })
-    const managerFormError = ref("")
-    const formData = computed(() => {
-      return { ...officeFormData, ...managerFormData }
-    })
+    const passwordFormError = ref("")
 
-    const officeFormIsValid = computed(() => {
-      return Boolean(
-        officeFormData.officeName.value &&
-          !Object.keys(officeFormData.officeName.errors).length
+    const passwordFormIsFilled = computed(() => {
+      return Object.keys(passwordFormData).every(
+        key => passwordFormData[key].value
       )
     })
 
-    const checkOfficeNameIsValid = async () => {
-      try {
-        await axios.get(
-          `/api/v1/office/duplicate/${officeFormData.officeName.value}`
-        )
-        step.value = 2
-      } catch (error) {
-        if (error.response.status === 409) {
-          officeFormError.value = "이미 회사로 등록된 이름이에요 😅"
-        } else {
-          alert(error)
-        }
-      }
-    }
-
-    const managerFormIsFilled = computed(() => {
-      return Object.keys(managerFormData).every(
-        key => managerFormData[key].value
-      )
-    })
-
-    const managerFormNoError = computed(() => {
-      return Object.keys(managerFormData).every(key => {
-        return !Object.keys(managerFormData[key].errors).length
+    const passwordFormNoError = computed(() => {
+      return Object.keys(passwordFormData).every(key => {
+        return !Object.keys(passwordFormData[key].errors).length
       })
+    })
+
+    const passwordFormIsValid = computed(() => {
+      return (
+        officeFormIsValid.value &&
+        managerFormIsFilled.value &&
+        managerFormNoError.value &&
+        passwordFormIsFilled.value &&
+        passwordFormNoError.value
+      )
+    })
+
+    const term = ref(false)
+
+    // ===============================================================
+    // 전체 form (step 1 ~ step 3)
+    // ===============================================================
+    const formData = computed(() => {
+      return { ...officeFormData, ...managerFormData, ...passwordFormData }
     })
 
     const formIsValid = computed(() => {
@@ -257,12 +350,15 @@ export default {
         officeFormIsValid.value &&
         managerFormIsFilled.value &&
         managerFormNoError.value &&
+        passwordFormIsFilled.value &&
+        passwordFormNoError.value &&
         term.value
       )
     })
 
-    const term = ref(false)
-
+    // ===============================================================
+    // 회사 등록 api 요청
+    // ===============================================================
     const registerOffice = async () => {
       const submitData = { term: term.value }
       Object.keys(formData.value).forEach(
@@ -275,8 +371,9 @@ export default {
         emit("close")
       } catch (error) {
         console.log(error)
+        console.log(error.response)
         if (error.response.status === 409) {
-          managerFormError.value = "이미 존재하는 이메일이에요!"
+          // managerFormError.value = "이미 존재하는 이메일이에요!"
         } else {
           alert(error)
         }
@@ -293,6 +390,13 @@ export default {
       checkOfficeNameIsValid,
       managerFormData,
       managerFormError,
+      managerFormIsValid,
+      checkEmailIsValid,
+      passwordFormData,
+      passwordFormError,
+      passwordFormIsFilled,
+      passwordFormNoError,
+      passwordFormIsValid,
       formIsValid,
       term,
       registerOffice,
@@ -303,37 +407,49 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.backdrop {
-  background: rgba(46, 46, 51, 0.6);
-  @apply fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center;
-  z-index: 5;
+.header {
+  @apply grid gap-4 mb-10;
 
-  .modal-container {
-    @apply shadow-xl bg-white rounded-xl w-full md:w-1/2 max-w-lg p-10 grid gap-10;
+  .upper {
+    @apply flex justify-between items-start;
 
-    .input-list {
-      @apply grid gap-4 w-full;
+    .left {
+      @apply flex flex-col items-start gap-1;
 
-      .regist-btn {
-        @apply bg-blue-600 rounded-xl py-3 text-white font-medium;
-
-        &.disabled {
-          @apply bg-gray-400;
-        }
-
-        &.error {
-          @apply bg-red-600;
-        }
-      }
-
-      .selectLabel {
-        @apply text-gray-600;
-      }
-
-      .submit-error {
-        @apply text-red-600 text-sm font-medium mx-auto;
+      h1 {
+        @apply text-3xl font-bold;
       }
     }
+  }
+  .step {
+    @apply py-1 px-4 flex justify-center items-center rounded-full bg-blue-400 text-sm text-white;
+  }
+}
+
+.input-list {
+  @apply grid gap-4 w-full;
+
+  .regist-btn {
+    @apply bg-blue-600 rounded-xl py-3 text-white font-medium;
+
+    &.disabled {
+      @apply bg-gray-400;
+    }
+
+    &.error {
+      @apply bg-red-600;
+    }
+  }
+
+  .select-box {
+    @apply w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600;
+  }
+  .selectLabel {
+    @apply text-gray-600;
+  }
+
+  .submit-error {
+    @apply text-red-600 text-sm font-medium mx-auto;
   }
 }
 </style>

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface OnBoardService {
     @Transactional(rollbackFor = Exception.class)
-    OnBoardEntity registUserOnboard(UserRegistDto user);
+    void registUserOnboard(UserRegistDto user);
     UserRegistDto clickEmail(String email);
     void deleteUserOnboard(String email);
 }
