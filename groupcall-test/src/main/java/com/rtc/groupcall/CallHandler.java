@@ -49,10 +49,9 @@ public class CallHandler extends TextWebSocketHandler {
                 joinRoom(jsonMessage, session);
                 break;
             case "receiveVideoFrom":
-                final String senderName = jsonMessage.get("sender").getAsString();
-                final UserSession sender = registry.getByName(senderName);
+                final Long senderId = jsonMessage.get("sender").getAsLong();
+                final UserSession sender = registry.getById(senderId);
                 final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
-
                 user.receiveVideoFrom(sender, sdpOffer);
                 break;
             case "leaveRoom":
@@ -64,7 +63,7 @@ public class CallHandler extends TextWebSocketHandler {
                 if (user != null) {
                     IceCandidate cand = new IceCandidate(candidate.get("candidate").getAsString(),
                             candidate.get("sdpMid").getAsString(), candidate.get("sdpMLineIndex").getAsInt());
-                    user.addCandidate(cand, jsonMessage.get("name").getAsString());
+                    user.addCandidate(cand, jsonMessage.get("userId").getAsLong());
                 }
                 break;
             default:
@@ -79,13 +78,14 @@ public class CallHandler extends TextWebSocketHandler {
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
-        final String roomName = params.get("room").getAsString();
-        final String name = params.get("name").getAsString();
+        final String roomName = params.get("roomName").getAsString();
+        final String userName = params.get("userName").getAsString();
         final Long roomId = params.get("roomId").getAsLong();
+        final Long userId = params.get("userId").getAsLong();
 //        log.info(" {}님의 {} 접근 요청", name, roomName);
 
         Room room = roomManager.getRoom(roomName, roomId);
-        final UserSession user = room.join(name, session);
+        final UserSession user = room.join(userId, userName, session);
         registry.register(user);
     }
 

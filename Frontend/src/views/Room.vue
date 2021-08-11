@@ -59,6 +59,7 @@ import kurentoUtils from "kurento-utils"
 
 export default {
   name: "Room",
+  userId: "",
   components: {
     Video,
   },
@@ -80,14 +81,16 @@ export default {
     const state = reactive({
       room: room.value,
       name: store.state.auth.user.name,
+      userId: store.state.auth.user.userId,
     })
 
     // 동명이인 처리 어떻게 할건지
     const register = () => {
       const message = {
         id: "joinRoom",
-        name: state.name,
-        room: state.room,
+        userId: state.userId,
+        userName: state.name,
+        roomName: state.room,
         roomId: props.roomId,
       }
 
@@ -132,7 +135,7 @@ export default {
           receiveVideoResponse(parsedMessage)
           break
         case "iceCandidate":
-          participants[parsedMessage.name].rtcPeer.addIceCandidate(
+          participants[parsedMessage.userId].rtcPeer.addIceCandidate(
             parsedMessage.candidate,
             function(error) {
               if (error) {
@@ -148,11 +151,11 @@ export default {
     }
 
     function onNewParticipant(request) {
-      receiveVideo(request.name)
+      receiveVideo(request.userId, request.userName)
     }
 
     function receiveVideoResponse(result) {
-      participants[result.name].rtcPeer.processAnswer(
+      participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function(error) {
           if (error) return console.error(error)
@@ -188,8 +191,9 @@ export default {
       }
 
       console.log(state.name + " registered in room " + state.room)
-      let participant = new Participant(state.name)
-      participants[state.name] = participant
+      console.log(msg)
+      let participant = new Participant(state.userId, state.name + "(나)")
+      participants[state.userId] = participant
       let video = participant.getVideoElement()
 
       const options = {
@@ -207,7 +211,12 @@ export default {
         }
       )
 
-      msg.data.forEach(receiveVideo)
+      // msg.forEach(receiveVideo(msg.userId, msg.userName))
+      var len = msg.userId.length
+      for (let i = 0; i < len; i++) {
+        receiveVideo(msg.userId[i], msg.userName[i])
+      }
+      // msg.userId.forEach(receiveVideo)
     }
 
     // 얘도 떠날때임
@@ -225,9 +234,9 @@ export default {
       router.push({ name: "Office" })
     }
 
-    function receiveVideo(sender) {
-      let participant = new Participant(sender)
-      participants[sender] = participant
+    function receiveVideo(userId, userName) {
+      let participant = new Participant(userId, userName)
+      participants[userId] = participant
       let video = participant.getVideoElement()
 
       let options = {
@@ -247,10 +256,10 @@ export default {
     }
     //  떠날때임
     function onParticipantLeft(request) {
-      console.log("Participant " + request.name + " left")
-      let participant = participants[request.name]
+      console.log("Participant " + request.userId + " left")
+      let participant = participants[request.userId]
       participant.dispose()
-      delete participants[request.name]
+      delete participants[request.userId]
     }
 
     // ===========================================================================
@@ -269,15 +278,15 @@ export default {
      * @return
      */
 
-    function Participant(name) {
-      this.name = name
+    function Participant(userId, userName) {
+      this.userId = userId
       let container = document.createElement("div")
       // PARTICIPANT_MAIN_CLASS가 없을 때
       container.className = isPresentMainParticipant()
         ? PARTICIPANT_CLASS
         : PARTICIPANT_MAIN_CLASS
       container.classList.add("pointer-events-none")
-      container.id = name
+      container.id = userId
       let span = document.createElement("span")
       span.classList.add("w-full", "h-full", "bg-gray-200", "inline-block")
 
@@ -289,10 +298,11 @@ export default {
       container.onclick = switchContainerClass
       document.getElementById("participants").appendChild(container)
 
-      span.appendChild(document.createTextNode(name))
+      if (userName != null) span.appendChild(document.createTextNode(userName))
 
       // 이 부분이 video-id가 됨
-      video.id = "video-" + name
+      // 이거를 해석해야 할 것 같음.---------------------------------------------------------------------------------
+      video.id = "video-" + userId
       video.autoplay = true
       video.controls = false
 
@@ -328,7 +338,11 @@ export default {
       this.offerToReceiveVideo = function(error, offerSdp, wp) {
         if (error) return console.error("sdp offer error")
         console.log("Invoking SDP offer callback function")
-        var msg = { id: "receiveVideoFrom", sender: name, sdpOffer: offerSdp }
+        var msg = {
+          id: "receiveVideoFrom",
+          sender: userId,
+          sdpOffer: offerSdp,
+        }
         sendMessage(msg)
       }
 
@@ -338,7 +352,7 @@ export default {
         var message = {
           id: "onIceCandidate",
           candidate: candidate,
-          name: name,
+          userId: userId,
         }
         sendMessage(message)
       }
@@ -346,7 +360,7 @@ export default {
       Object.defineProperty(this, "rtcPeer", { writable: true })
 
       this.dispose = function() {
-        console.log("Disposing participant " + this.name)
+        console.log("Disposing participant " + this.userId)
         this.rtcPeer.dispose()
         container.parentNode.removeChild(container)
       }
@@ -392,19 +406,19 @@ export default {
 
     const changeMic = () => {
       switchMic.value = !switchMic.value
-      participants[
-        store.state.auth.user.name
-      ].rtcPeer.audioEnabled = !participants[store.state.auth.user.name].rtcPeer
-        .audioEnabled
+      // console.log(switchMic.value)
+      participants[state.userId].rtcPeer.audioEnabled = !participants[
+        state.userId
+      ].rtcPeer.audioEnabled
     }
     const changeCam = () => {
       switchCam.value = !switchCam.value
-      participants[
-        store.state.auth.user.name
-      ].rtcPeer.videoEnabled = !participants[store.state.auth.user.name].rtcPeer
-        .videoEnabled
+      // console.log(switchCam.value)
+      participants[state.userId].rtcPeer.videoEnabled = !participants[
+        state.userId
+      ].rtcPeer.videoEnabled
     }
-    // console.log(store.state.auth.user.name)
+    console.log(state.userId)
 
     // console.log(participants[store.state.auth.user.name].rtcPeer)
 
@@ -437,8 +451,8 @@ export default {
         @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
       }
 
-      .bar-part {
-        @apply flex fixed left-1/3 bottom-5;
+    .bar-part {
+      @apply flex fixed left-1/3 bottom-5;
 
         .mic-button {
           @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;
