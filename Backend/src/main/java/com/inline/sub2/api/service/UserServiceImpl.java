@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserEntity registUser(UserRegistDto user) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
@@ -87,11 +88,14 @@ public class UserServiceImpl implements UserService {
         //직책 번호 조회
         JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l);
 
+        RoomEntity roomEntity = roomService.getLobby(user.getOfficeId());
+
         //유저정보 기입
         userEntity.setEmail(user.getEmail());
         userEntity.setOfficeId(user.getOfficeId());
         userEntity.setDeptId(deptEntity.getDeptId());
         userEntity.setJobId(jobEntity.getJobId());
+        userEntity.setRoomId(roomEntity.getRoomId());
         userEntity.setName(user.getName());
         userEntity.setPhone(user.getPhone());
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -124,6 +128,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
         UserEntity userEntity = getUserId(userUpdateDto.getUserId());
 
