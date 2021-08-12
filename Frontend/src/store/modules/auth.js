@@ -39,11 +39,14 @@ export const auth = {
   },
   actions: {
     signUp: async (context, formData) => {
+      console.log("signUp 요청 !")
       try {
-        const res = await axios.post("/api/v1/users", formData)
-        console.log(res)
+        return await authAPI.post("", formData)
       } catch (error) {
-        console.log(error)
+        const { status } = error.response
+        console.log(error.response)
+        console.log(status)
+        throw Error("에러 발생!")
       }
     },
     async login({ commit }, formData) {

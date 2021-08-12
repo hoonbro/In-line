@@ -100,13 +100,15 @@ export default {
 
     const changePassword = async () => {
       if (!formIsValid.value) return
-
       try {
         await store.dispatch("auth/changePassword", {
           currentPassword: formData.oldPassword.value,
           newPassword: formData.password.value,
         })
-        router.push({ name: "Office" })
+        store.commit("landing/addAlertModalList", {
+          message: "비밀번호 변경 완료!",
+        })
+        router.push({ name: "Members" })
       } catch (error) {
         store.commit("landing/addAlertModalList", {
           type: "error",

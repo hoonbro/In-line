@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { ref } from "@vue/reactivity"
+import { ref, computed, watch } from "vue"
 export default {
   name: "TextInput",
   props: {
@@ -65,8 +65,14 @@ export default {
   emits: ["update:modelValue", "update:validate", "submit"],
   setup(props, { emit }) {
     const root = ref(null)
-    const labelActive = ref(Boolean(props.modelValue))
     const input = ref(null)
+
+    const modelValue = computed(() => props.modelValue)
+    const labelActive = ref(Boolean(props.modelValue))
+
+    watch(modelValue, value => {
+      labelActive.value = Boolean(value)
+    })
 
     const validate = () => {
       props.field.validators.forEach(validator => {
