@@ -42,7 +42,7 @@ export default {
     const store = useStore()
     const roomManageModalOpen = ref(false)
     const user = JSON.parse(localStorage.getItem("user"))
-    const roomStompClient = computed(() => store.state.socket.roomStompClient)
+
     const rooms = computed(() => {
       return store.state.office.rooms
     })
