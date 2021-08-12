@@ -19,4 +19,7 @@ public class ChatDto {
     private String content;
     private Date sendDate;
     private String sendTime;
+
+    //////////////////////// 추가
+    private Long roomId;
 }
