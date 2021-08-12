@@ -1,8 +1,10 @@
 package com.inline.sub2.api.controller;
 
+import com.inline.sub2.api.dto.DeptUserDto;
 import com.inline.sub2.api.service.AdminService;
 import com.inline.sub2.db.entity.CommuteEntity;
 import com.inline.sub2.db.entity.UserEntity;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import javax.xml.ws.Response;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -30,15 +32,37 @@ public class AdminController {
         try{
             map = adminService.getCommutes(officeId);
             log.info("전체 구성원 출퇴근 기록 반환 성공");
-            if(map == null){
-                log.error("해당 회사가 없습니다.");
-                status = HttpStatus.BAD_REQUEST;
-            }
         }catch (Exception e){
             log.error("전체구성원 출퇴근 기록 반환 실패");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<Map<String, List<CommuteEntity>>>(map, status);
+    }
+
+    @GetMapping("/dashboard/{officeId}")
+    @ApiOperation(value = "office별 인원 관리 정보(구성원 수, 부서별 사원 수)를 반환한다.", response =  Map.class)
+    public ResponseEntity<Map<String, Collection>> getCounts(@PathVariable("officeId") Long officeId){
+        Set<Integer> officeSet = new HashSet<>();
+        Map<String, Collection> map = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        try {
+            //전체 구성원 수
+            int officeUsers = adminService.getOfficeUserCount(officeId);
+            officeSet.add(officeUsers);
+
+            //부서별 구성원 수
+            List<DeptUserDto> dept = adminService.getDeptUserCount(officeId);
+
+            map.put("officeUserCount", officeSet);
+            map.put("deptUserCount", dept);
+            log.info("인원 관리 정보 반환 성공");
+        }catch (Exception e){
+            log.error("인원 관리 정보 반환 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<Map<String, Collection>>(map, status);
     }
 
     @PutMapping("/user/{userId}")
@@ -70,4 +94,26 @@ public class AdminController {
         }
         return new ResponseEntity<Double>(retireRate, status);
     }
+
+    @GetMapping("/jobyear/{officeId}")
+    public ResponseEntity<Long> getJobYear(@PathVariable Long officeId) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        Long jobYear = 0l;
+
+        try{
+            jobYear = adminService.getJobYear(officeId);
+            System.out.println("jobYear머나오냐? " + jobYear);
+        }
+        catch(Exception e){
+
+
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            return new ResponseEntity<Long>(jobYear,httpStatus);
+
+        }
+
+        return new ResponseEntity<Long>(jobYear,httpStatus);
+    }
+
+
 }

@@ -73,7 +73,7 @@ public class OnBoardController {
     }
 
     @GetMapping("/{officeId}")
-    @ApiOperation(value = "관리자가 onBoard 테이블에서 구성원을 삭제한다.", response = List.class)
+    @ApiOperation(value = "onboard테이블의 있는 구성원들을 반환해준다..", response = List.class)
     public ResponseEntity<List<OnBoardEntity>> getOnboardUsers(@PathVariable("officeId") Long officeId){
         HttpStatus httpStatus = HttpStatus.OK;
         List<OnBoardEntity> list = null;

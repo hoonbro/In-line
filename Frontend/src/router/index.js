@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
+import { moveRoom } from "@/lib/websocket"
+
 import LandingLayout from "@/layouts/LandingLayout.vue"
 import OfficeLayout from "@/layouts/OfficeLayout.vue"
 import RoomLayout from "@/layouts/RoomLayout.vue"
@@ -12,18 +14,12 @@ import Admin from "@/views/Admin.vue"
 import Room from "@/views/Room.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
-import RegisterMember from "@/views/RegisterMember.vue"
 import Signup from "@/views/Signup.vue"
 
 const routes = [
   {
     path: "/",
     component: LandingLayout,
-    // localStorage에 jwt가 있으면 Office로 라우팅
-    beforeEnter: (to, from, next) => {
-      if (localStorage.getItem("accessToken")) next({ name: "Office" })
-      else next()
-    },
     children: [
       {
         path: "",
@@ -112,11 +108,6 @@ const routes = [
         component: ChangePassword,
         meta: { loginRequired: true },
       },
-      {
-        path: "register-member",
-        name: "RegisterMember",
-        component: RegisterMember,
-      },
     ],
   },
   {
@@ -145,14 +136,20 @@ const router = createRouter({
 // from: 현재 url에 해당하는 라우팅 객체
 // next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
 router.beforeEach((to, from, next) => {
-  // login이 필수인데, localStorage에 jwt가 없으면
-  //  -> Home으로 보낸다 (로그인을 하라는 param과 함께)
-  // const isLoginRequired = to.matched.some(
-  //   routeInfo => routeInfo.meta.loginRequired
-  // )
+  // 로그인하지 않은 유저 접근 금지인 페이지 -> 로그인으로 이동
   if (to.meta.loginRequired && !localStorage.getItem("accessToken")) {
     next({ name: "Home", params: { shouldLogin: true } })
+    // 로그인한 유저 접근 금지인 페이지 -> 로비(?)로 이동
+  } else if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
+    next({ name: "Office" })
   } else next()
+})
+
+router.afterEach((to, from) => {
+  if (to.fullPath.includes("office") || to.fullPath.includes("rooms")) {
+    console.log(to.fullPath)
+    moveRoom()
+  }
 })
 
 export default router

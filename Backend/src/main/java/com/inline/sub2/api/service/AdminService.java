@@ -1,5 +1,6 @@
 package com.inline.sub2.api.service;
 
+import com.inline.sub2.api.dto.DeptUserDto;
 import com.inline.sub2.db.entity.CommuteEntity;
 import com.inline.sub2.db.entity.UserEntity;
 
@@ -12,4 +13,10 @@ public interface AdminService {
     UserEntity retireUser(Long userId);
 
     Double getRetireRate(Long officeId);
+
+    int getOfficeUserCount(Long officeId);
+
+    List<DeptUserDto> getDeptUserCount(Long officeId);
+
+    Long getJobYear(Long officeId);
 }

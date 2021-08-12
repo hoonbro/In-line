@@ -1,5 +1,6 @@
 package com.inline.sub2.api.service;
 
+import com.inline.sub2.api.dto.DeptUserDto;
 import com.inline.sub2.db.entity.CommuteEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.db.repository.CommuteRepository;
@@ -61,5 +62,21 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Double getRetireRate(Long officeId) {
         return userRepository.findRetireRate(officeId);
+    }
+
+    @Override
+    public int getOfficeUserCount(Long officeId) {
+        return userRepository.countByOfficeId(officeId);
+    }
+
+    @Override
+    public List<DeptUserDto> getDeptUserCount(Long officeId) {
+        return userRepository.countGroupByDept(officeId);
+    }
+
+    @Override
+    public Long getJobYear(Long officeId) {
+        Long jobYear =  userRepository.getJobYear(officeId);
+        return jobYear;
     }
 }
