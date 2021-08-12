@@ -7,24 +7,28 @@
         안녕하세요! 🙌
       </p>
       <div class="workinfo">
-        <p class="label">오늘 근무 일정</p>
+        <p class="label">근무 시간</p>
         <p class="time">09:00 - 18:00</p>
-        <button
-          class="work-btn"
-          :class="{
-            beforeStart: workType === 'beforeStart',
-            doing: workType === 'doing',
-            done: workType === 'done',
-          }"
-          @click="changeWorkType"
-        >
-          <span class="material-icons-outlined icon">
-            alarm
-          </span>
-          <span v-if="workType === 'beforeStart'">업무 시작</span>
-          <span v-else-if="workType === 'doing'">업무 중</span>
-          <span v-else>업무 종료</span>
-        </button>
+        <div class="flex gap-2">
+          <button
+            class="work-btn"
+            :class="{ comein: commute.comeIn }"
+            @click="comeInOffice"
+          >
+            <span class="material-icons-outlined icon">
+              alarm
+            </span>
+            <span>출근</span>
+            <span>{{ commute.comeIn || "-" }}</span>
+          </button>
+          <button class="work-btn comeout" @click="comeOutOffice">
+            <span class="material-icons-outlined icon">
+              directions_run
+            </span>
+            <span>퇴근</span>
+            <span>{{ commute.comeOut || "-" }}</span>
+          </button>
+        </div>
       </div>
     </div>
     <hr />
@@ -73,42 +77,35 @@ export default {
       }
     })
 
-    const changeWorkType = async () => {
+    const comeInOffice = async () => {
       const now = new Date(Date.now())
       const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
 
-      switch (workType.value) {
-        case "beforeStart": {
-          confirmModalContent.value = [
-            `현재 시간: ${currentTime}`,
-            "출근하시겠습니까?",
-          ]
-          confirmModal.value.isVisible = true
-          const ok = await confirmModal.value.show()
-          if (ok) {
-            store.dispatch("auth/commuteIn")
-          }
-          break
-        }
-        case "doing": {
-          confirmModalContent.value = [
-            `현재 시간: ${currentTime}`,
-            "퇴근하시겠습니까?",
-          ]
-          confirmModal.value.isVisible = true
-          const ok = await confirmModal.value.show()
-          if (ok) {
-            store.dispatch("auth/commuteOut")
-          }
-          break
-        }
-        case "done": {
-          store.commit("landing/addAlertModalList", {
-            message: "오늘 업무는 종료되었습니다.",
-          })
-        }
+      confirmModalContent.value = [
+        `현재 시간: ${currentTime}`,
+        "출근하시겠습니까?",
+      ]
+      confirmModal.value.isVisible = true
+      const ok = await confirmModal.value.show()
+      if (ok) {
+        store.dispatch("auth/comeInOffice")
       }
-      // 초기화
+      confirmModalContent.value = []
+    }
+
+    const comeOutOffice = async () => {
+      const now = new Date(Date.now())
+      const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
+
+      confirmModalContent.value = [
+        `현재 시간: ${currentTime}`,
+        "퇴근하시겠습니까?",
+      ]
+      confirmModal.value.isVisible = true
+      const ok = await confirmModal.value.show()
+      if (ok) {
+        store.dispatch("auth/setCommute")
+      }
       confirmModalContent.value = []
     }
 
@@ -120,8 +117,10 @@ export default {
     return {
       userName,
       members,
+      commute,
       workType,
-      changeWorkType,
+      comeInOffice,
+      comeOutOffice,
       confirmModalContent,
       confirmModal,
       handleMemberClick,
@@ -139,40 +138,31 @@ aside {
     @apply grid gap-6;
 
     .hello-message {
-      @apply text-lg font-bold;
+      @apply text-xl font-bold;
     }
 
     .workinfo {
-      p {
-        @apply text-lg;
-      }
-
       .label {
-        @apply font-bold mb-1;
+        @apply text-lg font-bold mb-1;
       }
 
       .time {
-        @apply font-medium mb-4;
+        @apply mb-4;
       }
 
       .work-btn {
-        @apply flex items-center justify-center text-sm font-bold w-full py-2 border rounded outline-none;
+        @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none;
 
         .icon {
           font-size: 20px;
-          @apply mr-2;
         }
 
-        &.beforeStart {
+        &.comein {
           @apply border-blue-600 text-blue-600 bg-blue-100;
         }
 
-        &.doing {
-          @apply border-green-600 text-green-600 bg-green-100;
-        }
-
-        &.end {
-          @apply border-gray-600 text-gray-600 bg-gray-100;
+        &.comeout {
+          @apply border-red-600 text-red-600 bg-red-100;
         }
       }
     }

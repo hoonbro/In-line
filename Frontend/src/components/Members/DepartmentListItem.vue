@@ -1,7 +1,9 @@
 <template>
-  <li class="department-list-item">
+  <li class="department-list-item" :class="{ selected }">
     <p class="name">{{ name }}</p>
-    <p class="count">{{ count }}</p>
+    <div class="count">
+      <span>{{ count }}</span>
+    </div>
   </li>
 </template>
 
@@ -9,6 +11,7 @@
 export default {
   name: "DepartmentListItem",
   props: {
+    selected: Boolean,
     name: String,
     count: Number,
   },
@@ -17,13 +20,21 @@ export default {
 
 <style scoped lang="scss">
 .department-list-item {
-  @apply border-b flex justify-between py-4 pl-9 pr-4 cursor-pointer select-none;
+  @apply border-b flex justify-between py-4 px-6 cursor-pointer select-none;
+
+  &:hover {
+    @apply bg-gray-50;
+  }
+
+  &.selected {
+    @apply bg-blue-50;
+  }
 
   .name {
-    @apply font-bold;
+    @apply font-medium;
   }
   .count {
-    @apply bg-gray-100 text-sm w-6 h-6 align-middle text-center;
+    @apply bg-blue-100 rounded text-xs font-medium px-2 h-6 flex justify-center items-center;
   }
 }
 </style>
