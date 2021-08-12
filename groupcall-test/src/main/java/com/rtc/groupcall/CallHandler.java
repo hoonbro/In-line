@@ -2,6 +2,7 @@ package com.rtc.groupcall;
 
 import java.io.IOException;
 
+import com.rtc.groupcall.db.entity.RoomEntity;
 import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,10 @@ public class CallHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomName(), user.getRoomId()).leave(user);
+        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId(), user.getOfficeId());
+        RoomEntity lobby = roomManager.getLobby(room.getOfficeId());
+        roomManager.moveUser(user.getUserId(), lobby.getRoomId());
+        room.leave(user);
     }
 
     private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
@@ -82,16 +86,20 @@ public class CallHandler extends TextWebSocketHandler {
         final String userName = params.get("userName").getAsString();
         final Long roomId = params.get("roomId").getAsLong();
         final Long userId = params.get("userId").getAsLong();
+        final Long officeId = params.get("officeId").getAsLong();
 //        log.info(" {}님의 {} 접근 요청", name, roomName);
 
-        Room room = roomManager.getRoom(roomName, roomId);
-        final UserSession user = room.join(userId, userName, session);
+        Room room = roomManager.getRoom(roomName, roomId, officeId);
+        roomManager.moveUser(userId, roomId);
+        final UserSession user = room.join(officeId, userId, userName, session);
         registry.register(user);
     }
 
     private void leaveRoom(UserSession user) throws IOException {
-        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId());
+        final Room room = roomManager.getRoom(user.getRoomName(), user.getRoomId(), user.getOfficeId());
         room.leave(user);
+        RoomEntity lobby = roomManager.getLobby(room.getOfficeId());
+        roomManager.moveUser(user.getUserId(), lobby.getRoomId());
 //        if (room.getParticipants().isEmpty()) {
 //            log.info("{}이 비었습니다.", room.getRoomName());
 ////            roomManager.removeRoom(room);

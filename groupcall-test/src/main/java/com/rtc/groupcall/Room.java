@@ -36,28 +36,30 @@ public class Room implements Closeable {
     private MediaPipeline pipeline;
     private String roomName;
     private final Long roomId;
+    private final Long officeId;
 
-    public Room(String roomName, MediaPipeline pipeline, Long roomId) {
+    public Room(String roomName, MediaPipeline pipeline, Long roomId, Long officeId) {
         this.roomName = roomName;
         this.pipeline = pipeline;
         this.roomId = roomId;
+        this.officeId = officeId;
 //        log.info("ROOM {} 생성 성공", roomName);
     }
 
-    public Room(String roomName, Long roomId) {
-        this.roomName = roomName;
-        this.roomId = roomId;
-//        log.info("ROOM {} 생성 성공", roomName);
-    }
+//    public Room(String roomName, Long roomId) {
+//        this.roomName = roomName;
+//        this.roomId = roomId;
+////        log.info("ROOM {} 생성 성공", roomName);
+//    }
 
     @PreDestroy
     private void shutdown() {
         this.close();
     }
 
-    public UserSession join(Long userId, String userName, WebSocketSession session) throws IOException {
+    public UserSession join(Long officeId, Long userId, String userName, WebSocketSession session) throws IOException {
         log.info("ROOM {}: adding participant {}", this.roomName, userName);
-        final UserSession participant = new UserSession(userId, userName, this.roomName, this.roomId, session, this.pipeline);
+        final UserSession participant = new UserSession(officeId, userId, userName, this.roomName, this.roomId, session, this.pipeline);
         joinRoom(participant);
         participants.put(participant.getUserId(), participant);
         sendParticipantNames(participant);
