@@ -19,9 +19,18 @@
 <script>
 import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
+import { useRoute } from "vue-router"
+
 export default {
   name: "RoomChat",
   setup() {
+    // ===========================================
+    const route = useRoute()
+    const path = route.fullPath
+    console.log(route.fullPath) // '/rooms/177'
+    console.log(path.slice(7)) // '177'
+    // ===========================================
+
     const store = useStore()
     const officeId = computed(() => store.state.auth.user.officeId)
     const userId = computed(() => store.state.auth.user.userId)

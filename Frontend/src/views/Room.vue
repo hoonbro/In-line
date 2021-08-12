@@ -52,7 +52,13 @@
 
 <script>
 import Video from "@/components/Room/Video.vue"
-import { onMounted, onUnmounted, reactive, ref } from "@vue/runtime-core"
+import {
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  computed,
+} from "@vue/runtime-core"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import kurentoUtils from "kurento-utils"
@@ -87,30 +93,30 @@ export default {
     })
 
     //////////////////////////////////room chat 추가한 부분//////////////////////////////////
-    const connectRoomChat = () => {
-      const serverURL = "/chatStomp"
-      const socket = new SockJS(serverURL)
-      roomStompClient.value = Stomp.over(socket)
-      roomStompClient.connect(
-        {},
-        frame => {
-          roomStompClient.connected = true
-          store.commit("socket/roomStompClient", roomStompClient.value)
-          roomStompClient.value.subscribe(
-            `/sub/${state.officeId}/${props.roomId}`
-          )
-        },
-        error => {
-          store.commit("landing/addAlertModalList", {
-            type: "error",
-            message: "소켓 연결이 끊겼어요.",
-          })
-          stompClient.connected = false
-          store.commit("socket/setStompClient", stompClient)
-          rej("외않되")
-        }
-      )
-    }
+    // const connectRoomChat = () => {
+    //   const serverURL = "/chatStomp"
+    //   const socket = new SockJS(serverURL)
+    //   roomStompClient.value = Stomp.over(socket)
+    //   roomStompClient.connect(
+    //     {},
+    //     frame => {
+    //       roomStompClient.connected = true
+    //       store.commit("socket/roomStompClient", roomStompClient.value)
+    //       roomStompClient.value.subscribe(
+    //         `/sub/${state.officeId}/${props.roomId}`
+    //       )
+    //     },
+    //     error => {
+    //       store.commit("landing/addAlertModalList", {
+    //         type: "error",
+    //         message: "소켓 연결이 끊겼어요.",
+    //       })
+    //       stompClient.connected = false
+    //       store.commit("socket/setStompClient", stompClient)
+    //       rej("외않되")
+    //     }
+    //   )
+    // }
     ////////////////////////////////////////////////////////////////////////////////////////
 
     // 동명이인 처리 어떻게 할건지
@@ -127,7 +133,7 @@ export default {
       sendMessage(message)
     }
 
-    onMounted(() => connectRoomChat())
+    // onMounted(() => connectRoomChat())
     onUnmounted(() => leaveRoom())
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
