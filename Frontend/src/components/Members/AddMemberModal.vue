@@ -168,7 +168,10 @@ export default {
       try {
         await store.dispatch("onboard/registerMember", submitData)
         emit("close")
-        alert(`${submitData.name}(${submitData.email})님께 메일을 보냈습니다!`)
+        store.commit("landing/addAlertModalList", {
+          type: "success",
+          message: `${submitData.name}(${submitData.email})님께 메일을 보냈습니다!`,
+        })
       } catch (error) {
         formError.value = error.message
         store.commit("landing/addAlertModalList", {
