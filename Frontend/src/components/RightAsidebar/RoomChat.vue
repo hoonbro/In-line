@@ -55,7 +55,7 @@ export default {
           content: content.value,
         }
         roomStompClient.value.send(
-          `/pub/${officeId.value}/${roomId}`,
+          `/pub/${officeId.value}/` + 2,
           JSON.stringify(msg),
           {}
         )
