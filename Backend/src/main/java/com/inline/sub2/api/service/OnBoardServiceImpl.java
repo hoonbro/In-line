@@ -41,7 +41,7 @@ public class OnBoardServiceImpl implements OnBoardService{
 
     @Override
     @Transactional
-    public void registUserOnboard(UserRegistDto user) {
+    public OnBoardEntity registUserOnboard(UserRegistDto user) {
         OfficeEntity officeEntity = officeService.getOfficeName(user.getOfficeId());
         DeptEntity deptEntity = deptService.getDeptId(user.getDeptName(), 1l); //부서 번호 조회
         JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l); //직책 번호 조회
@@ -57,11 +57,12 @@ public class OnBoardServiceImpl implements OnBoardService{
         onBoardEntity.setName(user.getName());
         onBoardEntity.setOfficeId(user.getOfficeId());
         onBoardEntity.setDeptId(user.getDeptId());
-        onBoardRepository.save(onBoardEntity);
+        onBoardEntity = onBoardRepository.save(onBoardEntity);
 
         //구성원에게 이메일 발송
         emailService.sendEmail(user);
         log.info("구성원에게 이메일 발송 성공");
+        return onBoardEntity;
     }
 
     @Override
