@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateUser(UserUpdateDto userUpdateDto) {
+    public UserEntity updateUser(UserUpdateDto userUpdateDto) {
         UserEntity userEntity = getUserId(userUpdateDto.getUserId());
 
         DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),1l);
@@ -137,9 +137,9 @@ public class UserServiceImpl implements UserService {
         userEntity.setName(userUpdateDto.getName());
         userEntity.setNickName(userUpdateDto.getNickName());
         userEntity.setPhone(userUpdateDto.getPhone());
-        log.info(userEntity.toString());
-        userRepository.save(userEntity);
-//        return userRepository.findByUserIdAndRetireDateIsNull(userUpdateDto.getUserId());
+        userEntity.setJobEntity(jobEntity);
+        userEntity.setDeptEntity(deptEntity);
+        return userRepository.save(userEntity);
     }
 
     @Override

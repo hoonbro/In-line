@@ -54,29 +54,21 @@
       <div v-else-if="step === 2">
         <div class="input-list">
           <div v-for="(field, key) in managerFormData" :key="key">
-            <select
-              v-if="key === 'deptName'"
+            <SelectInput
+              v-if="key === 'dept'"
               v-model="field.value"
-              class="select-box"
-              :class="{ selectLabel: !field.value }"
-            >
-              <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts" :key="dept.deptId">
-                {{ dept.deptName }}
-              </option>
-            </select>
+              :name="key"
+              :field="field"
+              :items="depts"
+            />
 
-            <select
-              v-else-if="key === 'jobName'"
+            <SelectInput
+              v-else-if="key === 'job'"
               v-model="field.value"
-              class="select-box"
-              :class="{ selectLabel: !field.value }"
-            >
-              <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs" :key="job.jobId">
-                {{ job.jobName }}
-              </option>
-            </select>
+              :name="key"
+              :field="field"
+              :items="jobs"
+            />
 
             <TextInput
               v-else
@@ -121,15 +113,15 @@
               @submit="registerOffice"
             />
           </div>
-          <div>
+          <div class="select-none">
             <input
-              class="mr-1"
+              class="mr-1 cursor-pointer"
               type="checkbox"
               name="term"
               id="term"
               v-model="term"
             />
-            <label class="text-sm font-medium" for="term">
+            <label class="text-sm font-medium cursor-pointer" for="term">
               이용약관 및 개인정보처리방침 동의
             </label>
           </div>
@@ -213,7 +205,6 @@ export default {
             type: "error",
             message: error,
           })
-          // alert(error)
         }
       }
     }
@@ -237,13 +228,13 @@ export default {
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
-      deptName: {
+      dept: {
         label: "담당자 소속",
         value: "",
         validators: [requiredValidator],
         errors: {},
       },
-      jobName: {
+      job: {
         label: "담당자 직무",
         type: "text",
         value: "",
@@ -306,7 +297,6 @@ export default {
             type: "error",
             message: error,
           })
-          // alert(error)
         }
       }
     }
@@ -385,7 +375,9 @@ export default {
       try {
         console.log(submitData)
         await store.dispatch("office/registerOffice", submitData)
-        alert("회사 등록을 완료했어요!")
+        store.commit("landing/addAlertModalList", {
+          message: "회사 등록을 완료했어요!",
+        })
         emit("close")
       } catch (error) {
         store.commit("landing/addAlertModalList", {

@@ -13,7 +13,7 @@
               {{ confirmButton }}
             </button>
             <button class="modal-btn cancel" @click="cancel">
-              취소
+              {{ cancelButton }}
             </button>
           </slot>
         </div>
@@ -35,6 +35,10 @@ export default {
     confirmButton: {
       type: String,
       default: "확인",
+    },
+    cancelButton: {
+      type: String,
+      default: "취소",
     },
   },
   setup() {
@@ -79,10 +83,10 @@ export default {
   @apply fixed inset-0 flex justify-center;
 
   .modal-container {
-    @apply max-w-xs w-full bg-white shadow-md rounded p-6 grid gap-4 mt-20 mb-auto;
+    @apply max-w-xs w-full bg-white shadow-lg rounded p-6 grid gap-4 mt-20 mb-auto;
 
     .modal-content-container {
-      @apply w-full grid gap-1;
+      @apply w-full grid gap-1 font-bold;
     }
 
     .modal-btns-container {
@@ -92,7 +96,7 @@ export default {
         @apply flex-1 py-2 px-4 text-sm rounded;
 
         &.confirm {
-          @apply text-white font-bold bg-blue-400;
+          @apply text-white font-bold bg-blue-500;
         }
 
         &.cancel {
