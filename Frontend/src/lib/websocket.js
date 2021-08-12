@@ -24,9 +24,11 @@ export const connectStomp = (userId, officeId) => {
           res => {
             console.group("subscription")
             const data = JSON.parse(res.body)
+            console.log(data)
             if (data.type === "CHAT") {
               store.commit("socket/addOfficeChat", data.chatDto)
             } else if (data.type === "userUpdate") {
+              console.log(data.members)
               store.commit("office/updateConnectionOfMembers", data.members)
             }
             console.groupEnd()
