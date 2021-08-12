@@ -80,7 +80,7 @@ public class SocketController {
             Office office = officeManager.getOffice(chatDto.getOfficeId());
             ConcurrentMap<Long,ParticipantDto> participants = office.moveParticipant(chatDto);
             map.put("type","userUpdate");
-            map.put("moveMember" , participants);
+            map.put("members" , participants);
         }
         return map;
     }
