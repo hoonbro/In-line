@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface OnBoardService {
     @Transactional(rollbackFor = Exception.class)
-    OnBoardEntity registUserOnboard(UserRegistDto user);
+    void registUserOnboard(UserRegistDto user);
+    OnBoardEntity getOnboardUser(String email);
     UserRegistDto clickEmail(String email);
     void deleteUserOnboard(String email);
     List<OnBoardEntity> getOnboardUsers(Long officeId);

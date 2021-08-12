@@ -29,7 +29,7 @@ public class OnBoardController {
     @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가하고 이메일을 보낸다.", response = OnBoardEntity.class)
     public ResponseEntity<OnBoardEntity> registUserOnboard(@RequestBody UserRegistDto user) {
         HttpStatus httpStatus = HttpStatus.CREATED;
-        OnBoardEntity onBoardEntity = null;
+        OnBoardEntity onBoardEntity = new OnBoardEntity();
         boolean isDuplicate = userService.duplicateEmail(user.getEmail());
         if (isDuplicate) {
             httpStatus = HttpStatus.CONFLICT;
@@ -37,7 +37,8 @@ public class OnBoardController {
         }
         else{
             try {
-                onBoardEntity = onBoardService.registUserOnboard(user);
+                onBoardService.registUserOnboard(user);
+                onBoardEntity = onBoardService.getOnboardUser(user.getEmail());
             }catch (Exception e){
                 log.error("가입 처리중인 이메일");
                 httpStatus = HttpStatus.BAD_REQUEST;
