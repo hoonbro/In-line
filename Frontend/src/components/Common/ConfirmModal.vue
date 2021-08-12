@@ -1,24 +1,26 @@
 <template>
   <teleport to="body">
-    <div class="backdrop" v-if="isVisible">
-      <div class="modal-container">
-        <div class="modal-content-container">
-          <p v-for="text in content" :key="text">
-            {{ text }}
-          </p>
-        </div>
-        <div class="modal-btns-container">
-          <slot name="modal-buttons">
-            <button class="modal-btn confirm" @click="confirm">
-              {{ confirmButton }}
-            </button>
-            <button class="modal-btn cancel" @click="cancel">
-              {{ cancelButton }}
-            </button>
-          </slot>
+    <transition name="fade">
+      <div class="backdrop" v-if="isVisible">
+        <div class="modal-container">
+          <div class="modal-content-container">
+            <p v-for="text in content" :key="text">
+              {{ text }}
+            </p>
+          </div>
+          <div class="modal-btns-container">
+            <slot name="modal-buttons">
+              <button class="modal-btn confirm" @click="confirm">
+                {{ confirmButton }}
+              </button>
+              <button class="modal-btn cancel" @click="cancel">
+                {{ cancelButton }}
+              </button>
+            </slot>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </teleport>
 </template>
 
@@ -78,15 +80,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/* Transition */
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-all;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateY(-32px);
+  @apply opacity-0;
+}
+
 .backdrop {
   z-index: 999;
   @apply fixed inset-0 flex justify-center;
 
   .modal-container {
-    @apply max-w-xs w-full bg-white shadow-lg rounded p-6 grid gap-4 mt-20 mb-auto;
+    @apply max-w-sm w-full bg-white shadow-lg rounded p-6 grid gap-4 mt-20 mb-auto;
 
     .modal-content-container {
-      @apply w-full grid gap-1 font-bold;
+      @apply w-full grid gap-1 font-medium;
     }
 
     .modal-btns-container {
@@ -96,7 +110,7 @@ export default {
         @apply flex-1 py-2 px-4 text-sm rounded;
 
         &.confirm {
-          @apply text-white font-bold bg-blue-500;
+          @apply text-white bg-blue-500;
         }
 
         &.cancel {

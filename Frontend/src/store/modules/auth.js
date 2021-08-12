@@ -108,7 +108,8 @@ export const auth = {
         }
       }
     },
-    async commuteIn({ commit, state }) {
+    // 출퇴근
+    async comeInOffice({ commit, state }) {
       try {
         const res = await commuteAPI({
           method: "PUT",
@@ -127,7 +128,7 @@ export const auth = {
         throw Error(error)
       }
     },
-    async commuteOut({ commit, state }) {
+    async comeOutOffice({ commit, state }) {
       try {
         const res = await commuteAPI({
           method: "PUT",
