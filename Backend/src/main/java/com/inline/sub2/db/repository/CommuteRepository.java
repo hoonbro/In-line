@@ -21,6 +21,6 @@ public interface CommuteRepository extends JpaRepository<CommuteEntity,String> {
     @Query("SELECT c FROM CommuteEntity c WHERE c.officeId = ?1 ORDER BY c.ymd")
     public List<CommuteEntity> findAllByOfficeId(Long officeId);
 
-    @Query("SELECT DISTINCT FUNCTION('DATE_FORMAT', c.ymd, '%Y-%m') FROM CommuteEntity c WHERE c.officeId = ?1 ORDER BY c.ymd")
+    @Query("SELECT DISTINCT FUNCTION('DATE_FORMAT', c.ymd, '%Y-%m') FROM CommuteEntity c WHERE c.officeId = ?1")
     public List<String> findByYmd(Long officeId);
 }
