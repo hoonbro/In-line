@@ -106,7 +106,9 @@ export default {
       },
     })
 
+    // ==================================================================
     // onBoard에 올라가 있는 데이터 가져오기
+    // ==================================================================
     onMounted(async () => {
       try {
         const res = await store.dispatch(
@@ -130,33 +132,49 @@ export default {
 
     const formError = ref("")
 
+    // ==================================================================
+    // 유효성 검사
+    // ==================================================================
     const formIsFilled = computed(() => {
       return Object.keys(formData).every(key => formData[key].value)
     })
-
     const formNoError = computed(() => {
       return Object.keys(formData).every(key => {
         return !Object.keys(formData[key].errors).length
       })
     })
-
     const formIsValid = computed(() => {
       return formIsFilled.value && formNoError.value
     })
 
+    // ==================================================================
+    // api 요청
+    // ==================================================================
     const signUp = async () => {
       const submitData = {
         email: formData.email.value,
         deptName: formData.deptName.value,
         jobName: formData.jobName.value,
-        // officeId: officeId.value,
-        officeName: officeName.value,
+        officeId: officeId.value,
+        // officeName: officeName.value,
         name: name.value,
         password: formData.password.value,
         phone: formData.phone.value,
       }
       console.log(submitData)
-      const res = await store.dispatch("auth/signUp", submitData)
+      try {
+        const res = await store.dispatch("auth/signUp", submitData)
+        console.log(res)
+        store.commit("landing/addAlertModalList", {
+          message: "회원가입이 완료되었습니다!",
+        })
+        router.push({ name: "Home", params: { shouldLogin: true } })
+      } catch (error) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
+      }
     }
 
     return {

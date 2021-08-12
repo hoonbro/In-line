@@ -51,6 +51,23 @@
         </div>
       </div>
     </section>
+
+    <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
+    <section>
+      <div class="header">
+        <h1 class="section-title">On Board</h1>
+      </div>
+      <div class="onboard-container">
+        <ul>
+          <OnBoardMemberListItem
+            v-for="onBoardMember in onBoardList"
+            :key="onBoardMember.onboardId"
+            :member="onBoardMember"
+          />
+        </ul>
+      </div>
+    </section>
+
     <AddMemberModal
       v-if="addMemberModalOpen"
       @close="addMemberModalOpen = false"
@@ -70,6 +87,7 @@ import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 import AddMemberModal from "@/components/Members/AddMemberModal.vue"
 import ProfileModal from "@/components/Members/ProfileModal.vue"
+import OnBoardMemberListItem from "@/components/Members/OnBoardMemberListItem.vue"
 
 export default {
   name: "Members",
@@ -78,6 +96,7 @@ export default {
     DepartmentListItem,
     AddMemberModal,
     ProfileModal,
+    OnBoardMemberListItem,
   },
   setup() {
     const store = useStore()
@@ -98,6 +117,22 @@ export default {
       })
     })
 
+    // =====================================================
+    // On Board 관련
+    const onBoardList = computed(() => store.state.onboard.onBoardList)
+    onMounted(async () => {
+      try {
+        await store.dispatch(
+          "onboard/getOnBoardList",
+          store.state.auth.user.officeEntity.officeId
+        )
+      } catch (error) {
+        console.log(error.message)
+      }
+    })
+    // On Board 관련 끝
+    // =====================================================
+
     const openProfileModal = userId => {
       profileUserId.value = userId
       profileModalOpen.value = true
@@ -111,6 +146,7 @@ export default {
       profileModalOpen,
       openProfileModal,
       profileUserId,
+      onBoardList,
     }
   },
 }
@@ -140,6 +176,11 @@ export default {
           @apply mr-2;
         }
       }
+    }
+
+    .onboard-container {
+      height: 250px;
+      @apply flex flex-col bg-white rounded-lg shadow overflow-auto;
     }
 
     .members-container {
