@@ -1,7 +1,9 @@
 <template>
   <div class="chat-container">
     <div class="chat-list-container">
-      <div class="chat-list" ref="chatListEl"></div>
+      <div class="chat-list" ref="chatListEl">
+        <ChatListItem v-for="(chat, idx) in chatList" :key="idx" :chat="chat" />
+      </div>
     </div>
     <div class="chat-input-container">
       <textarea
@@ -20,15 +22,18 @@
 import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
 import { useRoute } from "vue-router"
+import ChatListItem from "@/components/RightAsidebar/ChatListItem.vue"
 
 export default {
   name: "RoomChat",
+  components: { ChatListItem },
   setup() {
     // ===========================================
     const route = useRoute()
     const path = route.fullPath
     console.log(route.fullPath) // '/rooms/177'
-    console.log(path.slice(7)) // '177'
+    // console.log(path.slice(7)) // '177'
+    const roomId = path.slice(7)
     // ===========================================
 
     const store = useStore()
@@ -36,7 +41,7 @@ export default {
     const userId = computed(() => store.state.auth.user.userId)
     const userName = computed(() => store.state.auth.user.name)
     const chatList = computed(() => {
-      return store.state.socket.officeChatList.map(chat => {
+      return store.state.socket.roomChatList.map(chat => {
         const AMPM = +chat.sendTime.slice(0, 2) < 12 ? "AM" : "PM"
         const formatedTime = `${chat.sendTime.slice(0, 5)} ${AMPM}`
         return { ...chat, sendTime: formatedTime }
@@ -64,7 +69,7 @@ export default {
           content: content.value,
         }
         roomStompClient.value.send(
-          `/pub/${officeId.value}/` + 2,
+          `/pub/${officeId.value}/${roomId}`,
           JSON.stringify(msg),
           {}
         )

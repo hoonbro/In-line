@@ -31,6 +31,10 @@ export const socket = {
     initOfficeChatList(state, chatList) {
       state.officeChatList = chatList
     },
+    addRoomChat(state, chat) {
+      state.roomChatList.push(chat)
+      console.log(state.roomChatList )
+    },
     addOfficeChat(state, chat) {
       state.officeChatList.push(chat)
     },
