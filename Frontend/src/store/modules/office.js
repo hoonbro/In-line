@@ -66,12 +66,14 @@ export const office = {
         }
       })
     },
-    updateConnectionOfMembers(state, members) {
-      const connectedMemberIdList = Object.keys(members).map(key => +key)
-      console.log(connectedMemberIdList)
+    updateConnectionOfMembers(state, targetMembers) {
+      const targetMemberIdList = Object.keys(targetMembers).map(
+        memberId => +memberId
+      )
       state.members.forEach(member => {
-        if (connectedMemberIdList.includes(member.userId)) {
+        if (targetMemberIdList.includes(member.userId)) {
           member.connected = true
+          member.roomId = targetMembers[`${member.userId}`].roomId
         } else {
           member.connected = false
         }
@@ -88,6 +90,10 @@ export const office = {
     },
   },
   getters: {
+    lobbyId(state) {
+      if (!state.rooms) return
+      return state.rooms[0].roomId
+    },
     user(state) {
       return state.user
     },
@@ -281,7 +287,7 @@ export const office = {
         const res = await roomAPI({
           method: "GET",
           params: {
-            officeId,
+            officeId: rootState.auth.user.officeId,
           },
           headers: {
             accessToken: rootState.auth.accessToken,

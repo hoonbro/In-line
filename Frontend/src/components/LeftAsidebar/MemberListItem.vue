@@ -7,7 +7,10 @@
     />
     <div class="fake-img" v-else>{{ member.name[0] }}</div>
     <div>
-      <p class="name">{{ member.name }}</p>
+      <div class="name">
+        <span>{{ member.name }}</span>
+        <span v-if="member.connected">({{ member.roomId }}번방)</span>
+      </div>
       <p class="department">{{ member.deptEntity.deptName }}</p>
     </div>
   </div>
@@ -46,7 +49,8 @@ export default {
     @apply bg-blue-600 flex justify-center items-center text-white font-bold;
   }
 
-  p {
+  p,
+  span {
     @apply text-sm;
   }
 
