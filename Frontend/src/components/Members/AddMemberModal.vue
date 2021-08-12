@@ -176,7 +176,7 @@ export default {
         formError.value = error.message
         store.commit("landing/addAlertModalList", {
           type: "error",
-          message: "전송 실패",
+          message: "메일 전송 실패",
         })
         console.log(error)
       }
