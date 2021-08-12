@@ -1,9 +1,7 @@
 <template>
   <div class="chat-container">
     <div class="chat-list-container">
-      <div class="chat-list" ref="chatListEl">
-        <ChatListItem v-for="(chat, idx) in chatList" :key="idx" :chat="chat" />
-      </div>
+      <div class="chat-list" ref="chatListEl"></div>
     </div>
     <div class="chat-input-container">
       <textarea
@@ -21,10 +19,8 @@
 <script>
 import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
-import ChatListItem from "@/components/RightAsidebar/ChatListItem.vue"
 export default {
   name: "RoomChat",
-  components: { ChatListItem },
   setup() {
     const store = useStore()
     const officeId = computed(() => store.state.auth.user.officeId)
@@ -37,7 +33,7 @@ export default {
         return { ...chat, sendTime: formatedTime }
       })
     })
-    const stompClient = computed(() => store.state.socket.stompClient)
+    const roomStompClient = computed(() => store.state.socket.roomStompClient)
     const chatListEl = ref(null)
     const content = ref("")
 
@@ -46,7 +42,11 @@ export default {
     }
 
     const sendMessage = event => {
-      if (content.value && stompClient.value && stompClient.value.connected) {
+      if (
+        content.value &&
+        roomStompClient.value &&
+        roomStompClient.value.connected
+      ) {
         console.log(`Send message: ${content.value}`)
         const msg = {
           officeId: officeId.value,
@@ -54,8 +54,8 @@ export default {
           userName: userName.value,
           content: content.value,
         }
-        stompClient.value.send(
-          `/pub/${officeId.value}`,
+        roomStompClient.value.send(
+          `/pub/${officeId.value}/${roomId}`,
           JSON.stringify(msg),
           {}
         )
