@@ -26,9 +26,10 @@ public class OnBoardController {
     UserService userService;
 
     @PostMapping("/user")
-    @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가하고 이메일을 보낸다.")
-    public ResponseEntity<Void> registUserOnboard(@RequestBody UserRegistDto user) {
+    @ApiOperation(value = "관리자가 구성원을 추가했을 때 onBoard 테이블에 추가하고 이메일을 보낸다.", response = OnBoardEntity.class)
+    public ResponseEntity<OnBoardEntity> registUserOnboard(@RequestBody UserRegistDto user) {
         HttpStatus httpStatus = HttpStatus.CREATED;
+        OnBoardEntity onBoardEntity = new OnBoardEntity();
         boolean isDuplicate = userService.duplicateEmail(user.getEmail());
         if (isDuplicate) {
             httpStatus = HttpStatus.CONFLICT;
@@ -37,13 +38,14 @@ public class OnBoardController {
         else{
             try {
                 onBoardService.registUserOnboard(user);
+                onBoardEntity = onBoardService.getOnboardUser(user.getEmail());
             }catch (Exception e){
                 log.error("가입 처리중인 이메일");
                 httpStatus = HttpStatus.BAD_REQUEST;
             }
 
         }
-        return new ResponseEntity<Void>(httpStatus);
+        return new ResponseEntity<OnBoardEntity>(onBoardEntity, httpStatus);
     }
 
     @GetMapping("/user/{email}")
@@ -73,7 +75,7 @@ public class OnBoardController {
     }
 
     @GetMapping("/{officeId}")
-    @ApiOperation(value = "관리자가 onBoard 테이블에서 구성원을 삭제한다.", response = List.class)
+    @ApiOperation(value = "onboard테이블의 있는 구성원들을 반환해준다..", response = List.class)
     public ResponseEntity<List<OnBoardEntity>> getOnboardUsers(@PathVariable("officeId") Long officeId){
         HttpStatus httpStatus = HttpStatus.OK;
         List<OnBoardEntity> list = null;

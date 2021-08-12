@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoomRepository extends JpaRepository<RoomEntity, String> {
-
+    public RoomEntity findByOfficeIdAndRoomName(Long officeId, String roomName);
 }

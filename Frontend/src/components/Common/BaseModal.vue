@@ -1,7 +1,19 @@
-<template> </template>
+<template>
+  <div class="backdrop">
+    <div class="modal-container">
+      <slot></slot>
+    </div>
+  </div>
+</template>
 
 <script>
-export default {}
+export default {
+  name: "BaseModal",
+}
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.modal-container {
+  @apply p-10 bg-white shadow-lg;
+}
+</style>

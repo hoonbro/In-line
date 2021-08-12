@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
+import { moveRoom } from "@/lib/websocket"
+
 import LandingLayout from "@/layouts/LandingLayout.vue"
 import OfficeLayout from "@/layouts/OfficeLayout.vue"
 import RoomLayout from "@/layouts/RoomLayout.vue"
@@ -141,6 +143,13 @@ router.beforeEach((to, from, next) => {
   } else if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
     next({ name: "Office" })
   } else next()
+})
+
+router.afterEach((to, from) => {
+  if (to.fullPath.includes("office") || to.fullPath.includes("rooms")) {
+    console.log(to.fullPath)
+    moveRoom()
+  }
 })
 
 export default router
