@@ -3,7 +3,7 @@
     <MainNav />
     <main>
       <LeftAsidebar @click:openTodoModal="handleOpenTodoModal" />
-      <router-view class="flex-1" />
+      <router-view class="router-view" />
       <RightAsidebar />
     </main>
   </div>
@@ -57,6 +57,15 @@ export default {
   @apply h-screen flex flex-col overflow-hidden;
   main {
     @apply h-full overflow-hidden flex;
+
+    .router-view {
+      scrollbar-width: none;
+      @apply flex-1 bg-gray-100 content-start overflow-auto;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
   }
 }
 </style>
