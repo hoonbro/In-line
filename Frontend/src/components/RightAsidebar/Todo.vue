@@ -46,7 +46,7 @@ export default {
     // const todos = ref([])
     const store = useStore()
     const todos = computed(() => {
-      return store.state.office.todos
+      return store.getters["office/sortedTodosByDone"]
     })
     const formData = reactive({
       title: "",
@@ -56,7 +56,7 @@ export default {
     const editMode = ref(false)
 
     const getTodos = () => {
-      store.dispatch("office/getTodos")
+      store.dispatch("office/getTodos", store.getters["auth/userId"])
     }
 
     const createTodos = async () => {
