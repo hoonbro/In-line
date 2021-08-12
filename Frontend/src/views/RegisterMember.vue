@@ -123,15 +123,19 @@ export default {
         await store.dispatch("auth/resetPassword", {
           email: formData.email.value,
         })
-        alert(
-          "이메일을 발송했습니다.\n임시비밀번호로 로그인 후 비밀번호를 꼭 바꿔주세요!"
-        )
+        store.commit("landing/addAlertModalList", {
+          message:
+            "이메일을 발송했습니다.\n임시비밀번호로 로그인 후 비밀번호를 꼭 바꿔주세요!.",
+        })
         router.push({
           name: "Home",
           params: { shouldLogin: true },
         })
       } catch (error) {
-        alert(error.message)
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
       }
     }
 

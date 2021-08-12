@@ -38,6 +38,14 @@ export const auth = {
     },
   },
   actions: {
+    signUp: async (context, formData) => {
+      try {
+        const res = await axios.post("/api/v1/users", formData)
+        console.log(res)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async login({ commit }, formData) {
       try {
         const res = await authAPI.post("/login", formData)
@@ -134,7 +142,7 @@ export const auth = {
         throw Error(error)
       }
     },
-    async updateProfileImage({ commit, state }, formData) {
+    async updateProfileImage({ state }, formData) {
       try {
         const { data: newProfileImg } = await authAPI({
           method: "PUT",
@@ -150,6 +158,21 @@ export const auth = {
       } catch (error) {
         console.log(error)
         throw Error("이미지 업로드에 실패했습니다.")
+      }
+    },
+    async updateProfile({ commit, state }, { userId, form }) {
+      try {
+        const res = await authAPI({
+          method: "PUT",
+          url: `/${userId}`,
+          data: form,
+          headers: {
+            accessToken: state.accessToken,
+          },
+        })
+        return res.data
+      } catch (error) {
+        throw Error("프로필 수정에 실패했어요.")
       }
     },
   },

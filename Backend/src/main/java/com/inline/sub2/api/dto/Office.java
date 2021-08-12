@@ -41,6 +41,13 @@ public class Office {
         return participants;
     }
 
+    public ConcurrentMap<Long,ParticipantDto> moveParticipant(ChatDto chatDto) { // 방이동시
+        ParticipantDto participantDto = participants.get(chatDto.getUserId());
+        participantDto.setRoomId(chatDto.getRoomId());
+        participants.put(chatDto.getUserId(),participantDto);
+        return participants;
+    }
+
 
 
 

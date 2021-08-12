@@ -33,6 +33,7 @@
         v-for="member in members"
         :key="member.userId"
         :member="member"
+        @click="handleMemberClick(member.userId, member.name)"
       />
     </div>
   </aside>
@@ -43,16 +44,15 @@
 <script>
 import { computed, ref } from "@vue/runtime-core"
 import { useStore } from "vuex"
-import ConfirmModal from "@/components/Common/ConfirmModal.vue"
 import MemberListItem from "@/components/LeftAsidebar/MemberListItem.vue"
 
 export default {
   name: "LeftAsidebar",
   components: {
-    ConfirmModal,
     MemberListItem,
   },
-  setup() {
+  emits: ["click:openTodoModal"],
+  setup(_, { emit }) {
     const store = useStore()
     const userName = computed(() => store.state.auth.user.name)
     const members = computed(
@@ -112,6 +112,11 @@ export default {
       confirmModalContent.value = []
     }
 
+    const handleMemberClick = (userId, userName) => {
+      console.log(userId)
+      emit("click:openTodoModal", { userId, userName })
+    }
+
     return {
       userName,
       members,
@@ -119,6 +124,7 @@ export default {
       changeWorkType,
       confirmModalContent,
       confirmModal,
+      handleMemberClick,
     }
   },
 }

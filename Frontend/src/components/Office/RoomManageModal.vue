@@ -164,7 +164,10 @@ export default {
     // 방 생성할 때 최대 길이 제한 걸어야 함 (Ok)
     const createRoom = async () => {
       if (!createFormIsValid.value) {
-        alert("회의실 이름은 공백으로 할 수 없습니다.")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "회의실 이름은 공백으로 할 수 없습니다.",
+        })
         return
       }
       try {
@@ -192,7 +195,10 @@ export default {
 
     const editRoom = async roomId => {
       if (!newName.value) {
-        alert("회의실 이름은 공백으로 할 수 없습니다.")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "회의실 이름은 공백으로 할 수 없습니다.",
+        })
         return
       }
       try {

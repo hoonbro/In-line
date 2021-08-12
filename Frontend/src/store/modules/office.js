@@ -47,6 +47,17 @@ export const office = {
         return { ...member, connected: false }
       })
     },
+    updateProfileOfMembers(state, newUser) {
+      state.members = state.members.map(member => {
+        if (member.userId === newUser.userId) {
+          return {
+            ...member,
+            ...newUser,
+          }
+        }
+        return member
+      })
+    },
     updateMemberProfileImage(state, { userId, newProfileImage }) {
       console.log(newProfileImage)
       state.members.forEach(member => {
@@ -86,6 +97,18 @@ export const office = {
         return a.connected === b.connected ? 0 : a.connected ? -1 : 1
       })
     },
+    sortedTodosByDone(state) {
+      const todos = [...state.todos]
+      return todos.sort((todo1, todo2) => {
+        return todo1.done === todo2.done
+          ? todo1.day > todo2.day
+            ? -1
+            : 1
+          : todo1.done
+          ? 1
+          : -1
+      })
+    },
   },
   actions: {
     async getDepts({ commit }) {
@@ -95,6 +118,7 @@ export const office = {
           url: "depts",
         })
         commit("setDepts", res.data)
+        return res.data
       } catch (error) {
         console.log(error)
         throw Error("부서 목록을 불러오는 데 실패했습니다.")
@@ -107,6 +131,7 @@ export const office = {
           url: "jobs",
         })
         commit("setJobs", res.data)
+        return res.data
       } catch (error) {
         console.log(error)
         throw Error("역할 목록을 불러오는 데 실패했습니다.")
@@ -155,19 +180,22 @@ export const office = {
         console.log(error)
       }
     },
-    async getTodos({ commit, rootState }) {
+    async getTodos({ commit, rootState }, userId) {
       try {
         const res = await todoAPI({
           method: "",
           url: "",
           params: {
-            userId: rootState.auth.user.userId,
+            userId,
           },
           headers: {
             accessToken: rootState.auth.accessToken,
           },
         })
-        commit("setTodos", res.data)
+        if (rootState.auth.user.userId === userId) {
+          commit("setTodos", res.data)
+        }
+        return res.data
       } catch (error) {
         console.log(error)
       }
