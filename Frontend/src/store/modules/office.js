@@ -97,6 +97,18 @@ export const office = {
         return a.connected === b.connected ? 0 : a.connected ? -1 : 1
       })
     },
+    sortedTodosByDone(state) {
+      const todos = [...state.todos]
+      return todos.sort((todo1, todo2) => {
+        return todo1.done === todo2.done
+          ? todo1.day > todo2.day
+            ? -1
+            : 1
+          : todo1.done
+          ? 1
+          : -1
+      })
+    },
   },
   actions: {
     async getDepts({ commit }) {
@@ -168,19 +180,22 @@ export const office = {
         console.log(error)
       }
     },
-    async getTodos({ commit, rootState }) {
+    async getTodos({ commit, rootState }, userId) {
       try {
         const res = await todoAPI({
           method: "",
           url: "",
           params: {
-            userId: rootState.auth.user.userId,
+            userId,
           },
           headers: {
             accessToken: rootState.auth.accessToken,
           },
         })
-        commit("setTodos", res.data)
+        if (rootState.auth.user.userId === userId) {
+          commit("setTodos", res.data)
+        }
+        return res.data
       } catch (error) {
         console.log(error)
       }

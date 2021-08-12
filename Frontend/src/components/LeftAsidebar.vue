@@ -33,6 +33,7 @@
         v-for="member in members"
         :key="member.userId"
         :member="member"
+        @click="handleMemberClick(member.userId, member.name)"
       />
     </div>
   </aside>
@@ -50,7 +51,8 @@ export default {
   components: {
     MemberListItem,
   },
-  setup() {
+  emits: ["click:openTodoModal"],
+  setup(_, { emit }) {
     const store = useStore()
     const userName = computed(() => store.state.auth.user.name)
     const members = computed(
@@ -110,6 +112,11 @@ export default {
       confirmModalContent.value = []
     }
 
+    const handleMemberClick = (userId, userName) => {
+      console.log(userId)
+      emit("click:openTodoModal", { userId, userName })
+    }
+
     return {
       userName,
       members,
@@ -117,6 +124,7 @@ export default {
       changeWorkType,
       confirmModalContent,
       confirmModal,
+      handleMemberClick,
     }
   },
 }
