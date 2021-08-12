@@ -8,17 +8,25 @@ export const socket = {
   namespaced: true,
   state: {
     stompClient: null,
+    roomStompClient: null,
     // subscription: null,
     officeChatList: [],
+    roomChatList: [],
   },
   getters: {
     stompClient(state) {
       return state.stompClient
     },
+    roomStompClient(state) {
+      return state.roomStompClient
+    },
   },
   mutations: {
     setStompClient(state, payload) {
       state.stompClient = payload
+    },
+    setRoomStompClient(state, payload) {
+      state.roomStompClient = payload
     },
     initOfficeChatList(state, chatList) {
       state.officeChatList = chatList
