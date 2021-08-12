@@ -17,8 +17,7 @@ const roomAPI = axios.create({
   // baseURL: `http://i5d207.p.ssafy.io:8997/rooms`,
 
   // deploy URL
-  // baseURL: `https://i5d207.p.ssafy.io:8995/rooms`,
-  baseURL: `https://13.124.47.223:8997/rooms`,
+  baseURL: `https://i5d207.p.ssafy.io:8995/rooms`,
 })
 
 const officeAPI = axios.create({

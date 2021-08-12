@@ -11,7 +11,7 @@ module.exports = {
         target: "https://i5d207.p.ssafy.io",
       },
       "/chatStomp": {
-        target: "https://13.124.47.223:8997",
+        target: "http://i5d207.p.ssafy.io:8998",
       },
     },
     overlay: true,
