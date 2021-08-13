@@ -53,7 +53,7 @@ import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 
 export default {
   name: "MembersContainer",
-  emits: [],
+  emits: ["openProfileModal"],
   components: { MemberListItem, DepartmentListItem },
   setup() {
     const store = useStore()
@@ -118,7 +118,7 @@ export default {
     @apply col-span-4 h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
 
     .header {
-      @apply p-4 border-b font-bold flex justify-between bg-blue-700 text-white;
+      @apply p-4 border-b border-gray-300 font-medium flex justify-between bg-gray-50 select-none;
     }
 
     .departments-container {

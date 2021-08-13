@@ -63,6 +63,7 @@ public class RoomManager {
                         .roomId(user.getRoomId())
                         .roomName(user.getRoomName())
                         .officeId(user.getOfficeId())
+                        .profileImage(user.getProfileImage())
                         .build();
 
                 participantsMap.put(userKey, userDto.toString());
@@ -85,7 +86,14 @@ public class RoomManager {
 
             rooms.put(r.getRoomId(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), r.getRoomId(), r.getOfficeId()));
         }
+        List<RoomEntity> list = roomRepository.findAllByOfficeId(officeId);
+        Map<Long, Collection> map = getOfficeRooms(officeId);
 
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).getRoomUserList() != null && list.get(i).getRoomUserList().size() == map.get(list.get(i).getRoomId()).size())
+                continue;
+            list.get(i).setRoomUserList(map.get(list.get(i).getRoomId()));
+        }
         return roomRepository.findAllByOfficeId(officeId);
     }
 

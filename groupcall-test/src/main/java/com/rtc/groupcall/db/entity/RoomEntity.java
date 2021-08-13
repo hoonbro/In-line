@@ -3,6 +3,8 @@ package com.rtc.groupcall.db.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Data
 @Getter
@@ -23,4 +25,7 @@ public class RoomEntity {
     private Long userId;
     @Column(name = "office_id")
     private Long officeId;
+    @Transient //@Transient 어노테이션을 사용한 필드나 메소드는 DB 테이블에 적용되지 않는다.
+    private Collection roomUserList;
+
 }

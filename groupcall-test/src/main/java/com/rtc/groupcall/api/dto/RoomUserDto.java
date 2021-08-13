@@ -15,4 +15,5 @@ public class RoomUserDto {
     private Long roomId;
     private String roomName;
     private Long officeId;
+    private String profileImage;
 }
