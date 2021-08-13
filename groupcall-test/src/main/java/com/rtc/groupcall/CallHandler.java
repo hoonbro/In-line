@@ -87,11 +87,12 @@ public class CallHandler extends TextWebSocketHandler {
         final Long roomId = params.get("roomId").getAsLong();
         final Long userId = params.get("userId").getAsLong();
         final Long officeId = params.get("officeId").getAsLong();
+        String profileImage = params.get("profileImage").getAsString();
 //        log.info(" {}님의 {} 접근 요청", name, roomName);
 
         Room room = roomManager.getRoom(roomName, roomId, officeId);
         roomManager.moveUser(userId, roomId);
-        final UserSession user = room.join(officeId, userId, userName, session);
+        final UserSession user = room.join(officeId, userId, userName, profileImage, session);
         registry.register(user);
         log.info(roomManager.getOfficeRooms(officeId).toString());
     }

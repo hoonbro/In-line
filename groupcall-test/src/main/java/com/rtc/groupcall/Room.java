@@ -58,9 +58,9 @@ public class Room implements Closeable {
         this.close();
     }
 
-    public UserSession join(Long officeId, Long userId, String userName, WebSocketSession session) throws IOException {
+    public UserSession join(Long officeId, Long userId, String userName, String profileImage, WebSocketSession session) throws IOException {
         log.info("ROOM {}: adding participant {}", this.roomName, userName);
-        final UserSession participant = new UserSession(officeId, userId, userName, this.roomName, this.roomId, session, this.pipeline);
+        final UserSession participant = new UserSession(officeId, userId, userName, this.roomName, this.roomId, profileImage, session, this.pipeline);
         joinRoom(participant);
         participants.put(participant.getUserId(), participant);
         sendParticipantNames(participant);
