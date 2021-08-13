@@ -21,23 +21,33 @@
 <script>
 import { computed, onMounted, onUpdated, ref } from "vue"
 import { useStore } from "vuex"
+import { useRoute } from "vue-router"
 import ChatListItem from "@/components/RightAsidebar/ChatListItem.vue"
+
 export default {
   name: "RoomChat",
   components: { ChatListItem },
   setup() {
+    // ===========================================
+    const route = useRoute()
+    const path = route.fullPath
+    console.log(route.fullPath) // '/rooms/177'
+    // console.log(path.slice(7)) // '177'
+    const roomId = path.slice(7)
+    // ===========================================
+
     const store = useStore()
     const officeId = computed(() => store.state.auth.user.officeId)
     const userId = computed(() => store.state.auth.user.userId)
     const userName = computed(() => store.state.auth.user.name)
     const chatList = computed(() => {
-      return store.state.socket.officeChatList.map(chat => {
+      return store.state.socket.roomChatList.map(chat => {
         const AMPM = +chat.sendTime.slice(0, 2) < 12 ? "AM" : "PM"
         const formatedTime = `${chat.sendTime.slice(0, 5)} ${AMPM}`
         return { ...chat, sendTime: formatedTime }
       })
     })
-    const stompClient = computed(() => store.state.socket.stompClient)
+    const roomStompClient = computed(() => store.state.socket.roomStompClient)
     const chatListEl = ref(null)
     const content = ref("")
 
@@ -46,7 +56,11 @@ export default {
     }
 
     const sendMessage = event => {
-      if (content.value && stompClient.value && stompClient.value.connected) {
+      if (
+        content.value &&
+        roomStompClient.value &&
+        roomStompClient.value.connected
+      ) {
         console.log(`Send message: ${content.value}`)
         const msg = {
           officeId: officeId.value,
@@ -54,8 +68,8 @@ export default {
           userName: userName.value,
           content: content.value,
         }
-        stompClient.value.send(
-          `/pub/${officeId.value}`,
+        roomStompClient.value.send(
+          `/pub/${officeId.value}/${roomId}`,
           JSON.stringify(msg),
           {}
         )
