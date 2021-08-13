@@ -15,8 +15,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker //websocket 활성화
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //    private final com.inline.sub2.handler.StompHandler stompHandler;
-    @Autowired
-    private StompHandler stompHandler;
+//    @Autowired
+//    private StompHandler stompHandler;
 
 
     @Override
@@ -33,8 +33,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS();
     }
 
-    @Override
-    public void configureClientInboundChannel (ChannelRegistration registration){
-        registration.interceptors(stompHandler);
-    }
+//    @Override
+//    public void configureClientInboundChannel (ChannelRegistration registration){
+//        registration.interceptors(stompHandler);
+//    }
 }

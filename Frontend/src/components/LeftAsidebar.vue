@@ -2,7 +2,7 @@
   <aside>
     <div class="infos">
       <p class="hello-message">
-        {{ userName }}님,
+        {{ userName }}님111,
         <br />
         안녕하세요! 🙌
       </p>
