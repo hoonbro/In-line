@@ -2,31 +2,33 @@
   <aside>
     <div class="infos">
       <p class="hello-message">
-        {{ userName }}님111,
+        {{ userName }}님,
         <br />
         안녕하세요! 🙌
       </p>
       <div class="workinfo">
-        <p class="label">근무 시간</p>
-        <p class="time">09:00 - 18:00</p>
         <div class="flex gap-2">
           <button
             class="work-btn"
-            :class="{ comein: commute.comeIn }"
+            :class="{ comein: comeInTime }"
             @click="comeInOffice"
           >
             <span class="material-icons-outlined icon">
               alarm
             </span>
             <span>출근</span>
-            <span>{{ commute.comeIn || "-" }}</span>
+            <span>{{ comeInTime || "-" }}</span>
           </button>
-          <button class="work-btn comeout" @click="comeOutOffice">
+          <button
+            class="work-btn"
+            :class="{ comeout: comeOutTime }"
+            @click="comeOutOffice"
+          >
             <span class="material-icons-outlined icon">
               directions_run
             </span>
             <span>퇴근</span>
-            <span>{{ commute.comeOut || "-" }}</span>
+            <span>{{ comeOutTime || "-" }}</span>
           </button>
         </div>
       </div>
@@ -63,6 +65,16 @@ export default {
       () => store.getters["office/sortedMembersByOnline"]
     )
     const commute = computed(() => store.state.auth.commute)
+    const comeInTime = computed(
+      () =>
+        `${commute.value.comeIn.slice(0, 2)}시
+        ${commute.value.comeIn.slice(3, 5)}분`
+    )
+    const comeOutTime = computed(
+      () =>
+        `${commute.value.comeOut.slice(0, 2)}시
+        ${commute.value.comeOut.slice(3, 5)}분`
+    )
 
     const confirmModal = ref(null)
     const confirmModalContent = ref([])
@@ -104,7 +116,7 @@ export default {
       confirmModal.value.isVisible = true
       const ok = await confirmModal.value.show()
       if (ok) {
-        store.dispatch("auth/setCommute")
+        store.dispatch("auth/comeOutOffice")
       }
       confirmModalContent.value = []
     }
@@ -117,7 +129,8 @@ export default {
     return {
       userName,
       members,
-      commute,
+      comeInTime,
+      comeOutTime,
       workType,
       comeInOffice,
       comeOutOffice,
@@ -142,14 +155,6 @@ aside {
     }
 
     .workinfo {
-      .label {
-        @apply text-lg font-bold mb-1;
-      }
-
-      .time {
-        @apply mb-4;
-      }
-
       .work-btn {
         @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none;
 
