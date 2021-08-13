@@ -149,55 +149,6 @@ export default {
       max-height: 250px;
       @apply flex flex-col bg-white rounded-lg shadow overflow-auto;
     }
-
-    .members-container {
-      height: 504px;
-      @apply grid gap-4 grid-cols-12;
-
-      .department-container {
-        @apply col-span-4 h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
-
-        .header {
-          @apply p-4 text-sm border-b;
-        }
-
-        .departments-container {
-          @apply overflow-auto;
-
-          .department-list {
-            @apply grid;
-          }
-        }
-      }
-
-      .user-container {
-        @apply flex flex-col col-span-8 bg-white rounded-lg shadow overflow-hidden;
-
-        .search-container {
-          @apply flex-shrink-0 p-4 border-b flex items-center relative;
-
-          .search-btn {
-            @apply p-2 w-10 h-10 bg-gray-100 rounded mr-4;
-
-            span {
-              @apply text-gray-400;
-            }
-          }
-
-          input {
-            @apply py-2 px-4 rounded bg-gray-100 w-full;
-          }
-        }
-
-        .users-container {
-          @apply flex-1 overflow-auto h-full;
-
-          .user-list {
-            @apply grid;
-          }
-        }
-      }
-    }
   }
 }
 </style>
