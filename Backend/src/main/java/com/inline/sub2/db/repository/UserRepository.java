@@ -20,9 +20,9 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Query("select ((select count(user.userId) from UserEntity user where user.retireDate is not null and user.officeId=?1) / 2) * 100 from UserEntity u where u.officeId = ?1")
     public Double findRetireRate(Long officeId);
 
-    public int countByOfficeId(long OfficeId);
+    public int countByOfficeIdAndRetireDateIsNull(long OfficeId);
 
-    @Query("select new com.inline.sub2.api.dto.DeptUserDto(d.deptName, count(u.userId)) from UserEntity u join DeptEntity d on u.deptId = d.deptId where u.officeId = :officeId group by u.deptId")
+    @Query("select new com.inline.sub2.api.dto.DeptUserDto(d.deptName, count(u.userId)) from UserEntity u join DeptEntity d on u.deptId = d.deptId where u.officeId = :officeId and u.retireDate is null group by u.deptId")
     public List<DeptUserDto> countGroupByDept(long officeId);
 
     //select avg(DATE_FORMAT(now(), "%Y-%m-%d") - DATE_FORMAT(join_date,"%Y-%m-%d")) from user where office_id=1;
