@@ -110,12 +110,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media (min-width: 1024px) {
+  .members-container {
+    height: 504px;
+  }
+}
+
 .members-container {
-  height: 504px;
   @apply grid gap-4 grid-cols-12;
 
   .department-container {
-    @apply col-span-4 h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
+    @apply col-span-12 lg:col-span-4 h-60 lg:h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
 
     .header {
       @apply p-4 border-b border-gray-300 font-medium flex justify-between bg-gray-50 select-none;
@@ -131,7 +136,7 @@ export default {
   }
 
   .user-container {
-    @apply flex flex-col col-span-8 bg-white rounded-lg shadow overflow-hidden;
+    @apply flex flex-col col-span-12 lg:col-span-8 h-96 lg:h-full bg-white rounded-lg shadow overflow-hidden;
 
     .search-container {
       @apply flex-shrink-0 p-4 border-b flex items-center relative;

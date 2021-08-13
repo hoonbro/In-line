@@ -4,7 +4,7 @@
     <div class="links">
       <router-link :to="{ name: 'Office' }">홈</router-link>
       <router-link :to="{ name: 'Members' }">구성원</router-link>
-      <router-link :to="{ name: 'Admin' }">관리자</router-link>
+      <router-link :to="{ name: 'Admin' }" v-if="isAdmin">관리자</router-link>
     </div>
     <button class="logout" @click="logout">
       로그아웃
@@ -29,6 +29,7 @@ export default {
   setup() {
     const router = useRouter()
     const store = useStore()
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
     const stompClient = computed(() => store.state.socket.stompClient)
     const user = computed(() => store.state.auth.user)
     const modalEl = ref(null)
@@ -46,6 +47,7 @@ export default {
 
     return {
       logout,
+      isAdmin,
       modalEl,
     }
   },

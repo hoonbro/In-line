@@ -1,81 +1,90 @@
 <template>
-  <div class="admin">
-    <div class="top-box-wrapper">
-      <h1 class="">회사</h1>
-      <div class="top-box">
-        <div class="top-box-item">
-          <p>전체 구성원 수</p>
-          <p>{{ members.officeUserCount }} 명</p>
-        </div>
-        <div class="top-box-item">
-          <p>퇴사자 수</p>
-          <p>{{ retires }} 명</p>
-        </div>
-        <div class="top-box-item">
-          <ul v-for="(depts, index) in members">
-            <li v-for="dept in depts">
-              <p v-if="index.length !== 15">
-                {{ dept.deptName }} : {{ dept.cnt }} 명
-              </p>
-            </li>
-          </ul>
-        </div>
-        <div class="top-box-item"><p>어쩌구저쩌구</p></div>
-      </div>
-    </div>
-    <div class="bottom-box-wrapper">
-      <h1 class="">근태 관리</h1>
-      <div class="bottom-box">
-        <div class="bottom-box-item left-box">
-          <div class="content"><span>월별</span></div>
-          <div class="hr"></div>
-          <ul class="month-list">
-            <li v-for="(month, index) in attendances" class="month-list-item">
+  <div>
+    <div class="admin">
+      <div class="top-box-wrapper">
+        <h1 class="">회사</h1>
+        <div class="top-box">
+          <div class="top-box-item large">
+            <div class="flex flex-col h-full">
+              <h3 class="title">
+                <span>전체 구성원 수</span>
+                <span>🤩</span>
+              </h3>
               <div class="content">
-                <span class="asd cursor-pointer" @click="changeActive(index)"
-                  >{{ index.slice(0, 4) }}년 {{ index.slice(5, 8) }}월</span
-                >
-              </div>
-              <div class="hr"></div>
-            </li>
-          </ul>
-        </div>
-        <div class="bottom-box-item right-box">
-          <div v-if="active === null" class="mx-auto mt-5">
-            <img class="mx-auto" src="@/assets/asd.gif" alt="엑박" />
-            <p class="text-center">
-              월별 근태 현황을 보시려면 왼쪽 목록에서 월을 눌러주세요
-            </p>
-          </div>
-          <!-- <div v-if="active === null" class="grid grid-cols-3 gap-2">
-            <div v-for="(month, idx) in year">
-              <div
-                class="h-24 bg-gray-200 rounded-xl text-center"
-                @click="changeActive()"
-              >
-                {{ idx + 1 }}월
+                <span>{{
+                  members.officeUserCount ? members.officeUserCount[0] : null
+                }}</span>
               </div>
             </div>
-          </div> -->
-          <ul>
-            <div v-for="(attendance, index) in attendances">
-              <div v-if="active === index">
-                <h2>{{ index.slice(0, 4) }}년 {{ index.slice(5, 8) }} 월</h2>
-                <div
-                  v-for="(item, idx) in attendance"
-                  :key="item.commuteId"
-                  class=""
-                >
-                  <p
-                    class="day p-1  mt-2"
+          </div>
+          <div class="top-box-item large">
+            <div class="flex flex-col h-full">
+              <h3 class="title">퇴사자 수🥲</h3>
+              <p class="content">
+                <span>{{ retires }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="top-box">
+          <template v-for="dept in members.deptUserCount" :key="dept.deptName">
+            <div class="top-box-item">
+              <div class="flex flex-col h-full">
+                <h3 class="title">{{ dept.deptName }}</h3>
+                <p class="content">
+                  <span>{{ dept.cnt }}</span>
+                </p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="bottom-box-wrapper">
+        <h1 class="">근태 관리</h1>
+        <div class="bottom-box">
+          <div class="bottom-box-item left-box">
+            <div class="header">
+              <span>월별</span>
+            </div>
+            <ul class="month-list">
+              <li
+                v-for="(value, key) in attendances"
+                :key="key"
+                class="month-list-item"
+              >
+                <div class="content" @click="changeActive(key)">
+                  {{ key.slice(0, 4) }}년 {{ key.slice(5, 8) }}월
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="bottom-box-item right-box">
+            <div v-if="active === null" class="mx-auto mt-5">
+              <img class="mx-auto" src="@/assets/asd.gif" alt="엑박" />
+              <p class="text-center">
+                월별 근태 현황을 보시려면 왼쪽 목록에서 월을 눌러주세요
+              </p>
+            </div>
+            <div v-for="(attendance, key) in attendances" :key="key">
+              <template v-if="active === key">
+                <h2>{{ key.slice(0, 4) }}년 {{ key.slice(5, 8) }} 월</h2>
+                <div v-for="(item, idx) in attendance" :key="item.commuteId">
+                  <template
                     v-if="
                       idx === 0 ||
                         attendance[idx].ymd !== attendance[idx - 1].ymd
                     "
                   >
-                    {{ item.ymd.slice(5, 7) }}월 {{ item.ymd.slice(8, 11) }}일
-                  </p>
-                  <div class="grid grid-cols-3 p-1 h-9">
+                    <p class="day">
+                      {{ item.ymd.slice(5, 7) }}월 {{ item.ymd.slice(8, 11) }}일
+                    </p>
+                    <div class="table-row label">
+                      <p>이름</p>
+                      <p>출근 시간</p>
+                      <p>퇴근 시간</p>
+                    </div>
+                  </template>
+                  <div class="table-row">
                     <p>{{ item.userEntity.name }}</p>
                     <p v-if="item.comeIn === null">{{ item.comeIn }}-</p>
                     <p v-else>
@@ -86,12 +95,11 @@
                       {{ item.comeOut.slice(0, 5) }}
                     </p>
                   </div>
-                  <div class="hr"></div>
                 </div>
-              </div>
+              </template>
             </div>
-          </ul>
-          <!-- 아래에서 '일'을 반복하고 '일'안에서 '멤버'반복 -->
+            <!-- 아래에서 '일'을 반복하고 '일'안에서 '멤버'반복 -->
+          </div>
         </div>
       </div>
     </div>
@@ -150,9 +158,9 @@ export default {
         "admin/getAttendances",
         user.officeId
       )
-      store.dispatch("admin/getRetires", user.officeId)
-      store.dispatch("admin/getMembers", user.officeId)
-      store.dispatch("admin/getYears", user.officeId)
+      await store.dispatch("admin/getRetires", user.officeId)
+      await store.dispatch("admin/getMembers", user.officeId)
+      await store.dispatch("admin/getYears", user.officeId)
     })
     return { user, attendances, retires, members, active, changeActive, year }
   },
@@ -160,54 +168,69 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// 400, 700 가져옴
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap");
-
-* {
-  font-family: "Noto Sans KR", sans-serif;
-  // 얘를 700으로 조절가능
-  font-weight: 400;
-}
-
 .admin {
-  // 스크롤은 유지되지만 스크롤바가 안보임
   scrollbar-width: none;
   @apply bg-gray-100 p-10 grid gap-10 content-start overflow-auto;
 
-  h1 {
-    @apply mb-6 ml-1 text-3xl font-bold;
+  &::-webkit-scrollbar {
+    display: none;
   }
 
-  h2 {
-    @apply text-2xl font-bold;
-  }
-  // 스크롤은 유지되지만 스크롤바가 안보임
-  // &::-webkit-scrollbar {
-  //   display: none;
-  // }
   .top-box-wrapper {
+    @apply grid gap-6;
+
+    h1 {
+      @apply text-3xl font-bold;
+    }
+
     .top-box {
-      @apply grid grid-cols-5 gap-4;
+      @apply grid grid-cols-12 gap-4;
+
       .top-box-item {
-        @apply h-40 bg-white shadow rounded-lg p-4;
+        @apply h-32 lg:h-36 bg-white col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2 2xl:col-span-2 shadow rounded-lg p-4;
+
+        &.large {
+          @apply xl:col-span-3 2xl:col-span-2;
+        }
+
+        .title {
+          @apply text-xl font-bold;
+        }
+
+        .content {
+          @apply font-bold flex-1 flex items-end justify-end;
+
+          span {
+            @apply text-4xl;
+          }
+        }
       }
     }
   }
 
   .bottom-box-wrapper {
+    @apply grid gap-6;
+
+    h1 {
+      @apply text-3xl font-bold;
+    }
+
     .bottom-box {
-      @apply grid grid-cols-12 gap-4;
-      height: 50vh;
+      @apply grid grid-cols-12 gap-4 lg:h-96;
+
+      .header {
+        @apply p-4 text-lg font-bold bg-gray-50 border-b border-gray-300;
+      }
 
       .content {
-        @apply px-4 py-2;
+        @apply p-4 cursor-pointer border-b;
+
+        &:hover {
+          @apply bg-gray-50;
+        }
       }
       .bottom-box-item {
         @apply bg-white shadow rounded-lg overflow-scroll;
-
-        .day {
-          @apply text-xl;
-        }
 
         .hr {
           @apply bg-gray-200 h-px w-full;
@@ -215,8 +238,10 @@ export default {
         .month-list {
         }
       }
+
       .left-box {
-        @apply col-start-1 col-end-3 h-full;
+        @apply col-span-12 h-60 lg:col-span-4 xl:col-span-3 lg:h-full;
+
         .hr {
           @apply bg-gray-200 h-px w-full;
         }
@@ -224,7 +249,27 @@ export default {
     }
 
     .right-box {
-      @apply col-start-3 col-end-11 h-full px-4 py-2 overflow-scroll;
+      @apply col-span-12 h-96 lg:col-span-8 lg:h-full xl:col-span-9 p-6 overflow-scroll;
+
+      h2 {
+        @apply text-2xl font-bold mb-4;
+      }
+
+      .day {
+        @apply text-xl font-medium my-6 mb-2;
+      }
+
+      .table-row {
+        @apply flex w-full py-2;
+
+        &.label {
+          @apply font-bold;
+        }
+
+        p {
+          @apply flex-1;
+        }
+      }
     }
   }
 }
