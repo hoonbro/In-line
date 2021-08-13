@@ -13,7 +13,9 @@
     </router-link>
     <ul class="btn-list">
       <li>
-        <router-link class="btn" to="#">기능 소개</router-link>
+        <router-link class="btn" :to="{ name: 'MemberIntroduce' }"
+          >팀 소개</router-link
+        >
       </li>
       <li>
         <a class="btn cursor-pointer" @click="$emit('openOfficeModal')">

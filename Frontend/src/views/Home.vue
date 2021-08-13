@@ -76,7 +76,7 @@
   <section class="section-box">
     <div class="flex justify-center gap-4">
       <div>
-        <h1>Home</h1>
+        <h1>Admin</h1>
         <p class="item-text">인사이트 파악과 근태 관리를 손쉽게</p>
       </div>
       <div class="py-12 pl-4">
@@ -85,9 +85,23 @@
     </div>
   </section>
   <!--///////////////////////////////////////////////////////////////////////-->
-  <footer class="flex bg-red-200 h-40">
-    <div class="h-1/2">
-      <img src="@/assets/LandingPage/logo2.png" alt="" />
+  <footer class="bg-gray-200">
+    <div class="flex mx-auto justify-center gap-24">
+      <div>
+        <img class="my-10" src="@/assets/LandingPage/logo2.png" alt="" />
+      </div>
+      <div class="my-auto">
+        <p>
+          ⓒ 인-라인 | 070-1234-5678 |
+          <a
+            href="mailto:iamlegend_@naver.com?subject=인라인에 문의하기&body=필요한 사항이 있다면 메일을 보내주세요."
+            >iamlegend_@naver.com</a
+          >
+        </p>
+        <p>
+          사업자 등록 번호 123-123-123 | 서비스 이용 약관 | 개인정보 처리 방침
+        </p>
+      </div>
     </div>
   </footer>
 </template>

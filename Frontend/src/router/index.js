@@ -7,7 +7,7 @@ import RoomLayout from "@/layouts/RoomLayout.vue"
 import AuthLayout from "@/layouts/AuthLayout.vue"
 
 import Home from "@/views/Home.vue"
-import RegistOffice from "@/views/RegistOffice.vue"
+import MemberIntroduce from "@/views/MemberIntroduce.vue"
 import Office from "@/views/Office.vue"
 import Members from "@/views/Members.vue"
 import Admin from "@/views/Admin.vue"
@@ -28,9 +28,9 @@ const routes = [
         component: Home,
       },
       {
-        path: "regist-office",
-        name: "RegistOffice",
-        component: RegistOffice,
+        path: "member-introduce",
+        name: "MemberIntroduce",
+        component: MemberIntroduce,
       },
     ],
   },
