@@ -11,5 +11,6 @@ public interface CommuteService {
     CommuteEntity commuteLogin(CommuteDto commuteDto);
     CommuteEntity commuteIn(Long commuteId);
     CommuteEntity commuteOut(Long commuteId);
+    CommuteEntity commuteInfo(Long userId);
 //    List<CommuteEntity> commuteList(Long officeId);
 }

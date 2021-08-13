@@ -58,6 +58,11 @@ public class CommuteServiceImpl implements CommuteService {
         return commuteRepository.save(commuteEntity);
     }
 
+    @Override
+    public CommuteEntity commuteInfo(Long userId) {
+        return  commuteRepository.findByUserIdAndYmd(userId,new Date());
+    }
+
 //    @Override
 //    public List<CommuteEntity> commuteList(Long officeId) {
 //        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
