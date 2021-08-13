@@ -24,4 +24,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     @Query("select new com.inline.sub2.api.dto.DeptUserDto(d.deptName, count(u.userId)) from UserEntity u join DeptEntity d on u.deptId = d.deptId where u.officeId = :officeId group by u.deptId")
     public List<DeptUserDto> countGroupByDept(long officeId);
+
+    //select avg(DATE_FORMAT(now(), "%Y-%m-%d") - DATE_FORMAT(join_date,"%Y-%m-%d")) from user where office_id=1;
+    @Query("select avg(year(now())-year(user.joinDate)) from UserEntity user where user.officeId=?1")
+    public Long getJobYear(Long officeId);
 }
