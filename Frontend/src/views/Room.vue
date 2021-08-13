@@ -87,7 +87,7 @@ export default {
       }
     })
     // const roomStompClient = ref(store.state.socket.roomStompClient)
-  
+
     const state = reactive({
       room: room.value,
       name: store.state.auth.user.name,
@@ -95,7 +95,6 @@ export default {
       officeId: store.state.auth.user.officeId,
     })
 
-    
     //////////////////////////////////room chat 추가한 부분//////////////////////////////////
     const connectRoomChat = () => {
       const serverURL = "/chatStomp"
@@ -107,10 +106,12 @@ export default {
           roomStompClient.connected = true
           store.commit("socket/setRoomStompClient", roomStompClient)
           roomStompClient.subscribe(
-            `/sub/${state.officeId}/${props.roomId}`, res =>{
+            `/sub/${state.officeId}/${props.roomId}`,
+            res => {
               console.log(JSON.parse(res.body))
-          store.commit("socket/addRoomChat", JSON.parse(res.body))
-          })
+              store.commit("socket/addRoomChat", JSON.parse(res.body))
+            }
+          )
         },
         error => {
           store.commit("landing/addAlertModalList", {
@@ -141,7 +142,7 @@ export default {
     onMounted(() => connectRoomChat())
     onUnmounted(() => leaveRoom())
 
-    let ws = new WebSocket(`wss://13.124.47.223:8997/groupcall`)
+    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
 
     ws.onopen = function(event) {
       register()
