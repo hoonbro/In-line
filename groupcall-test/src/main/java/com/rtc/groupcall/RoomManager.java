@@ -63,6 +63,7 @@ public class RoomManager {
                         .roomId(user.getRoomId())
                         .roomName(user.getRoomName())
                         .officeId(user.getOfficeId())
+                        .profileImage(user.getProfileImage())
                         .build();
 
                 participantsMap.put(userKey, userDto.toString());
