@@ -56,14 +56,12 @@
           </button>
         </div>
         <div class="todo-list" v-if="expandedSection === 'done'">
-          <p v-if="doingTodos && !doingTodos.length">내용이 없어요🥲</p>
+          <p v-if="doneTodos && !doneTodos.length">내용이 없어요🥲</p>
           <div v-for="(todo, idx) in doneTodos" :key="todo.todoId">
             <p
               class="text-md font-bold py-2"
               :style="`z-index: ${idx}`"
-              v-if="
-                idx === 0 || doingTodos[idx].day !== doingTodos[idx - 1].day
-              "
+              v-if="idx === 0 || doneTodos[idx].day !== doneTodos[idx - 1].day"
             >
               {{ todo.day }}
             </p>
