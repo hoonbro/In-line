@@ -47,7 +47,6 @@
 import { ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 import { computed, onMounted } from "@vue/runtime-core"
-import axios from "axios"
 import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 
@@ -85,17 +84,19 @@ export default {
     }
 
     onMounted(async () => {
-      const res = await axios({
-        method: "GET",
-        url: `/api/v1/admin/dashboard/${store.getters["auth/officeId"]}`,
-        headers: {
-          accessToken: `${store.getters["auth/accessToken"]}`,
-        },
-      })
-      totalUserCount.value = res.data.officeUserCount[0]
-      deptList.value = res.data.deptUserCount
-      console.log(deptList.value)
+      try {
+        const members = await store.dispatch("admin/getOrganization")
+        console.log(members)
+        totalUserCount.value = members.officeUserCount[0]
+        deptList.value = members.deptUserCount
+      } catch (error) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
+      }
     })
+
     return {
       totalUserCount,
       deptList,

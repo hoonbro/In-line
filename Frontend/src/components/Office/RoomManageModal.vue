@@ -1,5 +1,5 @@
 <template>
-  <Modal>
+  <Modal @close="$emit('close')">
     <template v-slot:modal-header>
       <header>
         <h3 class="text-3xl font-bold select-none">회의실 관리</h3>
@@ -110,6 +110,7 @@
       </div>
     </template>
   </Modal>
+  <ConfirmModal ref="confirmModal" :content="confirmModalContent" />
 </template>
 
 <script>
@@ -129,6 +130,7 @@ export default {
   props: {
     userId: Number,
   },
+  emits: ["close"],
   setup() {
     const store = useStore()
     const rooms = computed(() => store.state.office.rooms)
@@ -140,6 +142,8 @@ export default {
     const activeCreate = ref(false)
     const activeEdit = ref("")
     const newName = ref("")
+    const confirmModal = ref(null)
+    const confirmModalContent = ref([])
 
     const formData = reactive({
       name: {
@@ -152,9 +156,6 @@ export default {
         maxlength: 20,
       },
     })
-
-    // 방 생성하기를 누르면 Input이 보이면서 해당 버튼은 없어지게
-    // template에서 바로 상태 변경 (false => true)
 
     // 방 생성할 때, 유효성 체크
     const createFormIsValid = computed(() => {
@@ -219,10 +220,16 @@ export default {
     }
 
     const deleteRoom = async (roomId, roomName) => {
-      if (confirm(`회의실 이름: ${roomName}\n회의실을 삭제하시겠어요?`)) {
+      confirmModalContent.value = [
+        `회의실 이름: ${roomName}`,
+        `회의실을 삭제하시겠어요?`,
+      ]
+      const ok = await confirmModal.value.show()
+      if (ok) {
         try {
           await store.dispatch("office/deleteRoom", roomId)
           store.commit("landing/addAlertModalList", {
+            type: "error",
             message: `${roomId}번 회의실이 삭제되었습니다!`,
           })
         } catch (error) {
@@ -248,6 +255,8 @@ export default {
       handleUpdateValidate,
       displayRoomList,
       createFormIsValid,
+      confirmModal,
+      confirmModalContent,
     }
   },
 }
@@ -324,10 +333,10 @@ header {
 
 .modal-footer {
   .create-btn {
-    @apply text-center font-bold rounded-xl;
+    @apply text-center font-medium rounded-xl;
 
     &.active {
-      @apply py-2 bg-blue-500 text-white;
+      @apply py-4 bg-blue-500 text-white;
     }
 
     &.disabled {

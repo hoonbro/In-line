@@ -6,13 +6,17 @@
       </header>
       <div class="mb-10">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold">Doing👍</h3>
+          <h3 class="text-xl font-bold">InProgress👍</h3>
           <button
             @click="
-              expandedSection = expandedSection === 'doing' ? 'done' : 'doing'
+              expandedSection =
+                expandedSection === 'inProgress' ? 'done' : 'inProgress'
             "
           >
-            <span class="material-icons" v-if="expandedSection === 'doing'">
+            <span
+              class="material-icons"
+              v-if="expandedSection === 'inProgress'"
+            >
               keyboard_arrow_up
             </span>
             <span class="material-icons" v-else>
@@ -20,14 +24,17 @@
             </span>
           </button>
         </div>
-        <div class="todo-list" v-if="expandedSection === 'doing'">
-          <p v-if="doingTodos && !doingTodos.length">내용이 없어요🥲</p>
-          <div v-for="(todo, idx) in doingTodos" :key="todo.todoId">
+        <div class="todo-list" v-if="expandedSection === 'inProgress'">
+          <p v-if="workInProgress && !workInProgress.length">
+            얘는 일을 안하나봐요!
+          </p>
+          <div v-for="(todo, idx) in workInProgress" :key="todo.todoId">
             <p
               class="text-md font-bold py-2"
               :style="`z-index: ${idx}`"
               v-if="
-                idx === 0 || doingTodos[idx].day !== doingTodos[idx - 1].day
+                idx === 0 ||
+                  workInProgress[idx].day !== workInProgress[idx - 1].day
               "
             >
               {{ todo.day }}
@@ -44,7 +51,8 @@
           <h3 class="text-xl font-bold">Done✅✅</h3>
           <button
             @click="
-              expandedSection = expandedSection === 'done' ? 'doing' : 'done'
+              expandedSection =
+                expandedSection === 'done' ? 'inProgress' : 'done'
             "
           >
             <span class="material-icons" v-if="expandedSection === 'done'">
@@ -56,7 +64,7 @@
           </button>
         </div>
         <div class="todo-list" v-if="expandedSection === 'done'">
-          <p v-if="doneTodos && !doneTodos.length">내용이 없어요🥲</p>
+          <p v-if="doneTodos && !doneTodos.length">얘는 일을 안하나봐요!</p>
           <div v-for="(todo, idx) in doneTodos" :key="todo.todoId">
             <p
               class="text-md font-bold py-2"
@@ -95,9 +103,9 @@ export default {
     const store = useStore()
     const modalEl = ref(null)
     const todos = ref([])
-    const expandedSection = ref("doing")
+    const expandedSection = ref("inProgress")
 
-    const doingTodos = computed(() =>
+    const workInProgress = computed(() =>
       todos.value
         .filter(todo => !todo.done)
         .sort((a, b) => (a.day === b.day ? 0 : a.day < b.day ? -1 : 1))
@@ -118,7 +126,7 @@ export default {
     return {
       expandedSection,
       modalEl,
-      doingTodos,
+      workInProgress,
       doneTodos,
     }
   },

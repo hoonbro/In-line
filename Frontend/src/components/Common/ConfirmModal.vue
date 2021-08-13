@@ -50,6 +50,7 @@ export default {
 
     // 부모 컴포넌트에서 접근하기 위해서는 setup 함수에서 리턴해주어야 한다.
     const show = async () => {
+      isVisible.value = true
       return new Promise((resolve, reject) => {
         resolvePromise.value = resolve
         rejectPromise.value = reject
@@ -80,42 +81,25 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/* Transition */
-.fade-enter-active,
-.fade-leave-active {
-  @apply transition-all;
-}
+.modal-container {
+  @apply max-w-sm w-full bg-white shadow-lg rounded p-6 grid gap-4 mt-20 mb-auto;
 
-.fade-enter-from,
-.fade-leave-to {
-  transform: translateY(-32px);
-  @apply opacity-0;
-}
+  .modal-content-container {
+    @apply w-full grid gap-1 font-medium;
+  }
 
-.backdrop {
-  z-index: 999;
-  @apply fixed inset-0 flex justify-center;
+  .modal-btns-container {
+    @apply flex gap-2;
 
-  .modal-container {
-    @apply max-w-sm w-full bg-white shadow-lg rounded p-6 grid gap-4 mt-20 mb-auto;
+    .modal-btn {
+      @apply flex-1 py-2 px-4 text-sm rounded;
 
-    .modal-content-container {
-      @apply w-full grid gap-1 font-medium;
-    }
+      &.confirm {
+        @apply text-white bg-blue-500;
+      }
 
-    .modal-btns-container {
-      @apply flex gap-2;
-
-      .modal-btn {
-        @apply flex-1 py-2 px-4 text-sm rounded;
-
-        &.confirm {
-          @apply text-white bg-blue-500;
-        }
-
-        &.cancel {
-          @apply bg-gray-200;
-        }
+      &.cancel {
+        @apply bg-gray-200;
       }
     }
   }

@@ -1,107 +1,120 @@
 <template>
   <div>
     <div class="admin">
-      <div class="top-box-wrapper">
-        <h1 class="">회사</h1>
-        <div class="top-box">
-          <div class="top-box-item large">
-            <div class="flex flex-col h-full">
-              <h3 class="title">
-                <span>전체 구성원 수</span>
-                <span>🤩</span>
-              </h3>
-              <div class="content">
-                <span>{{
-                  members.officeUserCount ? members.officeUserCount[0] : null
-                }}</span>
+      <Loading v-if="loading" />
+      <template v-else>
+        <div class="top-box-wrapper">
+          <h1 class="">회사</h1>
+          <div class="top-box">
+            <div class="top-box-item large">
+              <div class="flex flex-col h-full">
+                <h3 class="title">
+                  <span>전체 구성원 수</span>
+                  <span>🤩</span>
+                </h3>
+                <div class="content">
+                  <span>{{ totalMemberCount }}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="top-box-item large">
-            <div class="flex flex-col h-full">
-              <h3 class="title">퇴사자 수🥲</h3>
-              <p class="content">
-                <span>{{ retires }}</span>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="top-box">
-          <template v-for="dept in members.deptUserCount" :key="dept.deptName">
-            <div class="top-box-item">
+            <div class="top-box-item large">
               <div class="flex flex-col h-full">
-                <h3 class="title">{{ dept.deptName }}</h3>
+                <h3 class="title">퇴사자 수😅</h3>
                 <p class="content">
-                  <span>{{ dept.cnt }}</span>
+                  <span>{{ retires }}</span>
                 </p>
               </div>
             </div>
-          </template>
-        </div>
-      </div>
-      <div class="bottom-box-wrapper">
-        <h1 class="">근태 관리</h1>
-        <div class="bottom-box">
-          <div class="bottom-box-item left-box">
-            <div class="header">
-              <span>월별</span>
+            <div class="top-box-item large">
+              <div class="flex flex-col h-full">
+                <h3 class="title">근속년수😎</h3>
+                <p class="content">
+                  <span>{{ years }}</span>
+                </p>
+              </div>
             </div>
-            <ul class="month-list">
-              <li
-                v-for="(value, key) in attendances"
-                :key="key"
-                class="month-list-item"
-              >
-                <div class="content" @click="changeActive(key)">
-                  {{ key.slice(0, 4) }}년 {{ key.slice(5, 8) }}월
-                </div>
-              </li>
-            </ul>
           </div>
-          <div class="bottom-box-item right-box">
-            <div v-if="active === null" class="mx-auto mt-5">
-              <img class="mx-auto" src="@/assets/asd.gif" alt="엑박" />
-              <p class="text-center">
-                월별 근태 현황을 보시려면 왼쪽 목록에서 월을 눌러주세요
-              </p>
-            </div>
-            <div v-for="(attendance, key) in attendances" :key="key">
-              <template v-if="active === key">
-                <h2>{{ key.slice(0, 4) }}년 {{ key.slice(5, 8) }} 월</h2>
-                <div v-for="(item, idx) in attendance" :key="item.commuteId">
-                  <template
-                    v-if="
-                      idx === 0 ||
-                        attendance[idx].ymd !== attendance[idx - 1].ymd
-                    "
-                  >
-                    <p class="day">
-                      {{ item.ymd.slice(5, 7) }}월 {{ item.ymd.slice(8, 11) }}일
-                    </p>
-                    <div class="table-row label">
-                      <p>이름</p>
-                      <p>출근 시간</p>
-                      <p>퇴근 시간</p>
-                    </div>
-                  </template>
-                  <div class="table-row">
-                    <p>{{ item.userEntity.name }}</p>
-                    <p v-if="item.comeIn === null">{{ item.comeIn }}-</p>
-                    <p v-else>
-                      {{ item.comeIn.slice(0, 5) }}
-                    </p>
-                    <p v-if="item.comeOut === null">{{ item.comeOut }}-</p>
-                    <p v-else>
-                      {{ item.comeOut.slice(0, 5) }}
-                    </p>
+          <div class="top-box">
+            <!-- <template
+              v-for="dept in members.deptUserCount"
+              :key="dept.deptName"
+            >
+              <div class="top-box-item">
+                <div class="flex flex-col h-full">
+                  <h3 class="title">{{ dept.deptName }}</h3>
+                  <p class="content">
+                    <span>{{ dept.cnt }}</span>
+                  </p>
+                </div>
+              </div>
+            </template> -->
+          </div>
+        </div>
+        <div class="bottom-box-wrapper">
+          <h1 class="">근태 관리</h1>
+          <div class="bottom-box">
+            <div class="bottom-box-item left-box">
+              <div class="header">
+                <span>월별</span>
+              </div>
+              <ul class="month-list">
+                <li
+                  v-for="(value, key) in attendances"
+                  :key="key"
+                  class="month-list-item"
+                >
+                  <div class="content" @click="changeActive(key)">
+                    {{ key.slice(0, 4) }}년 {{ key.slice(5, 8) }}월
                   </div>
-                </div>
-              </template>
+                </li>
+              </ul>
             </div>
-            <!-- 아래에서 '일'을 반복하고 '일'안에서 '멤버'반복 -->
+            <div class="bottom-box-item right-box">
+              <div v-if="active === null" class="mx-auto mt-5">
+                <img class="mx-auto" src="@/assets/asd.gif" alt="엑박" />
+                <p class="text-center">
+                  월별 근태 현황을 보시려면 왼쪽 목록에서 월을 눌러주세요
+                </p>
+              </div>
+              <div v-for="(attendance, key) in attendances" :key="key">
+                <template v-if="active === key">
+                  <h2>{{ key.slice(0, 4) }}년 {{ key.slice(5, 8) }} 월</h2>
+                  <div v-for="(item, idx) in attendance" :key="item.commuteId">
+                    <template
+                      v-if="
+                        idx === 0 ||
+                          attendance[idx].ymd !== attendance[idx - 1].ymd
+                      "
+                    >
+                      <p class="day">
+                        {{ item.ymd.slice(5, 7) }}월
+                        {{ item.ymd.slice(8, 11) }}일
+                      </p>
+                      <div class="table-row label">
+                        <p>이름</p>
+                        <p>출근 시간</p>
+                        <p>퇴근 시간</p>
+                      </div>
+                    </template>
+                    <div class="table-row">
+                      <p>{{ item.userEntity.name }}</p>
+                      <p v-if="item.comeIn === null">{{ item.comeIn }}-</p>
+                      <p v-else>
+                        {{ item.comeIn.slice(0, 5) }}
+                      </p>
+                      <p v-if="item.comeOut === null">{{ item.comeOut }}-</p>
+                      <p v-else>
+                        {{ item.comeOut.slice(0, 5) }}
+                      </p>
+                    </div>
+                  </div>
+                </template>
+              </div>
+              <!-- 아래에서 '일'을 반복하고 '일'안에서 '멤버'반복 -->
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -116,6 +129,7 @@ export default {
   setup() {
     const store = useStore()
     const user = JSON.parse(localStorage.getItem("user"))
+    const loading = ref(true)
 
     // 얜 더미야!
     // const members = 16
@@ -126,8 +140,6 @@ export default {
       active.value = index
       console.log(active.value)
     }
-
-    const year = ref(12)
 
     const attendances = ref()
 
@@ -140,13 +152,14 @@ export default {
       })
     })
 
-    const retires = computed(() => {
-      return store.state.admin.retires
-    })
+    // const retires = computed(() => {
+    //   return store.state.admin.retires
+    // })
+    const retires = ref(0)
 
-    const members = computed(() => {
-      return store.state.admin.members
-    })
+    const members = ref(null)
+    const totalMemberCount = ref(null)
+    const memberCountOnDept = ref(null)
 
     const years = computed(() => {
       return store.state.admin.years
@@ -158,11 +171,26 @@ export default {
         "admin/getAttendances",
         user.officeId
       )
-      await store.dispatch("admin/getRetires", user.officeId)
+      // await store.dispatch("admin/getRetires", user.officeId)
       await store.dispatch("admin/getMembers", user.officeId)
       await store.dispatch("admin/getYears", user.officeId)
+      members.value = store.getters["admin/members"]
+      totalMemberCount.value = store.getters["admin/totalMemberCount"]
+      memberCountOnDept.value = store.getters["admin/memberCountOndept"]
+      loading.value = false
     })
-    return { user, attendances, retires, members, active, changeActive, year }
+    return {
+      loading,
+      user,
+      attendances,
+      retires,
+      members,
+      active,
+      changeActive,
+      years,
+      totalMemberCount,
+      memberCountOnDept,
+    }
   },
 }
 </script>
