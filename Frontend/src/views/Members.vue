@@ -6,7 +6,7 @@
           <h1 class="section-title">구성원</h1>
           <button
             class="add-member-btn"
-            v-if="true"
+            v-if="isAdmin"
             @click="addMemberModalOpen = true"
           >
             <span class="material-icons">add</span>
@@ -17,7 +17,7 @@
       </section>
 
       <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
-      <section>
+      <section v-if="isAdmin">
         <div class="header">
           <h1 class="section-title">On Board</h1>
         </div>
@@ -66,6 +66,8 @@ export default {
     const addMemberModalOpen = ref(false)
     const profileModalOpen = ref(false)
     const profileUserId = ref(null)
+
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
     const officeName = computed(
       () => store.state.auth.user.officeEntity.officeName
     )
@@ -106,6 +108,7 @@ export default {
     }
 
     return {
+      isAdmin,
       officeName,
       searchTerm,
       searchedMembers,
@@ -122,7 +125,7 @@ export default {
 
 <style scoped lang="scss">
 .members {
-  @apply grid gap-10 px-10 my-10;
+  @apply grid gap-10 p-10;
 
   section {
     @apply grid gap-6;
