@@ -41,8 +41,11 @@
           </ul>
         </div>
         <div class="bottom-box-item right-box">
-          <div class="my-auto mx-auto border-2 inline-block align-middle">
-            <p>왼쪽의 월을 눌러주세용</p>
+          <div v-if="active === null" class="mx-auto mt-5">
+            <img class="mx-auto" src="@/assets/asd.gif" alt="엑박" />
+            <p class="text-center">
+              월별 근태 현황을 보시려면 왼쪽 목록에서 월을 눌러주세요
+            </p>
           </div>
           <!-- <div v-if="active === null" class="grid grid-cols-3 gap-2">
             <div v-for="(month, idx) in year">
@@ -58,7 +61,11 @@
             <div v-for="(attendance, index) in attendances">
               <div v-if="active === index">
                 <h2>{{ index.slice(0, 4) }}년 {{ index.slice(5, 8) }} 월</h2>
-                <div v-for="(item, idx) in attendance" class="">
+                <div
+                  v-for="(item, idx) in attendance"
+                  :key="item.commuteId"
+                  class=""
+                >
                   <p
                     class="day p-1  mt-2"
                     v-if="
@@ -69,17 +76,13 @@
                     {{ item.ymd.slice(5, 7) }}월 {{ item.ymd.slice(8, 11) }}일
                   </p>
                   <div class="grid grid-cols-3 p-1 h-9">
-                    <p class="">{{ item.userEntity.name }}</p>
-                    <p class="" v-if="item.comeIn === null">
-                      {{ item.comeIn }}-
-                    </p>
-                    <p class="" v-if="item.comeIn !== null">
+                    <p>{{ item.userEntity.name }}</p>
+                    <p v-if="item.comeIn === null">{{ item.comeIn }}-</p>
+                    <p v-else>
                       {{ item.comeIn.slice(0, 5) }}
                     </p>
-                    <p class="" v-if="item.comeOut === null">
-                      {{ item.comeOut }}-
-                    </p>
-                    <p class="" v-if="item.comeOut !== null">
+                    <p v-if="item.comeOut === null">{{ item.comeOut }}-</p>
+                    <p v-else>
                       {{ item.comeOut.slice(0, 5) }}
                     </p>
                   </div>
