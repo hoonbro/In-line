@@ -104,8 +104,9 @@ public class RoomManager {
                 .officeId(roomDto.getOfficeId())
                 .userId(roomDto.getUserId())
                 .build();
-        rooms.put(roomDto.getRoomId(),  new Room(roomDto.getRoomName(), kurento.createMediaPipeline(), roomDto.getRoomId(), roomDto.getOfficeId()));
-        return roomRepository.save(roomEntity);
+        roomEntity = roomRepository.save(roomEntity);
+        rooms.put(roomEntity.getRoomId(),  new Room(roomDto.getRoomName(), kurento.createMediaPipeline(), roomEntity.getRoomId(), roomDto.getOfficeId()));
+        return roomEntity;
     }
 
     public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
