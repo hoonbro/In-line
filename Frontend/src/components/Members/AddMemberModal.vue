@@ -25,28 +25,20 @@
       <div class="add-form">
         <div class="input-list">
           <div v-for="(field, key) in formData" :key="key">
-            <select
-              v-if="key === 'deptName'"
+            <SelectInput
+              v-if="key === 'dept'"
               v-model="field.value"
-              class="select-box"
-              :class="{ selectLabel: !field.value }"
-            >
-              <option disabled value="">{{ field.label }}</option>
-              <option v-for="dept in depts" :key="dept.deptId">
-                {{ dept.deptName }}
-              </option>
-            </select>
-            <select
-              v-else-if="key === 'jobName'"
+              :name="key"
+              :field="field"
+              :items="depts"
+            />
+            <SelectInput
+              v-else-if="key === 'job'"
               v-model="field.value"
-              class="select-box"
-              :class="{ selectLabel: !field.value }"
-            >
-              <option disabled value="">{{ field.label }}</option>
-              <option v-for="job in jobs" :key="job.jobId">
-                {{ job.jobName }}
-              </option>
-            </select>
+              :name="key"
+              :field="field"
+              :items="jobs"
+            />
             <TextInput
               v-else
               v-model="field.value"
@@ -102,8 +94,12 @@ export default {
     const officeName = JSON.parse(localStorage.getItem("user")).officeEntity
       .officeName
 
-    store.dispatch("office/getDepts")
-    store.dispatch("office/getJobs")
+    try {
+      store.dispatch("office/getDepts")
+      store.dispatch("office/getJobs")
+    } catch (error) {
+      // store.commit()
+    }
     const depts = computed(() => store.state.office.depts)
     const jobs = computed(() => store.state.office.jobs)
 
@@ -122,13 +118,13 @@ export default {
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
-      deptName: {
+      dept: {
         label: "소속",
         value: "",
         validators: [requiredValidator],
         errors: {},
       },
-      jobName: {
+      job: {
         label: "역할",
         value: "",
         validators: [requiredValidator],
