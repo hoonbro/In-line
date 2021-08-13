@@ -8,7 +8,9 @@
             :src="`/images/${profileImg}`"
             alt="프로필 이미지"
           />
-          <span v-else>{{ profileForm.name.value[0] }}</span>
+          <div class="default-img" :class="bgColor" v-else>
+            {{ profileForm.name.value[0] }}
+          </div>
           <input
             type="file"
             accept="image/*"
@@ -171,6 +173,18 @@ export default {
     }
     const depts = ref(null)
     const jobs = ref(null)
+    const colorList = [
+      "gray",
+      "red",
+      "yellow",
+      "green",
+      "teal",
+      "blue",
+      "indigo",
+      "purple",
+      "pink",
+    ]
+    const bgColor = `bg-${colorList[props.userId % 9]}-400`
 
     const resetProfileForm = () => {
       profileForm.email.value = originData.email
@@ -278,6 +292,7 @@ export default {
       isMine,
       depts,
       jobs,
+      bgColor,
       profileForm,
       editMode,
       profileImg,
@@ -306,10 +321,14 @@ header {
   @apply mb-10 flex justify-center;
 
   .profile-img-wrapper {
-    @apply bg-blue-600 w-32 h-32 rounded-full flex items-center justify-center relative text-white text-lg font-bold;
+    @apply w-32 h-32 rounded-full relative text-lg font-bold overflow-hidden;
 
     img {
       @apply w-full h-full object-cover rounded-full;
+    }
+
+    .default-img {
+      @apply w-full h-full flex items-center justify-center text-white;
     }
 
     button {

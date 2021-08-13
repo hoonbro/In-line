@@ -1,6 +1,5 @@
 <template>
   <div class="layout">
-    <MainNav />
     <main>
       <!-- <Room /> -->
       <router-view class="flex-1" />
