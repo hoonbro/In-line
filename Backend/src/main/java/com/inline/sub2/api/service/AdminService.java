@@ -17,4 +17,6 @@ public interface AdminService {
     int getOfficeUserCount(Long officeId);
 
     List<DeptUserDto> getDeptUserCount(Long officeId);
+
+    Long getJobYear(Long officeId);
 }
