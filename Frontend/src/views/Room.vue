@@ -97,7 +97,7 @@ export default {
 
     //////////////////////////////////room chat 추가한 부분//////////////////////////////////
     const connectRoomChat = () => {
-      const serverURL = "/chatStomp"
+      const serverURL = "https://i5d207.p.ssafy.io:8995/chatStomp"
       const socket = new SockJS(serverURL)
       const roomStompClient = Stomp.over(socket)
       roomStompClient.connect(
