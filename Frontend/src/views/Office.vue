@@ -51,9 +51,6 @@ export default {
       return rooms.value.filter(room => room.roomName !== "로비")
     })
 
-    // getRooms 실행시키자
-    store.dispatch("office/getRooms", user.officeId)
-
     return {
       user,
       rooms,

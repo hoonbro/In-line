@@ -13,13 +13,9 @@
 <script>
 import { computed, onMounted, onUnmounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
-import {
-  connectStomp,
-  enterOffice,
-  exitOffice,
-  disconnectStomp,
-} from "@/lib/websocket"
+import { exitOffice, disconnectStomp } from "@/lib/websocket"
 import AlertModal from "@/components/Common/AlertModal.vue"
+import { setupVuexData } from "./lib/common"
 
 export default {
   components: { AlertModal },
@@ -47,15 +43,7 @@ export default {
       }
       // 2. 데이터 불러오기 & 연결하기
       if (store.getters["auth/accessToken"] && store.getters["auth/officeId"]) {
-        await store.dispatch("office/getMembers")
-
-        if (!stompClient.value || stompClient.value.connected === false) {
-          await connectStomp(
-            store.getters["auth/userId"],
-            store.getters["auth/officeId"]
-          )
-          enterOffice(stompClient.value, user.value)
-        }
+        await setupVuexData()
       }
     })
 

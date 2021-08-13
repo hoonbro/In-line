@@ -1,11 +1,6 @@
 import Stomp from "webstomp-client"
 import SockJS from "sockjs-client"
 import store from "@/store/index"
-import { auth } from "@/store/modules/auth"
-import { socket } from "@/store/modules/socket"
-
-// send: notification/:userId
-// sub: queue/:userId
 
 let stompClient
 
@@ -102,18 +97,18 @@ export const exitOffice = (stompClient, user) => {
   console.groupEnd()
 }
 
-export const moveRoom = () => {
+export const moveRoom = roomId => {
   const user = store.getters["auth/user"]
   const stompClient = store.getters["socket/stompClient"]
   console.group("WS: MOVE")
-  console.log(user)
+  console.log(roomId)
   if (stompClient && stompClient.connected) {
     const msg = {
       type: "MOVE",
       officeId: user.officeId,
       userId: user.userId,
       userName: user.name,
-      roomId: user.roomId,
+      roomId: +roomId,
     }
     console.log("MOVE 이벤트 전달")
     console.log(msg)

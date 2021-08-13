@@ -52,9 +52,17 @@
 
 <script>
 import Video from "@/components/Room/Video.vue"
-import { onUnmounted, reactive, ref } from "@vue/runtime-core"
+import {
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  computed,
+} from "@vue/runtime-core"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import SockJS from "sockjs-client"
+import Stomp from "webstomp-client"
 import kurentoUtils from "kurento-utils"
 
 export default {
@@ -78,11 +86,44 @@ export default {
         room.value = item.roomName
       }
     })
+    // const roomStompClient = ref(store.state.socket.roomStompClient)
+
     const state = reactive({
       room: room.value,
       name: store.state.auth.user.name,
       userId: store.state.auth.user.userId,
+      officeId: store.state.auth.user.officeId,
     })
+
+    //////////////////////////////////room chat 추가한 부분//////////////////////////////////
+    const connectRoomChat = () => {
+      const serverURL = "/chatStomp"
+      const socket = new SockJS(serverURL)
+      const roomStompClient = Stomp.over(socket)
+      roomStompClient.connect(
+        {},
+        frame => {
+          roomStompClient.connected = true
+          store.commit("socket/setRoomStompClient", roomStompClient)
+          roomStompClient.subscribe(
+            `/sub/${state.officeId}/${props.roomId}`,
+            res => {
+              console.log(JSON.parse(res.body))
+              store.commit("socket/addRoomChat", JSON.parse(res.body))
+            }
+          )
+        },
+        error => {
+          store.commit("landing/addAlertModalList", {
+            type: "error",
+            message: "소켓 연결이 끊겼어요.",
+          })
+          roomStompClient.connected = false
+          store.commit("socket/setStompClient", roomStompClient)
+        }
+      )
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
 
     // 동명이인 처리 어떻게 할건지
     const register = () => {
@@ -92,11 +133,13 @@ export default {
         userName: state.name,
         roomName: state.room,
         roomId: props.roomId,
+        officeId: state.officeId,
       }
 
       sendMessage(message)
     }
 
+    onMounted(() => connectRoomChat())
     onUnmounted(() => leaveRoom())
 
     let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
@@ -451,8 +494,8 @@ export default {
         @apply grid grid-cols-3 mx-20 mt-20 gap-3 place-items-center;
       }
 
-    .bar-part {
-      @apply flex fixed left-1/3 bottom-5;
+      .bar-part {
+        @apply flex fixed left-1/3 bottom-5;
 
         .mic-button {
           @apply flex bg-blue-900 rounded-full h-10 w-36 text-white justify-center mx-2 place-items-center cursor-pointer;

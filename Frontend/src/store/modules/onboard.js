@@ -2,13 +2,26 @@ import axios from "axios"
 
 export const onboard = {
   namespaced: true,
-  state: {},
+  state: {
+    onBoardList: [],
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    setOnBoardList: (state, data) => {
+      state.onBoardList = data
+    },
+    deleteOnBoardItem: (state, data) => {
+      const idx = state.onBoardList.indexOf(data)
+      state.onBoardList.splice(idx, 1)
+      console.log(state.onBoardList)
+    },
+    appendOnBoardItem: (state, data) => {
+      state.onBoardList.push(data)
+    },
+  },
   actions: {
     registerMember: async (context, formData) => {
       try {
-        console.log(formData)
         const res = await axios({
           url: "/api/v1/on-board/user",
           method: "POST",
@@ -17,9 +30,8 @@ export const onboard = {
           },
           data: formData,
         })
-        console.log(res)
+        context.commit("appendOnBoardItem", res.data)
       } catch (error) {
-        console.log(error)
         const { status } = error.response
         switch (status) {
           case 409: {
@@ -36,6 +48,23 @@ export const onboard = {
     },
     getInitData: (context, email) => {
       return axios.get(`/api/v1/on-board/user/${email}`)
+    },
+    getOnBoardList: async (context, officeId) => {
+      try {
+        const res = await axios.get(`/api/v1/on-board/${officeId}`)
+        context.commit("setOnBoardList", res.data)
+      } catch (error) {
+        throw Error("에러 발생!")
+      }
+    },
+    deleteOnBoardMember: async (context, member) => {
+      try {
+        const res = await axios.delete(`/api/v1/on-board/user/${member.email}`)
+        context.commit("deleteOnBoardItem", member)
+      } catch (error) {
+        console.log(error)
+        throw Error("삭제 실패")
+      }
     },
   },
 }

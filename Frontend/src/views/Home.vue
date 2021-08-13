@@ -27,7 +27,11 @@
       </div>
     </article>
     <!--  -->
-    <article data-aos="fade-left" data-aos-duration="2000">
+    <article
+      data-aos="fade-left"
+      data-aos-duration="2000"
+      data-aos-delay="1000"
+    >
       <h2 class="title text-right">Office</h2>
       <div class="content">
         <div class="item-text-container">
@@ -44,7 +48,11 @@
       </div>
     </article>
     <!--  -->
-    <article data-aos="fade-right" data-aos-duration="2000">
+    <article
+      data-aos="fade-right"
+      data-aos-duration="2000"
+      data-aos-delay="1000"
+    >
       <h2 class="title">Room</h2>
       <div class="content">
         <div class="item-img-container">
@@ -61,7 +69,7 @@
       </div>
     </article>
     <!--  -->
-    <article data-aos="fade-up" data-aos-duration="4000" data-aos-delay="500">
+    <article data-aos="fade-up" data-aos-duration="2000" data-aos-delay="1000">
       <h2 class="title text-right">Admin</h2>
       <div class="content">
         <div class="item-text-container">
@@ -75,6 +83,55 @@
         </div>
         <div class="item-img-container">
           <img src="@/assets/home-image4.png" alt="" />
+        </div>
+      </div>
+    </article>
+    <article class="grid grid-cols-3">
+      <div
+        class="icon"
+        data-aos="zoom-in"
+        data-aos-duration="3000"
+        data-aos-delay="2000"
+      >
+        <div class="icon-image w-36">
+          <img src="@/assets/video-call.png" alt="엑박" />
+        </div>
+        <div class="icon-explain">
+          <span
+            >오프라인 사무실 환경을 온라인에서 구축하기 위해 최고 수준의 화상
+            회의를 지원합니다</span
+          >
+        </div>
+      </div>
+      <div
+        class="icon"
+        data-aos="zoom-in"
+        data-aos-duration="3000"
+        data-aos-delay="2500"
+      >
+        <div class="icon-image w-36">
+          <img src="@/assets/chat-box.png" alt="엑박" />
+        </div>
+        <div class="icon-explain">
+          <span
+            >원활한 소통을 위해 팀원들의 실시간 접속 상태를 확인하고 채팅을 할
+            수 있습니다.
+          </span>
+        </div>
+      </div>
+      <div
+        class="icon"
+        data-aos="zoom-in"
+        data-aos-duration="3000"
+        data-aos-delay="3000"
+      >
+        <div class="icon-image w-36">
+          <img src="@/assets/bar-chart.png" alt="엑박" />
+        </div>
+        <div class="icon-explain">
+          <span
+            >사원들의 근태 관리, 나아가 전체 인원 관리를 쉽게 할 수 있습니다.
+          </span>
         </div>
       </div>
     </article>
@@ -104,11 +161,11 @@ export default {
   @apply container mt-40 px-4 mx-auto mb-20 grid gap-40;
 
   img {
-    @apply border-4 border-black;
+    @apply border-2 border-black;
   }
 
   article {
-    @apply bg-gray-100 rounded px-4 py-6 md:p-10;
+    @apply bg-gray-100 rounded px-4 py-6 md:p-10 my-12;
 
     .title {
       @apply text-2xl font-bold mb-6 md:text-4xl md:mb-10;
@@ -123,6 +180,14 @@ export default {
 
       img {
         @apply rounded-lg;
+      }
+    }
+    .icon {
+      .icon-image {
+        @apply mx-auto mb-4;
+      }
+      .icon-explain {
+        @apply mx-10 text-2xl;
       }
     }
 

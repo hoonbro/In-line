@@ -10,6 +10,9 @@ module.exports = {
       "/images": {
         target: "https://i5d207.p.ssafy.io",
       },
+      "/chatStomp": {
+        target: "http://i5d207.p.ssafy.io:8995",
+      },
     },
     overlay: true,
   },
