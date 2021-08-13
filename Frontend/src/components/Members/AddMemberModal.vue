@@ -19,8 +19,11 @@
         </div>
       </div>
       <div class="header">
-        <h3 class="title" @click="$emit('close')">구성원 추가</h3>
-        <p class="detail">{{ officeName }}의 구성원을 추가합니다.</p>
+        <h3 class="title">구성원 추가</h3>
+        <p class="detail">
+          구성원을 추가하시면 아래 입력한 이메일로 초대 메일을 보냅니다.<br />구성원이
+          초대를 수락하면 구성원 추가가 완료됩니다.
+        </p>
       </div>
       <div class="add-form">
         <div class="input-list">

@@ -28,15 +28,11 @@ export default {
   name: "RoomChat",
   components: { ChatListItem },
   setup() {
-    // ===========================================
     const route = useRoute()
-    const path = route.fullPath
-    console.log(route.fullPath) // '/rooms/177'
-    // console.log(path.slice(7)) // '177'
-    const roomId = path.slice(7)
-    // ===========================================
+    const roomId = route.fullPath.slice(7)
 
     const store = useStore()
+
     const officeId = computed(() => store.state.auth.user.officeId)
     const userId = computed(() => store.state.auth.user.userId)
     const userName = computed(() => store.state.auth.user.name)
@@ -47,7 +43,6 @@ export default {
         return { ...chat, sendTime: formatedTime }
       })
     })
-    const roomStompClient = computed(() => store.state.socket.roomStompClient)
     const chatListEl = ref(null)
     const content = ref("")
 
@@ -55,6 +50,7 @@ export default {
       content.value = `${content.value}\n`
     }
 
+    const roomStompClient = computed(() => store.state.socket.roomStompClient)
     const sendMessage = event => {
       if (
         content.value &&
@@ -77,12 +73,6 @@ export default {
       content.value = ""
     }
 
-    onUpdated(() => {
-      chatListEl.value.scrollTo({
-        top: chatListEl.value.scrollHeight,
-      })
-    })
-
     onMounted(() => {
       if (chatListEl.value) {
         chatListEl.value.scrollTo({
@@ -91,6 +81,13 @@ export default {
         })
       }
     })
+
+    onUpdated(() => {
+      chatListEl.value.scrollTo({
+        top: chatListEl.value.scrollHeight,
+      })
+    })
+
     return {
       userId,
       content,
