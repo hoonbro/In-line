@@ -15,9 +15,14 @@
       <button class="delete-btn" @click="deleteOnBoardMember">삭제</button>
     </div>
   </div>
+  <ConfirmModal
+    ref="confirmModal"
+    :content="['등록 예정인 구성원을 삭제하시겠어요?']"
+  />
 </template>
 
 <script>
+import { ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 
 export default {
@@ -27,8 +32,12 @@ export default {
   },
   setup(props) {
     const store = useStore()
+    const confirmModal = ref(null)
 
     const deleteOnBoardMember = async () => {
+      const ok = await confirmModal.value.show()
+      if (!ok) return
+
       try {
         await store.dispatch("onboard/deleteOnBoardMember", props.member)
         store.commit("landing/addAlertModalList", {
@@ -42,7 +51,7 @@ export default {
         })
       }
     }
-    return { deleteOnBoardMember }
+    return { confirmModal, deleteOnBoardMember }
   },
 }
 </script>

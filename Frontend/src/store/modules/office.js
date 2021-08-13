@@ -271,6 +271,7 @@ export const office = {
         commit("setMembers", res.data)
       } catch (error) {
         console.log(error)
+        throw Error(error)
       }
     },
     getMember({ rootState }, userId) {
@@ -281,8 +282,7 @@ export const office = {
         },
       })
     },
-
-    async getRooms({ commit, rootState }, officeId) {
+    async getRooms({ commit, rootState }) {
       try {
         const res = await roomAPI({
           method: "GET",
@@ -295,7 +295,7 @@ export const office = {
         })
         commit("setRooms", res.data)
       } catch (error) {
-        console.dir(error)
+        console.log(error)
       }
     },
     // --------------------------------------------------------------------------------

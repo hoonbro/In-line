@@ -1,6 +1,7 @@
 <template>
-  <Modal>
+  <Modal @close="$emit('close')">
     <template v-slot:modal-body>
+      <Loading v-if="loading" />
       <div class="profile-img-container">
         <div class="profile-img-wrapper">
           <img
@@ -47,10 +48,13 @@
           </li>
         </ul>
       </div>
-      <div class="change-pwd-btn-container" v-if="isMine && !editMode">
-        <router-link :to="{ name: 'ChangePassword' }">
+      <div class="btn-container" v-if="!editMode">
+        <router-link v-if="isMine" :to="{ name: 'ChangePassword' }">
           비밀번호 변경
         </router-link>
+        <button v-if="isAdmin" @click="deleteUser">
+          회원탈퇴
+        </button>
       </div>
       <!-- Edit Mode -->
       <form class="edit-form" v-if="editMode" @submit.prevent="updateProfile">
@@ -88,6 +92,7 @@
       </form>
     </template>
   </Modal>
+  <ConfirmModal ref="confirmModal" :content="confirmModalContent" />
 </template>
 
 <script>
@@ -114,7 +119,8 @@ export default {
   props: {
     userId: Number,
   },
-  setup(props) {
+  emits: ["close"],
+  setup(props, { emit }) {
     const store = useStore()
     const isAdmin = computed(() => store.getters["auth/isAdmin"])
     const isMine = computed(() => store.state.auth.user.userId === props.userId)
@@ -168,11 +174,12 @@ export default {
     const fileInputEl = ref(null)
     const editMode = ref(false)
     const profileFormError = ref("")
-    const clickInputEl = () => {
-      fileInputEl.value.click()
-    }
     const depts = ref(null)
     const jobs = ref(null)
+    const loading = ref(true)
+    const confirmModal = ref(null)
+    const confirmModalContent = ref([])
+
     const colorList = [
       "gray",
       "red",
@@ -185,6 +192,10 @@ export default {
       "pink",
     ]
     const bgColor = `bg-${colorList[props.userId % 9]}-400`
+
+    const clickInputEl = () => {
+      fileInputEl.value.click()
+    }
 
     const resetProfileForm = () => {
       profileForm.email.value = originData.email
@@ -266,6 +277,29 @@ export default {
       }
     }
 
+    const deleteUser = async () => {
+      confirmModalContent.value = ["이용자를 삭제하시겠습니까?"]
+      const ok = await confirmModal.value.show()
+      const msg = {
+        type: "",
+        message: "",
+      }
+      if (ok) {
+        try {
+          await store.dispatch("admin/deleteUser", { userId: props.userId })
+          // await store.dispatch("office/getMembers")
+          msg.type = "success"
+          msg.message = "회원이 삭제되었습니다."
+          emit("close")
+        } catch (error) {
+          msg.type = "error"
+          msg.message = error.message
+        } finally {
+          store.commit("landing/addAlertModalList", msg)
+        }
+      }
+    }
+
     onMounted(async () => {
       try {
         // 프로필 유저 정보 요청
@@ -282,12 +316,14 @@ export default {
         // 프로필 수정 시 사용되는 데이터 요청
         depts.value = await store.dispatch("office/getDepts")
         jobs.value = await store.dispatch("office/getJobs")
+        loading.value = false
       } catch (error) {
         console.log(error)
       }
     })
 
     return {
+      loading,
       isAdmin,
       isMine,
       depts,
@@ -302,7 +338,10 @@ export default {
       updateProfileImage,
       profileFormError,
       updateProfile,
+      deleteUser,
       handleUpdateValidate,
+      confirmModalContent,
+      confirmModal,
     }
   },
 }
@@ -382,11 +421,20 @@ header {
   }
 }
 
-.change-pwd-btn-container {
-  @apply mt-4 flex justify-end;
+.btn-container {
+  @apply mt-4 grid gap-1 place-items-end;
+
+  button,
+  a {
+    @apply font-medium text-sm text-gray-400;
+  }
 
   button {
-    @apply font-medium text-sm text-gray-600;
+    @apply hover:text-red-400;
+  }
+
+  a {
+    @apply hover:text-gray-600;
   }
 }
 </style>

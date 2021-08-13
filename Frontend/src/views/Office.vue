@@ -8,6 +8,7 @@
             :key="room.roomId"
             :title="room.roomName"
             :roomId="room.roomId"
+            :roomUserList="room.roomUserList"
             :large="true"
           />
         </div>

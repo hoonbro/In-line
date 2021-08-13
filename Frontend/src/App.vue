@@ -71,7 +71,8 @@ body {
 
 .backdrop {
   z-index: 999;
-  @apply fixed inset-0 flex justify-center;
+  background: rgba(46, 46, 51, 0.6);
+  @apply fixed -top-10 -left-10 -right-10 -bottom-10 flex items-center justify-center;
 }
 
 .alertModalContainer {
@@ -79,6 +80,20 @@ body {
   @apply fixed top-6 right-6 flex flex-col gap-2;
 }
 
+/* Transition */
+/* fade */
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-all;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateY(-32px);
+  @apply opacity-0;
+}
+
+/* confirmModal */
 .list-enter-active,
 .list-leave-active,
 .list-move {

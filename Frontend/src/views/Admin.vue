@@ -19,9 +19,17 @@
           </div>
           <div class="top-box-item large">
             <div class="flex flex-col h-full">
-              <h3 class="title">퇴사자 수🥲</h3>
+              <h3 class="title">퇴사자 수😅</h3>
               <p class="content">
                 <span>{{ retires }}</span>
+              </p>
+            </div>
+          </div>
+          <div class="top-box-item large">
+            <div class="flex flex-col h-full">
+              <h3 class="title">근속년수😎</h3>
+              <p class="content">
+                <span>{{ years }}</span>
               </p>
             </div>
           </div>
@@ -127,8 +135,6 @@ export default {
       console.log(active.value)
     }
 
-    const year = ref(12)
-
     const attendances = ref()
 
     watch(attendances, value => {
@@ -162,7 +168,7 @@ export default {
       await store.dispatch("admin/getMembers", user.officeId)
       await store.dispatch("admin/getYears", user.officeId)
     })
-    return { user, attendances, retires, members, active, changeActive, year }
+    return { user, attendances, retires, members, active, changeActive, years }
   },
 }
 </script>

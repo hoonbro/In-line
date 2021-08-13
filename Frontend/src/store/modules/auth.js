@@ -146,6 +146,7 @@ export const auth = {
         throw Error(error)
       }
     },
+    // 프로필
     async updateProfileImage({ state }, formData) {
       try {
         const { data: newProfileImg } = await authAPI({
@@ -164,7 +165,7 @@ export const auth = {
         throw Error("이미지 업로드에 실패했습니다.")
       }
     },
-    async updateProfile({ commit, state }, { userId, form }) {
+    async updateProfile({ state }, { userId, form }) {
       try {
         const res = await authAPI({
           method: "PUT",

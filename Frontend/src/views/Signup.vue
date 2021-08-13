@@ -76,7 +76,7 @@ export default {
         disabled: true,
       },
       jobName: {
-        label: "직무",
+        label: "직책",
         type: "text",
         value: "",
         validators: [requiredValidator],

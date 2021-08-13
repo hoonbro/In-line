@@ -235,7 +235,7 @@ export default {
         errors: {},
       },
       job: {
-        label: "담당자 직무",
+        label: "담당자 직책",
         type: "text",
         value: "",
         validators: [requiredValidator],
