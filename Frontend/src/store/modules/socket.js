@@ -33,7 +33,10 @@ export const socket = {
     },
     addRoomChat(state, chat) {
       state.roomChatList.push(chat)
-      console.log(state.roomChatList )
+      console.log(state.roomChatList)
+    },
+    resetRoomChat(state) {
+      state.roomChatList = []
     },
     addOfficeChat(state, chat) {
       state.officeChatList.push(chat)

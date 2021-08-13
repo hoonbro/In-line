@@ -132,6 +132,7 @@ export default {
           store.commit("socket/setStompClient", null)
         })
         console.groupEnd()
+        store.commit("socket/resetRoomChat")
         resolve(true)
       })
     }
