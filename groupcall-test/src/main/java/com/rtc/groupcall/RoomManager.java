@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import com.rtc.groupcall.api.dto.RoomDto;
 import com.rtc.groupcall.api.dto.RoomUserDto;
 import com.rtc.groupcall.db.entity.RoomEntity;
+import com.rtc.groupcall.db.entity.UserEntity;
 import com.rtc.groupcall.db.repository.RoomRepository;
 import com.rtc.groupcall.db.repository.UserRepository;
 import org.kurento.client.KurentoClient;
@@ -52,7 +53,7 @@ public class RoomManager {
                 continue;
 
             participants = room.getParticipants();
-            Map<Long, String> participantsMap = new TreeMap<>();
+            Map<Long, RoomUserDto> participantsMap = new TreeMap<>();
 
             for(Long userKey : participants.keySet()){
                 UserSession user = participants.get(userKey);
@@ -66,7 +67,7 @@ public class RoomManager {
                         .profileImage(user.getProfileImage())
                         .build();
 
-                participantsMap.put(userKey, userDto.toString());
+                participantsMap.put(userKey, userDto);
             }
 
             roomParticipants.put(key, participantsMap.values());
