@@ -93,6 +93,7 @@ export default {
       name: store.state.auth.user.name,
       userId: store.state.auth.user.userId,
       officeId: store.state.auth.user.officeId,
+      profileImage: store.state.auth.user.profileImage,
     })
 
     //////////////////////////////////room chat 추가한 부분//////////////////////////////////
@@ -132,7 +133,6 @@ export default {
           store.commit("socket/setStompClient", null)
         })
         console.groupEnd()
-        store.commit("socket/resetRoomChat")
         resolve(true)
       })
     }
@@ -140,6 +140,7 @@ export default {
 
     // 동명이인 처리 어떻게 할건지
     const register = () => {
+      if (state.profileImage == null) state.profileImage = ""
       const message = {
         id: "joinRoom",
         userId: state.userId,
@@ -147,6 +148,7 @@ export default {
         roomName: state.room,
         roomId: props.roomId,
         officeId: state.officeId,
+        profileImage: state.profileImage,
       }
 
       sendMessage(message)
@@ -287,7 +289,6 @@ export default {
       }
 
       ws.close()
-      disconnectStomp()
       router.push({ name: "Office" })
     }
 
