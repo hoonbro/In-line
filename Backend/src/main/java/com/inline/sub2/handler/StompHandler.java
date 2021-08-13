@@ -30,9 +30,6 @@ public class StompHandler implements ChannelInterceptor {
             System.out.println(accessor.getSessionId());
             System.out.println(message);
         }
-
-
         return message;
     }
-
 }

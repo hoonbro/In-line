@@ -53,7 +53,6 @@ export const onboard = {
       try {
         const res = await axios.get(`/api/v1/on-board/${officeId}`)
         context.commit("setOnBoardList", res.data)
-        console.log(res.data)
       } catch (error) {
         throw Error("에러 발생!")
       }
@@ -62,9 +61,9 @@ export const onboard = {
       try {
         const res = await axios.delete(`/api/v1/on-board/user/${member.email}`)
         context.commit("deleteOnBoardItem", member)
-        console.log(res)
       } catch (error) {
         console.log(error)
+        throw Error("삭제 실패")
       }
     },
   },

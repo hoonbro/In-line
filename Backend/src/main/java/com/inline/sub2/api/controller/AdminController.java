@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.util.*;
 
 @Slf4j
@@ -93,4 +94,26 @@ public class AdminController {
         }
         return new ResponseEntity<Double>(retireRate, status);
     }
+
+    @GetMapping("/jobyear/{officeId}")
+    public ResponseEntity<Long> getJobYear(@PathVariable Long officeId) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        Long jobYear = 0l;
+
+        try{
+            jobYear = adminService.getJobYear(officeId);
+            System.out.println("jobYear머나오냐? " + jobYear);
+        }
+        catch(Exception e){
+
+
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            return new ResponseEntity<Long>(jobYear,httpStatus);
+
+        }
+
+        return new ResponseEntity<Long>(jobYear,httpStatus);
+    }
+
+
 }

@@ -1,19 +1,24 @@
 package com.rtc.groupcall;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.rtc.groupcall.api.dto.RoomDto;
+import com.rtc.groupcall.api.dto.RoomUserDto;
 import com.rtc.groupcall.db.entity.RoomEntity;
-import com.rtc.groupcall.db.entity.UserEntity;
 import com.rtc.groupcall.db.repository.RoomRepository;
 import com.rtc.groupcall.db.repository.UserRepository;
 import org.kurento.client.KurentoClient;
+import org.kurento.client.MediaPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -37,15 +42,43 @@ public class RoomManager {
 
     private final ConcurrentMap<Long, Room> rooms = new ConcurrentHashMap<>();
 
+    public Map<Long, Collection> getOfficeRooms(Long officeId){
+        Map<Long, Collection> roomParticipants = new TreeMap<>();
+        ConcurrentMap<Long, UserSession> participants;
+        for(Long key :rooms.keySet()){
+            Room room = rooms.get(key);
+
+            if(room.getOfficeId() != officeId)
+                continue;
+
+            participants = room.getParticipants();
+            Map<Long, String> participantsMap = new TreeMap<>();
+
+            for(Long userKey : participants.keySet()){
+                UserSession user = participants.get(userKey);
+
+                RoomUserDto userDto = RoomUserDto.builder()
+                        .userId(user.getUserId())
+                        .userName(user.getUserName())
+                        .roomId(user.getRoomId())
+                        .roomName(user.getRoomName())
+                        .officeId(user.getOfficeId())
+                        .build();
+
+                participantsMap.put(userKey, userDto.toString());
+            }
+
+            roomParticipants.put(key, participantsMap.values());
+        }
+        return roomParticipants;
+    }
     public RoomEntity getRoom(Long roomId){
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException());
     }
 
-
-    public List<RoomEntity> getRooms(Long OfficeId){
-        List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(OfficeId);
-
+    public List<RoomEntity> getRooms(Long officeId){
+        List<RoomEntity> roomEntitys = roomRepository.findAllByOfficeId(officeId);
         for(RoomEntity r: roomEntitys){
             if(rooms.get(r.getRoomId()) != null)
                 continue;
@@ -53,7 +86,7 @@ public class RoomManager {
             rooms.put(r.getRoomId(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), r.getRoomId(), r.getOfficeId()));
         }
 
-        return roomRepository.findAllByOfficeId(OfficeId);
+        return roomRepository.findAllByOfficeId(officeId);
     }
 
     public RoomEntity createRoom(RoomDto roomDto){

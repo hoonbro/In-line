@@ -52,6 +52,7 @@ public class Room implements Closeable {
 ////        log.info("ROOM {} 생성 성공", roomName);
 //    }
 
+
     @PreDestroy
     private void shutdown() {
         this.close();
@@ -124,7 +125,7 @@ public class Room implements Closeable {
 
         final JsonArray participantsId = new JsonArray();
         final JsonArray participantsName = new JsonArray();
-        for (final UserSession participant : this.getParticipants()) {
+        for (final UserSession participant : this.getParticipantsvalues()) {
             if (participant.getUserId() != user.getUserId()) {
                 final JsonElement userId = new JsonPrimitive(participant.getUserId());
                 final JsonElement userName = new JsonPrimitive(participant.getUserName());
@@ -142,7 +143,7 @@ public class Room implements Closeable {
         user.sendMessage(existingParticipantsMsg);
     }
 
-    public Collection<UserSession> getParticipants() {
+    public Collection<UserSession> getParticipantsvalues() {
         return participants.values();
     }
 
