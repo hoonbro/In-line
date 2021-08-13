@@ -5,9 +5,12 @@
       :src="`/images/${member.profileImage}`"
       alt="프로필"
     />
-    <div class="fake-img" v-else>{{ member.name[0] }}</div>
+    <div class="fake-img" :class="bgColor" v-else>{{ member.name[0] }}</div>
     <div>
-      <p class="name">{{ member.name }}</p>
+      <div class="name">
+        <span>{{ member.name }}</span>
+        <span v-if="member.connected">({{ member.roomId }}번방)</span>
+      </div>
       <p class="department">{{ member.deptEntity.deptName }}</p>
     </div>
   </div>
@@ -20,6 +23,23 @@ export default {
     member: {
       type: Object,
     },
+  },
+  setup(props) {
+    const colorList = [
+      "gray",
+      "red",
+      "yellow",
+      "green",
+      "teal",
+      "blue",
+      "indigo",
+      "purple",
+      "pink",
+    ]
+    const bgColor = `bg-${colorList[props.member.userId % 9]}-400`
+    return {
+      bgColor,
+    }
   },
 }
 </script>
@@ -43,10 +63,11 @@ export default {
   }
 
   .fake-img {
-    @apply bg-blue-600 flex justify-center items-center text-white font-bold;
+    @apply flex justify-center items-center text-white font-bold;
   }
 
-  p {
+  p,
+  span {
     @apply text-sm;
   }
 

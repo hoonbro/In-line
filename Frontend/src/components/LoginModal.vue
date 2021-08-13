@@ -79,9 +79,9 @@ import {
   emailValidator,
   handleUpdateValidate,
 } from "@/lib/validator"
+import { setupVuexData } from "@/lib/common"
 import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
-import { connectStomp, enterOffice } from "@/lib/websocket"
 
 export default {
   name: "LoginModal",
@@ -129,20 +129,8 @@ export default {
         submitData[key] = formData[key].value
       })
       try {
-        // 로그인
         await store.dispatch("auth/login", submitData)
-        // 회원 목록 가져오기
-        await store.dispatch("office/getMembers")
-        // 소켓 연결
-        await connectStomp(
-          store.getters["auth/userId"],
-          store.getters["auth/officeId"]
-        )
-        // 사무실 입장
-        enterOffice(
-          store.getters["socket/stompClient"],
-          store.getters["auth/user"]
-        )
+        await setupVuexData()
 
         if (willRememberEamil.value) {
           localStorage.setItem("email", formData.email.value)
@@ -159,6 +147,7 @@ export default {
           store.commit("landing/addAlertModalList", { message: "안녕하세요!" })
         }
       } catch (error) {
+        console.log(error)
         store.commit("landing/addAlertModalList", {
           type: "error",
           message: error.message,

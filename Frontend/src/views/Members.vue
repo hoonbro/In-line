@@ -1,73 +1,37 @@
 <template>
-  <div class="members">
-    <section>
-      <div class="header">
-        <h1 class="section-title">구성원</h1>
-        <button
-          class="add-member-btn"
-          v-if="true"
-          @click="addMemberModalOpen = true"
-        >
-          <span class="material-icons">add</span>
-          <span>구성원 추가</span>
-        </button>
-      </div>
-      <div class="members-container">
-        <div class="department-container">
-          <div class="header">
-            {{ officeName }}
-          </div>
-          <div class="departments-container">
-            <ul class="department-list">
-              <DepartmentListItem :name="'FE'" :count="3" />
-              <DepartmentListItem :name="'BE'" :count="3" />
-            </ul>
-          </div>
+  <div>
+    <div class="members">
+      <section>
+        <div class="header">
+          <h1 class="section-title">구성원</h1>
+          <button
+            class="add-member-btn"
+            v-if="true"
+            @click="addMemberModalOpen = true"
+          >
+            <span class="material-icons">add</span>
+            <span>구성원 추가</span>
+          </button>
         </div>
-        <div class="user-container">
-          <div class="search-container">
-            <button class="search-btn">
-              <span class="material-icons">search</span>
-            </button>
-            <input
-              v-model.trim="searchTerm"
-              type="text"
-              placeholder="이름을 검색할 수 있어요."
+        <MemberContainer />
+      </section>
+
+      <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
+      <section>
+        <div class="header">
+          <h1 class="section-title">On Board</h1>
+        </div>
+        <div class="onboard-container">
+          <ul>
+            <OnBoardMemberListItem
+              v-for="onBoardMember in onBoardList"
+              :key="onBoardMember.onboardId"
+              :member="onBoardMember"
             />
-          </div>
-          <div class="users-container">
-            <ul
-              class="user-list"
-              v-if="searchedMembers && searchedMembers.length"
-            >
-              <MemberListItem
-                v-for="member in searchedMembers"
-                :key="member.userId"
-                :member="member"
-                @click="openProfileModal(member.userId)"
-              />
-            </ul>
-          </div>
+          </ul>
         </div>
-      </div>
-    </section>
-
-    <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
-    <section>
-      <div class="header">
-        <h1 class="section-title">On Board</h1>
-      </div>
-      <div class="onboard-container">
-        <ul>
-          <OnBoardMemberListItem
-            v-for="onBoardMember in onBoardList"
-            :key="onBoardMember.onboardId"
-            :member="onBoardMember"
-          />
-        </ul>
-      </div>
-    </section>
-
+      </section>
+    </div>
     <AddMemberModal
       v-if="addMemberModalOpen"
       @close="addMemberModalOpen = false"
@@ -83,8 +47,7 @@
 <script>
 import { computed, onMounted, ref } from "vue"
 import { useStore } from "vuex"
-import MemberListItem from "@/components/Members/MemberListItem.vue"
-import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
+import MemberContainer from "@/components/Members/MemberContainer.vue"
 import AddMemberModal from "@/components/Members/AddMemberModal.vue"
 import ProfileModal from "@/components/Members/ProfileModal.vue"
 import OnBoardMemberListItem from "@/components/Members/OnBoardMemberListItem.vue"
@@ -92,8 +55,7 @@ import OnBoardMemberListItem from "@/components/Members/OnBoardMemberListItem.vu
 export default {
   name: "Members",
   components: {
-    MemberListItem,
-    DepartmentListItem,
+    MemberContainer,
     AddMemberModal,
     ProfileModal,
     OnBoardMemberListItem,
@@ -154,12 +116,7 @@ export default {
 
 <style scoped lang="scss">
 .members {
-  scrollbar-width: none;
-  @apply bg-gray-100 p-10 grid gap-10 content-start overflow-auto;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  @apply grid gap-10 px-10 my-10;
 
   section {
     @apply grid gap-6;
@@ -179,7 +136,7 @@ export default {
     }
 
     .onboard-container {
-      height: 250px;
+      max-height: 250px;
       @apply flex flex-col bg-white rounded-lg shadow overflow-auto;
     }
 

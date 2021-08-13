@@ -77,6 +77,7 @@ public class SocketController {
         }
         else if(chatDto.getType().equals("MOVE")) {
             System.out.println("MOVE 들어오는지 여부");
+            System.out.println(chatDto.getRoomId());
             Office office = officeManager.getOffice(chatDto.getOfficeId());
             ConcurrentMap<Long,ParticipantDto> participants = office.moveParticipant(chatDto);
             map.put("type","userUpdate");

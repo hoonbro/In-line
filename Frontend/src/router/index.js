@@ -15,6 +15,7 @@ import Room from "@/views/Room.vue"
 import ResetPassword from "@/views/ResetPassword.vue"
 import ChangePassword from "@/views/ChangePassword.vue"
 import Signup from "@/views/Signup.vue"
+import store from "@/store"
 
 const routes = [
   {
@@ -60,8 +61,6 @@ const routes = [
     component: RoomLayout,
     meta: { loginRequired: true },
     beforeEnter: (to, from, next) => {
-      console.log(to)
-      console.log(from)
       if (to.fullPath === "/rooms/") {
         store.commit("landing/addAlertModalList", {
           type: "error",
@@ -146,9 +145,17 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  if (to.fullPath.includes("office") || to.fullPath.includes("rooms")) {
-    console.log(to.fullPath)
-    moveRoom()
+  console.log(to)
+  console.log(from)
+  if (to.fullPath.includes("office")) {
+    if (from.fullPath === "/") {
+      moveRoom(store.getters["auth/user"].roomId)
+    } else {
+      moveRoom(store.getters["office/lobbyId"])
+    }
+  } else if (to.fullPath.includes("rooms")) {
+    console.log(to.params)
+    moveRoom(to.params.roomId)
   }
 })
 
