@@ -65,16 +65,22 @@ export default {
       () => store.getters["office/sortedMembersByOnline"]
     )
     const commute = computed(() => store.state.auth.commute)
-    const comeInTime = computed(
-      () =>
-        `${commute.value.comeIn.slice(0, 2)}시
+    const comeInTime = computed(() => {
+      if (commute.value.comeIn) {
+        return `${commute.value.comeIn.slice(0, 2)}시
         ${commute.value.comeIn.slice(3, 5)}분`
-    )
-    const comeOutTime = computed(
-      () =>
-        `${commute.value.comeOut.slice(0, 2)}시
+      } else {
+        return ""
+      }
+    })
+    const comeOutTime = computed(() => {
+      if (commute.value.comeOut) {
+        return `${commute.value.comeOut.slice(0, 2)}시
         ${commute.value.comeOut.slice(3, 5)}분`
-    )
+      } else {
+        return ""
+      }
+    })
 
     const confirmModal = ref(null)
     const confirmModalContent = ref([])
