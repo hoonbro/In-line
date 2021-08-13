@@ -123,6 +123,18 @@ export default {
         }
       )
     }
+
+    const disconnectStomp = () => {
+      return new Promise((resolve, reject) => {
+        console.group("disconnectStomp")
+        store.state.socket.roomStompClient.disconnect(() => {
+          console.log("stomp 연결을 해제합니다.")
+          store.commit("socket/setStompClient", null)
+        })
+        console.groupEnd()
+        resolve(true)
+      })
+    }
     ////////////////////////////////////////////////////////////////////////////////////////
 
     // 동명이인 처리 어떻게 할건지
@@ -274,6 +286,7 @@ export default {
       }
 
       ws.close()
+      disconnectStomp()
       router.push({ name: "Office" })
     }
 
