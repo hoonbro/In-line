@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserEntity registUser(UserRegistDto user) {
         Date now = new Date();
         UserEntity userEntity = new UserEntity();
@@ -87,11 +88,14 @@ public class UserServiceImpl implements UserService {
         //직책 번호 조회
         JobEntity jobEntity = jobService.getJobId(user.getJobName(), 1l);
 
+        RoomEntity roomEntity = roomService.getLobby(user.getOfficeId());
+
         //유저정보 기입
         userEntity.setEmail(user.getEmail());
         userEntity.setOfficeId(user.getOfficeId());
         userEntity.setDeptId(deptEntity.getDeptId());
         userEntity.setJobId(jobEntity.getJobId());
+        userEntity.setRoomId(roomEntity.getRoomId());
         userEntity.setName(user.getName());
         userEntity.setPhone(user.getPhone());
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -124,11 +128,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public UserEntity updateUser(UserUpdateDto userUpdateDto) {
-        UserEntity userEntity = userRepository.findByUserIdAndRetireDateIsNull(userUpdateDto.getUserId());
+        UserEntity userEntity = getUserId(userUpdateDto.getUserId());
 
-        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),userEntity.getOfficeId());
-        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), userEntity.getOfficeId());
+        DeptEntity deptEntity = deptService.getDeptId(userUpdateDto.getDeptName(),1l);
+        JobEntity jobEntity = jobService.getJobId(userUpdateDto.getJobName(), 1l);
 
         userEntity.setDeptId(deptEntity.getDeptId());
         userEntity.setJobId(jobEntity.getJobId());
@@ -137,6 +142,8 @@ public class UserServiceImpl implements UserService {
         userEntity.setName(userUpdateDto.getName());
         userEntity.setNickName(userUpdateDto.getNickName());
         userEntity.setPhone(userUpdateDto.getPhone());
+        userEntity.setJobEntity(jobEntity);
+        userEntity.setDeptEntity(deptEntity);
         return userRepository.save(userEntity);
     }
 

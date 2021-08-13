@@ -94,4 +94,11 @@ public class RoomController {
 
         return new ResponseEntity<>(status);
     }
+
+    @GetMapping("/test/{officeId}")
+    public ResponseEntity<RoomEntity> test(@PathVariable("officeId") Long officeId){
+        HttpStatus status = HttpStatus.OK;
+        RoomEntity roomEntity = roomManager.getLobby(officeId);
+        return new ResponseEntity<RoomEntity>(roomEntity, status);
+    }
 }

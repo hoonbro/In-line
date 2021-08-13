@@ -57,11 +57,18 @@ public class OnBoardServiceImpl implements OnBoardService{
         onBoardEntity.setName(user.getName());
         onBoardEntity.setOfficeId(user.getOfficeId());
         onBoardEntity.setDeptId(user.getDeptId());
+        onBoardEntity.setOfficeEntity(officeEntity);
+        onBoardEntity.setDeptEntity(deptEntity);
+        onBoardEntity.setJobEntity(jobEntity);
         onBoardRepository.save(onBoardEntity);
 
         //구성원에게 이메일 발송
         emailService.sendEmail(user);
         log.info("구성원에게 이메일 발송 성공");
+    }
+
+    public OnBoardEntity getOnboardUser(String email){
+        return onBoardRepository.findByEmail(email);
     }
 
     @Override

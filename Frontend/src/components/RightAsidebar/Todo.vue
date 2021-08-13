@@ -46,7 +46,7 @@ export default {
     // const todos = ref([])
     const store = useStore()
     const todos = computed(() => {
-      return store.state.office.todos
+      return store.getters["office/sortedTodosByDone"]
     })
     const formData = reactive({
       title: "",
@@ -56,12 +56,15 @@ export default {
     const editMode = ref(false)
 
     const getTodos = () => {
-      store.dispatch("office/getTodos")
+      store.dispatch("office/getTodos", store.getters["auth/userId"])
     }
 
     const createTodos = async () => {
       if (!formData.title || !formData.content) {
-        alert("내용을 입력하세요")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "내용을 입력하세요.",
+        })
         return
       }
 
@@ -72,7 +75,10 @@ export default {
           day: formData.day,
           done: false,
         }
-        store.dispatch("office/createTodo", todo)
+        await store.dispatch("office/createTodo", todo)
+        store.commit("landing/addAlertModalList", {
+          message: "할일이 생성되었습니다.",
+        })
         Object.keys(formData).forEach(key => {
           formData[key] = ""
         })

@@ -47,6 +47,17 @@ export const office = {
         return { ...member, connected: false }
       })
     },
+    updateProfileOfMembers(state, newUser) {
+      state.members = state.members.map(member => {
+        if (member.userId === newUser.userId) {
+          return {
+            ...member,
+            ...newUser,
+          }
+        }
+        return member
+      })
+    },
     updateMemberProfileImage(state, { userId, newProfileImage }) {
       console.log(newProfileImage)
       state.members.forEach(member => {
@@ -55,12 +66,14 @@ export const office = {
         }
       })
     },
-    updateConnectionOfMembers(state, members) {
-      const connectedMemberIdList = Object.keys(members).map(key => +key)
-      console.log(connectedMemberIdList)
+    updateConnectionOfMembers(state, targetMembers) {
+      const targetMemberIdList = Object.keys(targetMembers).map(
+        memberId => +memberId
+      )
       state.members.forEach(member => {
-        if (connectedMemberIdList.includes(member.userId)) {
+        if (targetMemberIdList.includes(member.userId)) {
           member.connected = true
+          member.roomId = targetMembers[`${member.userId}`].roomId
         } else {
           member.connected = false
         }
@@ -77,6 +90,10 @@ export const office = {
     },
   },
   getters: {
+    lobbyId(state) {
+      if (!state.rooms) return
+      return state.rooms[0].roomId
+    },
     user(state) {
       return state.user
     },
@@ -84,6 +101,18 @@ export const office = {
       const members = [...state.members]
       return members.sort((a, b) => {
         return a.connected === b.connected ? 0 : a.connected ? -1 : 1
+      })
+    },
+    sortedTodosByDone(state) {
+      const todos = [...state.todos]
+      return todos.sort((todo1, todo2) => {
+        return todo1.done === todo2.done
+          ? todo1.day > todo2.day
+            ? -1
+            : 1
+          : todo1.done
+          ? 1
+          : -1
       })
     },
   },
@@ -95,6 +124,7 @@ export const office = {
           url: "depts",
         })
         commit("setDepts", res.data)
+        return res.data
       } catch (error) {
         console.log(error)
         throw Error("부서 목록을 불러오는 데 실패했습니다.")
@@ -107,6 +137,7 @@ export const office = {
           url: "jobs",
         })
         commit("setJobs", res.data)
+        return res.data
       } catch (error) {
         console.log(error)
         throw Error("역할 목록을 불러오는 데 실패했습니다.")
@@ -155,19 +186,22 @@ export const office = {
         console.log(error)
       }
     },
-    async getTodos({ commit, rootState }) {
+    async getTodos({ commit, rootState }, userId) {
       try {
         const res = await todoAPI({
           method: "",
           url: "",
           params: {
-            userId: rootState.auth.user.userId,
+            userId,
           },
           headers: {
             accessToken: rootState.auth.accessToken,
           },
         })
-        commit("setTodos", res.data)
+        if (rootState.auth.user.userId === userId) {
+          commit("setTodos", res.data)
+        }
+        return res.data
       } catch (error) {
         console.log(error)
       }
@@ -253,7 +287,7 @@ export const office = {
         const res = await roomAPI({
           method: "GET",
           params: {
-            officeId,
+            officeId: rootState.auth.user.officeId,
           },
           headers: {
             accessToken: rootState.auth.accessToken,

@@ -2,13 +2,12 @@ import Stomp from "webstomp-client"
 import SockJS from "sockjs-client"
 import store from "@/store/index"
 
-// send: notification/:userId
-// sub: queue/:userId
+let stompClient
 
 export const connectStomp = (userId, officeId) => {
   const serverURL = "/api/v1/stomp"
   const socket = new SockJS(serverURL)
-  let stompClient = Stomp.over(socket)
+  stompClient = Stomp.over(socket)
   return new Promise((res, rej) => {
     stompClient.connect(
       {},
@@ -20,9 +19,10 @@ export const connectStomp = (userId, officeId) => {
           res => {
             console.group("subscription")
             const data = JSON.parse(res.body)
+            console.log(data)
             if (data.type === "CHAT") {
               store.commit("socket/addOfficeChat", data.chatDto)
-            } else if (data.type === "ENTER" || data.type === "EXIT") {
+            } else if (data.type === "userUpdate") {
               console.log(data.members)
               store.commit("office/updateConnectionOfMembers", data.members)
             }
@@ -39,7 +39,10 @@ export const connectStomp = (userId, officeId) => {
         res("성공")
       },
       error => {
-        alert("소켓 연결 실패!")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "소켓 연결이 끊겼어요.",
+        })
         stompClient.connected = false
         store.commit("socket/setStompClient", stompClient)
         rej("망했어요")
@@ -71,6 +74,7 @@ export const enterOffice = (stompClient, user) => {
       officeId: user.officeId,
       userId: user.userId,
       userName: user.name,
+      roomId: user.roomId,
     }
     console.log(msg)
     stompClient.send(`/pub/${user.officeId}`, JSON.stringify(msg), {})
@@ -88,6 +92,26 @@ export const exitOffice = (stompClient, user) => {
       userName: user.userName,
     }
     console.log("ExitMessage 전달")
+    stompClient.send(`/pub/${user.officeId}`, JSON.stringify(msg), {})
+  }
+  console.groupEnd()
+}
+
+export const moveRoom = roomId => {
+  const user = store.getters["auth/user"]
+  const stompClient = store.getters["socket/stompClient"]
+  console.group("WS: MOVE")
+  console.log(roomId)
+  if (stompClient && stompClient.connected) {
+    const msg = {
+      type: "MOVE",
+      officeId: user.officeId,
+      userId: user.userId,
+      userName: user.name,
+      roomId: +roomId,
+    }
+    console.log("MOVE 이벤트 전달")
+    console.log(msg)
     stompClient.send(`/pub/${user.officeId}`, JSON.stringify(msg), {})
   }
   console.groupEnd()

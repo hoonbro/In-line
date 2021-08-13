@@ -33,4 +33,16 @@ public class OnBoardEntity {
 
     @Column(name = "office_id")
     private Long officeId;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id", insertable = false, updatable = false)
+    private JobEntity jobEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "dept_id", insertable = false, updatable = false)
+    private DeptEntity deptEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "office_id", insertable = false, updatable = false)
+    private OfficeEntity officeEntity;
 }

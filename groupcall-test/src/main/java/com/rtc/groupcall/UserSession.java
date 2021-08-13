@@ -36,6 +36,7 @@ public class UserSession implements Closeable {
 
     private final Long userId;
     private final String userName;
+    private final Long officeId;
     private final WebSocketSession session;
 
     private final MediaPipeline pipeline;
@@ -44,9 +45,10 @@ public class UserSession implements Closeable {
     private final WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<Long, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
-    public UserSession(final Long userId, final String userName, String roomName, final Long roomId, final WebSocketSession session,
+    public UserSession(final Long officeId, final Long userId, final String userName, String roomName, final Long roomId, final WebSocketSession session,
                        MediaPipeline pipeline) {
 
+        this.officeId = officeId;
         this.userId = userId;
         this.pipeline = pipeline;
         this.userName = userName;

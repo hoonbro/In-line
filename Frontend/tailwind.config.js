@@ -252,6 +252,7 @@ module.exports = {
     },
     fontFamily: {
       sans: [
+        "Noto Sans KR",
         "ui-sans-serif",
         "system-ui",
         "-apple-system",

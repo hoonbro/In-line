@@ -18,4 +18,8 @@ public class roomServiceImpl implements  roomService{
         roomEntity.setOfficeId(officeId);
         return RoomRepository.save(roomEntity);
     }
+
+    public RoomEntity getLobby(Long officeId){
+        return RoomRepository.findByOfficeIdAndRoomName(officeId, "로비");
+    }
 }
