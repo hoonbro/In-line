@@ -13,7 +13,7 @@
             <span>구성원 추가</span>
           </button>
         </div>
-        <MemberContainer />
+        <MemberContainer @openProfileModal="handleOpenProfileModal" />
       </section>
 
       <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
@@ -79,6 +79,11 @@ export default {
       })
     })
 
+    const handleOpenProfileModal = userId => {
+      profileModalOpen.value = true
+      profileUserId.value = userId
+    }
+
     // =====================================================
     // On Board 관련
     const onBoardList = computed(() => store.state.onboard.onBoardList)
@@ -109,6 +114,7 @@ export default {
       openProfileModal,
       profileUserId,
       onBoardList,
+      handleOpenProfileModal,
     }
   },
 }
@@ -122,15 +128,16 @@ export default {
     @apply grid gap-6;
 
     .header {
-      @apply flex items-center justify-between select-none;
+      @apply flex gap-2 items-center justify-between select-none;
 
       .section-title {
         @apply text-2xl font-bold;
       }
       .add-member-btn {
-        @apply py-2 px-4 flex items-center bg-blue-800 text-white font-medium rounded;
-        .material-icons {
-          @apply mr-2;
+        @apply py-2 px-4 flex items-center font-medium rounded bg-gray-200 transition;
+
+        &:hover {
+          @apply bg-blue-700 text-white;
         }
       }
     }
