@@ -130,8 +130,9 @@ export default {
         console.group("disconnectStomp")
         store.state.socket.roomStompClient.disconnect(() => {
           console.log("stomp 연결을 해제합니다.")
-          store.commit("socket/setStompClient", null)
+          store.commit("socket/setRoomStompClient", null)
         })
+        store.commit("socket/resetRoomChat")
         console.groupEnd()
         resolve(true)
       })
@@ -287,8 +288,8 @@ export default {
       for (let key in participants) {
         participants[key].dispose()
       }
-
       ws.close()
+      disconnectStomp()
       router.push({ name: "Office" })
     }
 
