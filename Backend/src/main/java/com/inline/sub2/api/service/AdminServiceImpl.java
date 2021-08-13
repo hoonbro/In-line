@@ -66,7 +66,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public int getOfficeUserCount(Long officeId) {
-        return userRepository.countByOfficeId(officeId);
+        return userRepository.countByOfficeIdAndRetireDateIsNull(officeId);
     }
 
     @Override
