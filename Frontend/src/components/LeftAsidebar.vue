@@ -162,10 +162,14 @@ aside {
 
     .workinfo {
       .work-btn {
-        @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none;
+        @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none transition;
 
         .icon {
           font-size: 20px;
+        }
+
+        &:hover {
+          @apply bg-blue-200;
         }
 
         &.comein {
