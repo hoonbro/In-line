@@ -77,8 +77,9 @@ export default {
   setup(_, { emit }) {
     const store = useStore()
 
-    const officeName = JSON.parse(localStorage.getItem("user")).officeEntity
-      .officeName
+    const officeName = computed(
+      () => store.state.auth.user.officeEntity.officeName
+    )
 
     const depts = ref(null)
     const jobs = ref(null)
@@ -140,11 +141,12 @@ export default {
       loading.value = true
       const submitData = { officeId: store.state.auth.user.officeId }
       Object.keys(formData).forEach(key => {
+        // job과 dept는 selectInput을 위해 field 명을 변경해주어야 합니다.
         if (key === "job" || key === "dept") {
           submitData[`${key}Name`] = formData[key].value
-          return
+        } else {
+          submitData[key] = formData[key].value
         }
-        submitData[key] = formData[key].value
       })
       try {
         await store.dispatch("onboard/registerMember", submitData)

@@ -1,3 +1,4 @@
+import { apiAxios } from "@/lib/axios"
 import axios from "axios"
 
 const chatAxios = axios.create({
@@ -47,13 +48,7 @@ export const socket = {
   },
   actions: {
     async getAllOfficeChat({ commit, rootState }) {
-      const res = await chatAxios({
-        method: "GET",
-        url: `/${rootState.auth.user.officeId}`,
-        headers: {
-          accessToken: rootState.auth.accessToken,
-        },
-      })
+      const res = await apiAxios.get(`/chat/${rootState.auth.user.officeId}`)
       commit("initOfficeChatList", res.data)
     },
   },
