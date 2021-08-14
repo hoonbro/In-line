@@ -93,11 +93,12 @@ export default {
       name: store.state.auth.user.name,
       userId: store.state.auth.user.userId,
       officeId: store.state.auth.user.officeId,
+      profileImage: store.state.auth.user.profileImage,
     })
 
     //////////////////////////////////room chat 추가한 부분//////////////////////////////////
     const connectRoomChat = () => {
-      const serverURL = "/chatStomp"
+      const serverURL = "https://i5d207.p.ssafy.io:8995/chatStomp"
       const socket = new SockJS(serverURL)
       const roomStompClient = Stomp.over(socket)
       roomStompClient.connect(
@@ -123,10 +124,24 @@ export default {
         }
       )
     }
+
+    const disconnectStomp = () => {
+      return new Promise((resolve, reject) => {
+        console.group("disconnectStomp")
+        store.state.socket.roomStompClient.disconnect(() => {
+          console.log("stomp 연결을 해제합니다.")
+          store.commit("socket/setRoomStompClient", null)
+        })
+        store.commit("socket/resetRoomChat")
+        console.groupEnd()
+        resolve(true)
+      })
+    }
     ////////////////////////////////////////////////////////////////////////////////////////
 
     // 동명이인 처리 어떻게 할건지
     const register = () => {
+      if (state.profileImage == null) state.profileImage = ""
       const message = {
         id: "joinRoom",
         userId: state.userId,
@@ -134,6 +149,7 @@ export default {
         roomName: state.room,
         roomId: props.roomId,
         officeId: state.officeId,
+        profileImage: state.profileImage,
       }
 
       sendMessage(message)
@@ -272,8 +288,8 @@ export default {
       for (let key in participants) {
         participants[key].dispose()
       }
-
       ws.close()
+      disconnectStomp()
       router.push({ name: "Office" })
     }
 

@@ -85,16 +85,6 @@ export default {
     const confirmModal = ref(null)
     const confirmModalContent = ref([])
 
-    const workType = computed(() => {
-      if (!commute.value.comeIn) {
-        return "beforeStart"
-      } else if (!commute.value.comeOut) {
-        return "doing"
-      } else {
-        return "done"
-      }
-    })
-
     const comeInOffice = async () => {
       const now = new Date(Date.now())
       const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
@@ -106,7 +96,11 @@ export default {
       confirmModal.value.isVisible = true
       const ok = await confirmModal.value.show()
       if (ok) {
-        store.dispatch("auth/comeInOffice")
+        await store.dispatch("auth/comeInOffice")
+        store.commit("landing/addAlertModalList", {
+          type: "success",
+          message: "안녕하세요! 오늘 하루도 화이팅!!",
+        })
       }
       confirmModalContent.value = []
     }
@@ -122,7 +116,11 @@ export default {
       confirmModal.value.isVisible = true
       const ok = await confirmModal.value.show()
       if (ok) {
-        store.dispatch("auth/comeOutOffice")
+        await store.dispatch("auth/comeOutOffice")
+        store.commit("landing/addAlertModalList", {
+          type: "success",
+          message: "오늘 하루도 수고 많으셨어요!",
+        })
       }
       confirmModalContent.value = []
     }
@@ -137,7 +135,6 @@ export default {
       members,
       comeInTime,
       comeOutTime,
-      workType,
       comeInOffice,
       comeOutOffice,
       confirmModalContent,
@@ -162,10 +159,14 @@ aside {
 
     .workinfo {
       .work-btn {
-        @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none;
+        @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none transition;
 
         .icon {
           font-size: 20px;
+        }
+
+        &:hover {
+          @apply bg-blue-200;
         }
 
         &.comein {

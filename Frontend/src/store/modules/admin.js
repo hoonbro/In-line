@@ -9,7 +9,10 @@ export const admin = {
   state: () => ({
     attendances: [],
     retires: [],
-    members: [],
+    members: {
+      deptUserCount: [],
+      officeUserCount: [],
+    },
     years: [],
   }),
   mutations: {
@@ -29,6 +32,16 @@ export const admin = {
   getters: {
     user(state) {
       return state.user
+    },
+    members(state) {
+      return state.members
+    },
+    memberCountOndept(state) {
+      console.log(state)
+      return state.members.deptUserCount
+    },
+    totalMemberCount(state) {
+      return state.members.officeUserCount[0]
     },
   },
   actions: {
@@ -90,6 +103,39 @@ export const admin = {
         commit("setYears", res.data)
       } catch (error) {
         console.log(error)
+      }
+    },
+    async deleteUser({ rootState, dispatch }, payload) {
+      try {
+        await adminAPI({
+          method: "PUT",
+          url: `/user/${payload.userId}`,
+          headers: {
+            accessToken: rootState.auth.accessToken,
+          },
+        })
+        // 회원 정보 업데이트
+        await dispatch("office/getMembers", null, { root: true })
+        // 부서 정보 업데이트
+        await dispatch("")
+      } catch (error) {
+        throw Error(error)
+      }
+    },
+    async getOrganization({ rootGetters, commit }) {
+      try {
+        const res = await adminAPI({
+          method: "GET",
+          url: `/dashboard/${rootGetters["auth/officeId"]}`,
+          headers: {
+            accessToken: rootGetters["auth/accessToken"],
+          },
+        })
+        console.log(res.data)
+        commit("setMembers", res.data)
+        return res.data
+      } catch (error) {
+        throw Error(error)
       }
     },
   },

@@ -47,13 +47,12 @@
 import { ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 import { computed, onMounted } from "@vue/runtime-core"
-import axios from "axios"
 import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 
 export default {
   name: "MembersContainer",
-  emits: [],
+  emits: ["openProfileModal"],
   components: { MemberListItem, DepartmentListItem },
   setup() {
     const store = useStore()
@@ -85,17 +84,19 @@ export default {
     }
 
     onMounted(async () => {
-      const res = await axios({
-        method: "GET",
-        url: `/api/v1/admin/dashboard/${store.getters["auth/officeId"]}`,
-        headers: {
-          accessToken: `${store.getters["auth/accessToken"]}`,
-        },
-      })
-      totalUserCount.value = res.data.officeUserCount[0]
-      deptList.value = res.data.deptUserCount
-      console.log(deptList.value)
+      try {
+        const members = await store.dispatch("admin/getOrganization")
+        console.log(members)
+        totalUserCount.value = members.officeUserCount[0]
+        deptList.value = members.deptUserCount
+      } catch (error) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
+      }
     })
+
     return {
       totalUserCount,
       deptList,
@@ -110,15 +111,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media (min-width: 1024px) {
+  .members-container {
+    height: 504px;
+  }
+}
+
 .members-container {
-  height: 504px;
   @apply grid gap-4 grid-cols-12;
 
   .department-container {
-    @apply col-span-4 h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
+    @apply col-span-12 lg:col-span-4 h-60 lg:h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
 
     .header {
-      @apply p-4 border-b font-bold flex justify-between bg-blue-700 text-white;
+      @apply p-4 border-b border-gray-300 font-medium flex justify-between bg-gray-50 select-none;
     }
 
     .departments-container {
@@ -131,7 +137,7 @@ export default {
   }
 
   .user-container {
-    @apply flex flex-col col-span-8 bg-white rounded-lg shadow overflow-hidden;
+    @apply flex flex-col col-span-12 lg:col-span-8 h-96 lg:h-full bg-white rounded-lg shadow overflow-hidden;
 
     .search-container {
       @apply flex-shrink-0 p-4 border-b flex items-center relative;

@@ -1,23 +1,53 @@
 <template>
-  <div class="office">
-    <div class="rooms-row">
-      <div class="rooms-container">
-        <RoomLink
-          v-for="room in displayRoomList"
-          :key="room.roomId"
-          :title="room.roomName"
-          :roomId="room.roomId"
-        />
+  <div>
+    <div class="office">
+      <div class="rooms-row">
+        <div class="rooms-container">
+          <RoomLink
+            v-for="room in defaultRoomList"
+            :key="room.roomId"
+            :title="room.roomName"
+            :roomId="room.roomId"
+            :roomUserList="room.roomUserList"
+            :large="true"
+          />
+        </div>
       </div>
-    </div>
-    <div class="button-group">
-      <button
-        class="room-manage-btn"
-        v-if="true"
-        @click="roomManageModalOpen = true"
-      >
-        회의실 관리
-      </button>
+      <div class="rooms-row">
+        <header>
+          <h1>팀별 미팅룸🤷‍♀️</h1>
+        </header>
+        <div class="rooms-container">
+          <RoomLink
+            v-for="room in smallRoomList"
+            :key="room.roomId"
+            :title="room.roomName"
+            :roomId="room.roomId"
+          />
+        </div>
+      </div>
+      <div class="rooms-row">
+        <header>
+          <h1>소규모 미팅룸🤩</h1>
+        </header>
+        <div class="rooms-container">
+          <RoomLink
+            v-for="room in smallRoomList"
+            :key="room.roomId"
+            :title="room.roomName"
+            :roomId="room.roomId"
+          />
+        </div>
+      </div>
+      <div class="button-group">
+        <button
+          class="room-manage-btn"
+          v-if="isAdmin"
+          @click="roomManageModalOpen = true"
+        >
+          회의실 관리
+        </button>
+      </div>
     </div>
     <RoomManageModal
       v-if="roomManageModalOpen"
@@ -42,6 +72,7 @@ export default {
     const store = useStore()
     const roomManageModalOpen = ref(false)
     const user = JSON.parse(localStorage.getItem("user"))
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
 
     const rooms = computed(() => {
       return store.state.office.rooms
@@ -51,11 +82,19 @@ export default {
       return rooms.value.filter(room => room.roomName !== "로비")
     })
 
+    const defaultRoomList = computed(() => {
+      return rooms.value.slice(1, 3)
+    })
+
+    const smallRoomList = computed(() => rooms.value.slice(3))
+
     return {
       user,
       rooms,
+      isAdmin,
       roomManageModalOpen,
-      displayRoomList,
+      defaultRoomList,
+      smallRoomList,
     }
   },
 }
@@ -64,20 +103,25 @@ export default {
 <style scoped lang="scss">
 .office {
   scrollbar-width: none;
-  @apply bg-gray-100 p-10 grid gap-10 content-start overflow-auto;
+  @apply p-10 grid gap-14;
   &::-webkit-scrollbar {
     display: none;
   }
   .rooms-row {
-    @apply w-full grid gap-4;
+    @apply w-full grid gap-6;
+
     &:last-child {
       @apply mb-10;
     }
-    .rooms-title {
-      @apply text-2xl font-bold;
+
+    header {
+      h1 {
+        @apply text-2xl font-bold;
+      }
     }
     .rooms-container {
-      @apply w-full grid grid-cols-1 lg:grid-cols-2 gap-8 xl:grid-cols-3;
+      @apply w-full grid grid-cols-12 gap-8;
+
       &.basic {
         @apply grid-cols-2;
       }

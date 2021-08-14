@@ -235,7 +235,7 @@ export default {
         errors: {},
       },
       job: {
-        label: "담당자 직무",
+        label: "담당자 직책",
         type: "text",
         value: "",
         validators: [requiredValidator],
@@ -369,9 +369,15 @@ export default {
     const registerOffice = async () => {
       if (!formIsValid.value) return
       const submitData = { term: term.value }
-      Object.keys(formData.value).forEach(
-        key => (submitData[key] = formData.value[key].value)
-      )
+
+      Object.keys(formData.value).forEach(key => {
+        // job과 dept는 selectInput을 위해 field 명을 변경해주어야 합니다.
+        if (key === "job" || key === "dept") {
+          submitData[`${key}Name`] = formData.value[key].value
+        } else {
+          submitData[key] = formData.value[key].value
+        }
+      })
       try {
         console.log(submitData)
         await store.dispatch("office/registerOffice", submitData)

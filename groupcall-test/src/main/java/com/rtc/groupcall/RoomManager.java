@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import com.rtc.groupcall.api.dto.RoomDto;
 import com.rtc.groupcall.api.dto.RoomUserDto;
 import com.rtc.groupcall.db.entity.RoomEntity;
+import com.rtc.groupcall.db.entity.UserEntity;
 import com.rtc.groupcall.db.repository.RoomRepository;
 import com.rtc.groupcall.db.repository.UserRepository;
 import org.kurento.client.KurentoClient;
@@ -52,7 +53,7 @@ public class RoomManager {
                 continue;
 
             participants = room.getParticipants();
-            Map<Long, String> participantsMap = new TreeMap<>();
+            Map<Long, RoomUserDto> participantsMap = new TreeMap<>();
 
             for(Long userKey : participants.keySet()){
                 UserSession user = participants.get(userKey);
@@ -63,9 +64,10 @@ public class RoomManager {
                         .roomId(user.getRoomId())
                         .roomName(user.getRoomName())
                         .officeId(user.getOfficeId())
+                        .profileImage(user.getProfileImage())
                         .build();
 
-                participantsMap.put(userKey, userDto.toString());
+                participantsMap.put(userKey, userDto);
             }
 
             roomParticipants.put(key, participantsMap.values());
@@ -85,7 +87,14 @@ public class RoomManager {
 
             rooms.put(r.getRoomId(),  new Room(r.getRoomName(), kurento.createMediaPipeline(), r.getRoomId(), r.getOfficeId()));
         }
+        List<RoomEntity> list = roomRepository.findAllByOfficeId(officeId);
+        Map<Long, Collection> map = getOfficeRooms(officeId);
 
+        for(int i = 0; i < list.size(); i++){
+            if(list.get(i).getRoomUserList() != null && list.get(i).getRoomUserList().size() == map.get(list.get(i).getRoomId()).size())
+                continue;
+            list.get(i).setRoomUserList(map.get(list.get(i).getRoomId()));
+        }
         return roomRepository.findAllByOfficeId(officeId);
     }
 
@@ -95,8 +104,9 @@ public class RoomManager {
                 .officeId(roomDto.getOfficeId())
                 .userId(roomDto.getUserId())
                 .build();
-        rooms.put(roomDto.getRoomId(),  new Room(roomDto.getRoomName(), kurento.createMediaPipeline(), roomDto.getRoomId(), roomDto.getOfficeId()));
-        return roomRepository.save(roomEntity);
+        roomEntity = roomRepository.save(roomEntity);
+        rooms.put(roomEntity.getRoomId(),  new Room(roomDto.getRoomName(), kurento.createMediaPipeline(), roomEntity.getRoomId(), roomDto.getOfficeId()));
+        return roomEntity;
     }
 
     public RoomEntity updateRoom(String roomName, RoomEntity roomEntity) {
