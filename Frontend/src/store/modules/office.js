@@ -1,31 +1,5 @@
 import { apiAxios, roomAxios } from "@/lib/axios"
-import axios from "axios"
 
-const notiAPI = axios.create({
-  baseURL: `/api/v1/notifications`,
-})
-
-const todoAPI = axios.create({
-  baseURL: `/api/v1/todos`,
-})
-
-const userAPI = axios.create({
-  baseURL: `/api/v1/users`,
-})
-
-const roomAPI = axios.create({
-  // Local test URL
-  // baseURL: `http://i5d207.p.ssafy.io:8997/rooms`,
-
-  // deploy URL
-  baseURL: `https://i5d207.p.ssafy.io:8995/rooms`,
-})
-
-const officeAPI = axios.create({
-  baseURL: `/api/v1/office`,
-})
-
-// 병훈
 export const office = {
   namespaced: true,
   state: {

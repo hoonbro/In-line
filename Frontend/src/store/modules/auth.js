@@ -141,9 +141,12 @@ export const auth = {
         throw Error("이미지 업로드에 실패했습니다.")
       }
     },
-    async updateProfile(_, { userId, form }) {
+    async updateProfile({ dispatch }, { userId, form }) {
       try {
         const res = await apiAxios.put(`/users/${userId}`, form)
+        await dispatch("office/getMembers", null, { root: true })
+        // 부서 정보 업데이트
+        await dispatch("admin/getOrganization", null, { root: true })
         return res.data
       } catch (error) {
         throw Error("프로필 수정에 실패했어요.")

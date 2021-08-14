@@ -5,7 +5,8 @@ export const apiAxios = axios.create({
 })
 
 export const roomAxios = axios.create({
-  baseURL: "/rooms",
+  // baseURL: "/rooms",
+  baseURL: "https://i5d207.p.ssafy.io:8995/rooms",
 })
 
 // export const authAPI = axios.create({
