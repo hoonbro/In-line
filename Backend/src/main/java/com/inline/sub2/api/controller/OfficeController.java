@@ -41,7 +41,7 @@ public class OfficeController {
     @PostMapping
     @ApiOperation(value = "회사 정보와 관리자 정보를 DB에 저장한다.")
     public ResponseEntity<Void> registAdmin(@RequestBody UserRegistDto admin) {
-        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         UserEntity userEntity = null;
         try{
             userEntity = userService.registAdmin(admin);
