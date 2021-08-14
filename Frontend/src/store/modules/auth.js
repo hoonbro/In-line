@@ -1,4 +1,5 @@
-import { apiAxios } from "@/lib/axios"
+import { apiAxios, setAxiosConfig } from "@/lib/axios"
+import axios from "axios"
 
 export const auth = {
   namespaced: true,
@@ -12,9 +13,13 @@ export const auth = {
     shouldChangePassword: false,
   },
   mutations: {
-    setToken(state, accessToken) {
+    initToken(state, accessToken) {
       state.accessToken = accessToken
       localStorage.setItem("accessToken", accessToken)
+    },
+    removeToken(state) {
+      state.accessToken = ""
+      localStorage.removeItem("accessToken")
     },
     setUser(state, userData) {
       state.user = userData
@@ -43,11 +48,14 @@ export const auth = {
     },
     async login({ commit }, formData) {
       try {
+        console.log(axios.defaults.headers.common["accessToken"])
         const res = await apiAxios.post("/users/login", formData)
-        commit("setToken", res.data.accessToken)
+        setAxiosConfig(res.data.accessToken)
+        commit("initToken", res.data.accessToken)
         commit("setUser", res.data.userDto)
         commit("setCommute", res.data.commuteEntity)
       } catch (error) {
+        console.log(error)
         const { status } = error.response
         switch (status) {
           case 400: {
@@ -163,7 +171,7 @@ export const auth = {
             accessToken,
           },
         })
-        commit("setToken", res.data.accessToken)
+        commit("initToken", res.data.accessToken)
         commit("setUser", res.data.userDto)
         commit("setCommute", res.data.commuteEntity)
         return res.data.accessToken

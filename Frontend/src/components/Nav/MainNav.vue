@@ -23,6 +23,7 @@ import { useRouter } from "vue-router"
 import { useStore } from "vuex"
 import { disconnectStomp, exitOffice } from "@/lib/websocket"
 import { computed, ref } from "@vue/runtime-core"
+import { removeAxiosConfig } from "@/lib/axios"
 
 export default {
   name: "MainNav",
@@ -38,7 +39,8 @@ export default {
       modalEl.value.isVisible = true
       const yes = await modalEl.value.show()
       if (yes) {
-        store.commit("auth/setToken", "")
+        store.commit("auth/removeToken")
+        removeAxiosConfig()
         exitOffice(stompClient.value, user.value)
         disconnectStomp()
         router.push({ name: "Home" })
