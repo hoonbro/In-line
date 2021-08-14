@@ -26,7 +26,7 @@
           </button> -->
           <div class="hr"></div>
         </template>
-        <button
+        <!-- <button
           class="menu-list-item noti"
           :class="{ active: activeMenu === 'noti' }"
           @click="handleActiveMenu('noti')"
@@ -34,7 +34,7 @@
           <span class="material-icons">
             notifications
           </span>
-        </button>
+        </button> -->
         <button
           class="menu-list-item chat"
           :class="{ active: activeMenu === 'chat' }"

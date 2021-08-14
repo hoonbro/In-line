@@ -1,9 +1,4 @@
 import { apiAxios } from "@/lib/axios"
-import axios from "axios"
-
-const chatAxios = axios.create({
-  baseURL: "/api/v1/chat",
-})
 
 export const socket = {
   namespaced: true,

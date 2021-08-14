@@ -1,5 +1,4 @@
 import { apiAxios } from "@/lib/axios"
-import axios from "axios"
 
 export const onboard = {
   namespaced: true,
