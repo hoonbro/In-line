@@ -134,7 +134,7 @@ export default {
   setup() {
     const store = useStore()
     const rooms = computed(() => store.state.office.rooms)
-    const user = JSON.parse(localStorage.getItem("user"))
+    const user = computed(() => store.state.auth.user)
     const displayRoomList = computed(() => {
       return rooms.value.filter(room => room.roomName !== "로비")
     })
@@ -174,7 +174,7 @@ export default {
       try {
         const room = {
           roomName: formData.name.value,
-          officeId: user.officeId,
+          officeId: user.value.officeId,
         }
         await store.dispatch("office/createRoom", room)
         activeCreate.value = !activeCreate.value

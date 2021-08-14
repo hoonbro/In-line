@@ -27,20 +27,6 @@ export default {
     const alertModalList = computed(() => store.state.landing.alertModalList)
 
     onMounted(async () => {
-      // 새로고침했을 때
-      // 1. LocalStorage => vuex
-      if (localStorage.getItem("accessToken")) {
-        store.commit("auth/setToken", localStorage.getItem("accessToken"))
-      }
-      if (localStorage.getItem("user")) {
-        store.commit("auth/setUser", JSON.parse(localStorage.getItem("user")))
-      }
-      if (localStorage.getItem("commute")) {
-        store.commit(
-          "auth/setCommute",
-          JSON.parse(localStorage.getItem("commute"))
-        )
-      }
       // 2. 데이터 불러오기 & 연결하기
       if (store.getters["auth/accessToken"] && store.getters["auth/officeId"]) {
         await setupVuexData()

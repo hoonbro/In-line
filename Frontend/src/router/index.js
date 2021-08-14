@@ -136,7 +136,9 @@ const router = createRouter({
 // next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
 router.beforeEach((to, from, next) => {
   // 로그인하지 않은 유저 접근 금지인 페이지 -> 로그인으로 이동
+  console.log(Boolean(localStorage.getItem("accessToken")))
   if (to.meta.loginRequired && !localStorage.getItem("accessToken")) {
+    console.log("홈으로 이동")
     next({ name: "Home", params: { shouldLogin: true } })
     // 로그인한 유저 접근 금지인 페이지 -> 로비(?)로 이동
   } else if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
@@ -145,8 +147,6 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  console.log(to)
-  console.log(from)
   if (to.fullPath.includes("office")) {
     if (from.fullPath === "/") {
       moveRoom(store.getters["auth/user"].roomId)

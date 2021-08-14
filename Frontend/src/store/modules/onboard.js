@@ -1,3 +1,4 @@
+import { apiAxios } from "@/lib/axios"
 import axios from "axios"
 
 export const onboard = {
@@ -22,14 +23,7 @@ export const onboard = {
   actions: {
     registerMember: async (context, formData) => {
       try {
-        const res = await axios({
-          url: "/api/v1/on-board/user",
-          method: "POST",
-          headers: {
-            accessToken: context.rootState.auth.accessToken,
-          },
-          data: formData,
-        })
+        const res = await apiAxios.post("/on-board/user", formData)
         context.commit("appendOnBoardItem", res.data)
       } catch (error) {
         const { status } = error.response
@@ -47,11 +41,11 @@ export const onboard = {
       }
     },
     getInitData: (context, email) => {
-      return axios.get(`/api/v1/on-board/user/${email}`)
+      return apiAxios.get(`/on-board/user/${email}`)
     },
     getOnBoardList: async (context, officeId) => {
       try {
-        const res = await axios.get(`/api/v1/on-board/${officeId}`)
+        const res = await apiAxios.get(`/on-board/${officeId}`)
         context.commit("setOnBoardList", res.data)
       } catch (error) {
         throw Error("에러 발생!")
@@ -59,7 +53,7 @@ export const onboard = {
     },
     deleteOnBoardMember: async (context, member) => {
       try {
-        const res = await axios.delete(`/api/v1/on-board/user/${member.email}`)
+        await apiAxios.delete(`/on-board/user/${member.email}`)
         context.commit("deleteOnBoardItem", member)
       } catch (error) {
         console.log(error)
