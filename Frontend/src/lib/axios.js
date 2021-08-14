@@ -42,3 +42,9 @@ export const setAxiosConfig = AUTH_TOKEN => {
   apiAxios.defaults.headers.common["accessToken"] = AUTH_TOKEN
   roomAxios.defaults.headers.common["accessToken"] = AUTH_TOKEN
 }
+
+export const removeAxiosConfig = () => {
+  delete axios.defaults.headers.common["accessToken"]
+  delete apiAxios.defaults.headers.common["accessToken"]
+  delete roomAxios.defaults.headers.common["accessToken"]
+}
