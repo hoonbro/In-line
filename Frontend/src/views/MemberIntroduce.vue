@@ -17,184 +17,53 @@
       <p>하하</p>
     </div>
   </section>
-  <section class="bottom">
-    <div class="box">
-      <div class="box-item">
-        <div class="box-up p-4 flex">
-          <div><img src="@/assets/test/spin.gif" alt="" /></div>
-          <div>
-            <p class="explain">이름</p>
-            <p class="explain">나이</p>
-            <p class="explain">역할</p>
-            <p class="explain">MBTI</p>
-          </div>
-        </div>
-        <div class="box-down">
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/github.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/email.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/instagram.png" alt=""
-            /></a>
-          </div>
+  <section
+    class="mx-8 mt-20 grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+  >
+    <div
+      v-for="member in members"
+      :key="member"
+      class="border-2 p-4 rounded-lg shadow-md"
+    >
+      <div class="flex">
+        <div><img src="@/assets/asd.gif" alt="개인 프로필 사진" /></div>
+        <div class="flex-grow grid content-evenly text-2xl font-bold">
+          <p>이름: {{ member.name }}</p>
+          <p>나이: {{ member.age }}</p>
+          <p>역할: {{ member.part }}</p>
+          <p>MBTI: {{ member.mbti }}</p>
         </div>
       </div>
-    </div>
-    <div class="box">
-      <div class="box-item">
-        <div class="box-up p-4 flex">
-          <div><img src="@/assets/test/spin.gif" alt="" /></div>
-          <div>
-            <p class="explain">이름</p>
-            <p class="explain">나이</p>
-            <p class="explain">역할</p>
-            <p class="explain">MBTI</p>
-          </div>
-        </div>
-        <div class="box-down">
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/github.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/email.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/instagram.png" alt=""
-            /></a>
-          </div>
-        </div>
+      <div>
+        'ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ'
       </div>
-    </div>
-    <div class="box">
-      <div class="box-item">
-        <div class="box-up p-4 flex">
-          <div><img src="@/assets/test/spin.gif" alt="" /></div>
-          <div>
-            <p class="explain">이름</p>
-            <p class="explain">나이</p>
-            <p class="explain">역할</p>
-            <p class="explain">MBTI</p>
-          </div>
+      <div class="flex justify-evenly">
+        <div>
+          <a :href="member.github">
+            <img
+              class="w-12 h-12 mx-auto"
+              src="@/assets/Member/github.png"
+              alt=""
+            />
+          </a>
         </div>
-        <div class="box-down">
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/github.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/email.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/instagram.png" alt=""
-            /></a>
-          </div>
+        <div>
+          <a :href="member.email">
+            <img
+              class="w-12 h-12 mx-auto"
+              src="@/assets/Member/email.png"
+              alt=""
+            />
+          </a>
         </div>
-      </div>
-    </div>
-    <div class="box">
-      <div class="box-item">
-        <div class="box-up p-4 flex">
-          <div><img src="@/assets/test/spin.gif" alt="" /></div>
-          <div>
-            <p class="explain">이름</p>
-            <p class="explain">나이</p>
-            <p class="explain">역할</p>
-            <p class="explain">MBTI</p>
-          </div>
-        </div>
-        <div class="box-down">
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/github.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/email.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/instagram.png" alt=""
-            /></a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="box">
-      <div class="box-item">
-        <div class="box-up p-4 flex">
-          <div><img src="@/assets/test/spin.gif" alt="" /></div>
-          <div>
-            <p class="explain">이름</p>
-            <p class="explain">나이</p>
-            <p class="explain">역할</p>
-            <p class="explain">MBTI</p>
-          </div>
-        </div>
-        <div class="box-down">
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/github.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/email.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/instagram.png" alt=""
-            /></a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="box">
-      <div class="box-item">
-        <div class="box-up p-4 flex">
-          <div><img src="@/assets/test/spin.gif" alt="" /></div>
-          <div>
-            <p class="explain">이름</p>
-            <p class="explain">나이</p>
-            <p class="explain">역할</p>
-            <p class="explain">MBTI</p>
-          </div>
-        </div>
-        <div class="box-down">
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/github.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/email.png" alt=""
-            /></a>
-          </div>
-          <div>
-            <a href=""
-              ><img class="icon" src="@/assets/Member/instagram.png" alt=""
-            /></a>
-          </div>
+        <div>
+          <a :href="member.insta">
+            <img
+              class="w-12 h-12 mx-auto"
+              src="@/assets/Member/instagram.png"
+              alt=""
+            />
+          </a>
         </div>
       </div>
     </div>
@@ -202,8 +71,68 @@
 </template>
 
 <script>
+import { reactive } from "@vue/reactivity"
 export default {
   name: "MemberIntroduce",
+  setup() {
+    const members = reactive({
+      sun: {
+        name: "선명준",
+        age: "27",
+        mbti: "MBTI",
+        part: "Back-end",
+        github: "",
+        email: "",
+        insta: "",
+      },
+      kim: {
+        name: "김병훈",
+        age: "29",
+        mbti: "MBTI",
+        part: "Front-end",
+        github: "",
+        email: "",
+        insta: "",
+      },
+      byeon: {
+        name: "변지훈",
+        age: "27",
+        mbti: "MBTI",
+        part: "Back-end",
+        github: "",
+        email: "",
+        insta: "",
+      },
+      lee: {
+        name: "이원우",
+        age: "28",
+        mbti: "MBTI",
+        part: "Front-end",
+        github: "",
+        email: "",
+        insta: "",
+      },
+      jo: {
+        name: "조여래",
+        age: "28",
+        mbti: "MBTI",
+        part: "Infra",
+        github: "",
+        email: "",
+        insta: "",
+      },
+      choi: {
+        name: "최영수",
+        age: "27",
+        mbti: "MBTI",
+        part: "Front-end",
+        github: "",
+        email: "",
+        insta: "",
+      },
+    })
+    return { members }
+  },
 }
 </script>
 
@@ -211,33 +140,5 @@ export default {
 .top {
   @apply bg-red-50 mx-64 my-36 border-4;
   height: 50vh;
-}
-
-.bottom {
-  @apply grid grid-cols-2 mx-20;
-  .box {
-    @apply w-3/5 mx-auto mb-6;
-    .box-item {
-      @apply bg-blue-100;
-      height: 55vh;
-      border: 2px solid red;
-      .box-up {
-        img {
-          @apply rounded-2xl h-80 w-60;
-        }
-
-        .explain {
-          @apply py-4 pl-4 text-5xl;
-        }
-      }
-      .box-down {
-        @apply grid grid-cols-3 mt-6;
-
-        .icon {
-          @apply w-24 h-24  mx-auto;
-        }
-      }
-    }
-  }
 }
 </style>
