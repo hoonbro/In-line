@@ -127,12 +127,9 @@ export default {
   name: "Admin",
   components: {},
   setup() {
+    const loading = ref(true)
     const store = useStore()
     const user = computed(() => store.state.auth.user)
-    const loading = ref(true)
-
-    // 얜 더미야!
-    // const members = 16
 
     const active = ref(null)
 
@@ -152,10 +149,9 @@ export default {
       })
     })
 
-    // const retires = computed(() => {
-    //   return store.state.admin.retires
-    // })
-    const retires = ref(0)
+    const retires = computed(() => {
+      return store.state.admin.retires
+    })
 
     const members = ref(null)
     const totalMemberCount = ref(null)
@@ -165,18 +161,18 @@ export default {
       return store.state.admin.years
     })
 
-    // getAttendances, getRetires, getMembers 실행
+    // getAttendances, getRetires, getOrganization 실행
     onMounted(async () => {
       attendances.value = await store.dispatch(
         "admin/getAttendances",
         user.value.officeId
       )
       await store.dispatch("admin/getRetires", user.value.officeId)
-      await store.dispatch("admin/getMembers", user.value.officeId)
+      await store.dispatch("office/getOrganization", user.value.officeId)
       await store.dispatch("admin/getYears", user.value.officeId)
       members.value = store.getters["admin/members"]
-      totalMemberCount.value = store.getters["admin/totalMemberCount"]
-      memberCountOnDept.value = store.getters["admin/memberCountOndept"]
+      totalMemberCount.value = store.getters["office/totalMemberCount"]
+      memberCountOnDept.value = store.getters["office/memberCountOndept"]
       loading.value = false
     })
     return {

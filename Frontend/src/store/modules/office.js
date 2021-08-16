@@ -9,6 +9,10 @@ export const office = {
     rooms: [],
     depts: [],
     jobs: [],
+    organization: {
+      deptUserCount: [],
+      officeUserCount: [],
+    },
   },
   mutations: {
     setNotifications(state, notis) {
@@ -22,6 +26,16 @@ export const office = {
         return { ...member, connected: false }
       })
     },
+    updateMember(state, newMember) {
+      state.members.forEach(member => {
+        if (member.userId === newMember.userId) {
+          member = { ...member, ...newMember }
+        }
+      })
+    },
+    deleteMember(state, memberId) {
+      state.member = state.member.filter(member => member.userId !== memberId)
+    },
     updateProfileOfMembers(state, newUser) {
       state.members = state.members.map(member => {
         if (member.userId === newUser.userId) {
@@ -34,7 +48,6 @@ export const office = {
       })
     },
     updateMemberProfileImage(state, { userId, newProfileImage }) {
-      console.log(newProfileImage)
       state.members.forEach(member => {
         if (member.userId === userId) {
           member.profileImage = newProfileImage
@@ -71,11 +84,13 @@ export const office = {
       state.rooms.filter(room => room !== roomId)
     },
     setDepts(state, depts) {
-      console.log(depts)
       state.depts = depts
     },
     setJobs(state, jobs) {
       state.jobs = jobs
+    },
+    setOrganization(state, payload) {
+      state.organization = payload
     },
   },
   getters: {
@@ -104,6 +119,12 @@ export const office = {
           : -1
       })
     },
+    memberCountOndept(state) {
+      return state.organization.deptUserCount
+    },
+    totalMemberCount(state) {
+      return state.organization.officeUserCount[0]
+    },
   },
   actions: {
     async getDepts({ commit }) {
@@ -129,7 +150,6 @@ export const office = {
     async registerOffice(context, formData) {
       try {
         const res = await apiAxios.post("/office", formData)
-        console.log(res)
         return res
       } catch (error) {
         console.log("error:", error)
@@ -244,7 +264,6 @@ export const office = {
     // --------------------------------------------------------------------------------
     async createRoom({ commit }, roomData) {
       try {
-        console.log(roomData)
         const res = await roomAxios.post("", roomData)
         const room = res.data
         commit("addRoom", room)
@@ -276,6 +295,17 @@ export const office = {
         commit("removeRooms", roomId)
       } catch (error) {
         throw Error("회의실을 삭제하던 중 문제가 발생했어요.")
+      }
+    },
+    async getOrganization({ rootGetters, commit }) {
+      try {
+        const res = await apiAxios.get(
+          `/office/dashboard/${rootGetters["auth/officeId"]}`
+        )
+        commit("setOrganization", res.data)
+        return res.data
+      } catch (error) {
+        throw Error(error)
       }
     },
   },
