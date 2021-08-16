@@ -1,9 +1,21 @@
 <template>
   <div class="navbar" :class="{ top: isNavTop }">
-    <router-link class="home-btn" :to="{ name: 'Home' }">인-라인</router-link>
+    <router-link class="home-btn" :to="{ name: 'Home' }">
+      <!-- 검은색 인-라인 -->
+      <img
+        src="@/assets/LandingPage/logo2.png"
+        alt=""
+        class="h-12"
+        v-if="isNavTop"
+      />
+      <!-- 흰색 인-라인 -->
+      <img src="@/assets/LandingPage/logo3.png" alt="" class="h-12" v-else />
+    </router-link>
     <ul class="btn-list">
       <li>
-        <router-link class="btn" to="#">기능 소개</router-link>
+        <router-link class="btn" :to="{ name: 'MemberIntroduce' }"
+          >팀 소개</router-link
+        >
       </li>
       <li>
         <a class="btn cursor-pointer" @click="$emit('openOfficeModal')">

@@ -128,7 +128,7 @@ export default {
   components: {},
   setup() {
     const store = useStore()
-    const user = JSON.parse(localStorage.getItem("user"))
+    const user = computed(() => store.state.auth.user)
     const loading = ref(true)
 
     // 얜 더미야!
@@ -169,11 +169,11 @@ export default {
     onMounted(async () => {
       attendances.value = await store.dispatch(
         "admin/getAttendances",
-        user.officeId
+        user.value.officeId
       )
-      // await store.dispatch("admin/getRetires", user.officeId)
-      await store.dispatch("admin/getMembers", user.officeId)
-      await store.dispatch("admin/getYears", user.officeId)
+      await store.dispatch("admin/getRetires", user.value.officeId)
+      await store.dispatch("admin/getMembers", user.value.officeId)
+      await store.dispatch("admin/getYears", user.value.officeId)
       members.value = store.getters["admin/members"]
       totalMemberCount.value = store.getters["admin/totalMemberCount"]
       memberCountOnDept.value = store.getters["admin/memberCountOndept"]

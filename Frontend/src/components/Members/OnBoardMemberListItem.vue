@@ -1,19 +1,21 @@
 <template>
   <div class="wrapper">
     <div class="member-item">
-      <div class="profile-container">
-        <span>{{ member.name[0] }}</span>
+      <div class="flex items-center gap-4">
+        <div class="profile-container">
+          <span>{{ member.name[0] }}</span>
+        </div>
+        <p class="name">{{ member.name }}</p>
       </div>
       <div class="infos">
-        <p class="name">{{ member.name }}</p>
         <p class="email">{{ member.email }}</p>
         <p>{{ member.deptEntity.deptName }}</p>
         <p>{{ member.jobEntity.jobName }}</p>
       </div>
     </div>
-    <div class="flex">
-      <button class="delete-btn" @click="deleteOnBoardMember">삭제</button>
-    </div>
+    <button class="delete-btn" @click="deleteOnBoardMember">
+      <span class="material-icons">delete</span>
+    </button>
   </div>
   <ConfirmModal
     ref="confirmModal"
@@ -58,24 +60,23 @@ export default {
 
 <style scoped lang="scss">
 .wrapper {
-  @apply flex justify-between p-4;
+  @apply flex justify-between items-baseline p-4;
 
   &:hover {
     @apply bg-blue-100 select-none;
   }
 
   .member-item {
-    @apply flex items-center;
+    @apply grid gap-2 items-center;
 
     .profile-container {
-      @apply w-10 h-10 rounded-full overflow-hidden bg-blue-400 flex items-center justify-center text-sm font-bold mr-4 text-white;
+      @apply w-10 h-10 rounded-full overflow-hidden bg-blue-400 flex items-center justify-center text-sm font-bold text-white;
+    }
+    .name {
+      @apply font-medium text-gray-900 text-base;
     }
     .infos {
-      @apply flex items-center text-sm text-gray-400;
-
-      .name {
-        @apply font-medium text-gray-900 text-base;
-      }
+      @apply flex gap-2 items-center text-sm text-gray-400;
 
       .email {
         @apply select-text text-gray-500;
@@ -84,14 +85,11 @@ export default {
       p {
         @apply text-sm;
       }
-      p:not(:last-child) {
-        @apply mr-2;
-      }
     }
   }
 
   .delete-btn {
-    @apply rounded px-4 py-2 h-auto self-center bg-gray-50 transition-all;
+    @apply rounded p-2 w-10 h-10 bg-gray-50 my-auto text-gray-400 transition-all;
 
     &:hover {
       @apply font-bold text-white bg-red-400;

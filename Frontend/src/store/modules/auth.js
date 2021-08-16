@@ -1,4 +1,5 @@
-import { apiAxios } from "@/lib/axios"
+import { apiAxios, setAxiosConfig } from "@/lib/axios"
+import axios from "axios"
 
 export const auth = {
   namespaced: true,
@@ -12,9 +13,13 @@ export const auth = {
     shouldChangePassword: false,
   },
   mutations: {
-    setToken(state, accessToken) {
+    initToken(state, accessToken) {
       state.accessToken = accessToken
       localStorage.setItem("accessToken", accessToken)
+    },
+    removeToken(state) {
+      state.accessToken = ""
+      localStorage.removeItem("accessToken")
     },
     setUser(state, userData) {
       state.user = userData
@@ -43,11 +48,14 @@ export const auth = {
     },
     async login({ commit }, formData) {
       try {
+        console.log(axios.defaults.headers.common["accessToken"])
         const res = await apiAxios.post("/users/login", formData)
-        commit("setToken", res.data.accessToken)
+        setAxiosConfig(res.data.accessToken)
+        commit("initToken", res.data.accessToken)
         commit("setUser", res.data.userDto)
         commit("setCommute", res.data.commuteEntity)
       } catch (error) {
+        console.log(error)
         const { status } = error.response
         switch (status) {
           case 400: {
@@ -77,9 +85,7 @@ export const auth = {
     },
     async changePassword({ commit }, passwordForm) {
       try {
-        await apiAxios.put(`/users/change-password`, {
-          data: passwordForm,
-        })
+        await apiAxios.put(`/users/change-password`, passwordForm)
         commit("setShouldChangePassword", false)
       } catch (error) {
         const { status } = error.response
@@ -141,9 +147,12 @@ export const auth = {
         throw Error("이미지 업로드에 실패했습니다.")
       }
     },
-    async updateProfile(_, { userId, form }) {
+    async updateProfile({ dispatch }, { userId, form }) {
       try {
         const res = await apiAxios.put(`/users/${userId}`, form)
+        await dispatch("office/getMembers", null, { root: true })
+        // 부서 정보 업데이트
+        await dispatch("admin/getOrganization", null, { root: true })
         return res.data
       } catch (error) {
         throw Error("프로필 수정에 실패했어요.")
@@ -160,7 +169,7 @@ export const auth = {
             accessToken,
           },
         })
-        commit("setToken", res.data.accessToken)
+        commit("initToken", res.data.accessToken)
         commit("setUser", res.data.userDto)
         commit("setCommute", res.data.commuteEntity)
         return res.data.accessToken

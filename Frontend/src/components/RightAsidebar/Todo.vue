@@ -30,6 +30,7 @@
       />
     </div>
   </div>
+  <ConfirmModal ref="confirmModal" :content="['할 일을 삭제할까요?']" />
 </template>
 
 <script>
@@ -48,6 +49,7 @@ export default {
     const todos = computed(() => {
       return store.getters["office/sortedTodosByDone"]
     })
+    const confirmModal = ref(null)
     const formData = reactive({
       title: "",
       content: "",
@@ -99,8 +101,11 @@ export default {
       store.dispatch("office/toggleTodoDone", todoId)
     }
 
-    const deleteTodo = todoId => {
-      store.dispatch("office/deleteTodo", todoId)
+    const deleteTodo = async todoId => {
+      const ok = await confirmModal.value.show()
+      if (ok) {
+        store.dispatch("office/deleteTodo", todoId)
+      }
     }
 
     onMounted(() => {
@@ -111,6 +116,7 @@ export default {
       todos,
       formData,
       editMode,
+      confirmModal,
       handleAddBtnClick,
       handleToggleComplete,
       deleteTodo,
