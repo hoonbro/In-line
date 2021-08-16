@@ -236,15 +236,6 @@ export const office = {
             officeId: rootState.auth.user.officeId,
           },
         })
-        // const res = await roomAPI({
-        //   method: "GET",
-        //   params: {
-        //     officeId: rootState.auth.user.officeId,
-        //   },
-        //   headers: {
-        //     accessToken: rootState.auth.accessToken,
-        //   },
-        // })
         commit("setRooms", res.data)
       } catch (error) {
         console.log(error)
@@ -255,14 +246,6 @@ export const office = {
       try {
         console.log(roomData)
         const res = await roomAxios.post("", roomData)
-        // const res = await roomAPI({
-        //   method: "POST",
-        //   url: ``,
-        //   data: roomData,
-        //   headers: {
-        //     accessToken: rootState.auth.accessToken,
-        //   },
-        // })
         const room = res.data
         commit("addRoom", room)
       } catch (error) {
@@ -272,17 +255,9 @@ export const office = {
     // --------------------------------------------------------------------------------
     async editRoom({ commit }, { room, roomId }) {
       try {
-        const res = await roomAxios.put(`/rooms/${roomId}`, {
+        const res = await roomAxios.put(`/${roomId}`, {
           roomName: room.name,
         })
-        // const res = await roomAPI({
-        //   method: "PUT",
-        //   url: `/${roomId}`,
-        //   data: { roomName: room.name },
-        //   headers: {
-        //     accessToken: rootState.auth.accessToken,
-        //   },
-        // })
         commit("updateRoom", {
           roomId: res.data.roomId,
           roomName: res.data.roomName,
@@ -295,15 +270,7 @@ export const office = {
 
     async deleteRoom({ commit }, roomId) {
       try {
-        await roomAxios.delete(`/rooms/${roomId}`)
-        // await roomAPI({
-        //   method: "DELETE",
-        //   url: `/${roomId}`,
-        //   headers: {
-        //     accessToken: rootState.auth.accessToken,
-        //   },
-        // })
-        console.log(`${roomId}번 회의실이 삭제됨니덩`)
+        await roomAxios.delete(`/${roomId}`)
         // DB에서는 삭제됐으나 front에서는 삭제가 안된 상태로 렌더링 되므로
         // filter를 이용해서 렌더링에서 제외시켜버린다
         commit("removeRooms", roomId)

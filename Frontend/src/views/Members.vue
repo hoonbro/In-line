@@ -90,13 +90,15 @@ export default {
     // On Board 관련
     const onBoardList = computed(() => store.state.onboard.onBoardList)
     onMounted(async () => {
-      try {
-        await store.dispatch(
-          "onboard/getOnBoardList",
-          store.state.auth.user.officeEntity.officeId
-        )
-      } catch (error) {
-        console.log(error.message)
+      if (isAdmin.value) {
+        try {
+          await store.dispatch(
+            "onboard/getOnBoardList",
+            store.state.auth.user.officeEntity.officeId
+          )
+        } catch (error) {
+          console.log(error.message)
+        }
       }
     })
     // On Board 관련 끝

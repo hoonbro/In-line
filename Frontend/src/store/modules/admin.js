@@ -64,7 +64,7 @@ export const admin = {
     },
     async getMembers({ commit }, officeId) {
       try {
-        const res = await apiAxios.get(`/admin/dashboard/${officeId}`)
+        const res = await apiAxios.get(`/office/dashboard/${officeId}`)
         commit("setMembers", res.data)
       } catch (error) {
         console.log(error)
@@ -92,7 +92,7 @@ export const admin = {
     async getOrganization({ rootGetters, commit }) {
       try {
         const res = await apiAxios.get(
-          `/admin/dashboard/${rootGetters["auth/officeId"]}`
+          `/office/dashboard/${rootGetters["auth/officeId"]}`
         )
         console.log(res.data)
         commit("setMembers", res.data)
