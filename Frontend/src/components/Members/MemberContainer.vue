@@ -58,9 +58,11 @@ export default {
     const store = useStore()
     const searchTerm = ref("")
     const totalUserCount = computed(
-      () => store.state.admin.members.officeUserCount[0]
+      () => store.state.office.organization.officeUserCount[0]
     )
-    const deptList = computed(() => store.state.admin.members.deptUserCount)
+    const deptList = computed(
+      () => store.state.office.organization.deptUserCount
+    )
     const officeName = computed(
       () => store.state.auth.user.officeEntity.officeName
     )
@@ -87,8 +89,7 @@ export default {
 
     onMounted(async () => {
       try {
-        const members = await store.dispatch("admin/getOrganization")
-        console.log(members)
+        await store.dispatch("office/getOrganization")
       } catch (error) {
         store.commit("landing/addAlertModalList", {
           type: "error",
