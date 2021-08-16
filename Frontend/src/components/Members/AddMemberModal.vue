@@ -81,8 +81,19 @@ export default {
       () => store.state.auth.user.officeEntity.officeName
     )
 
+<<<<<<< HEAD
+    try {
+      store.dispatch("office/getDepts")
+      store.dispatch("office/getJobs")
+    } catch (error) {
+      // store.commit()
+    }
+    const depts = computed(() => store.state.office.depts)
+    const jobs = computed(() => store.state.office.jobs)
+=======
     const depts = ref(null)
     const jobs = ref(null)
+>>>>>>> 7580ff9b3ffc0f1192aa47fe4e5d3d92a798ed0d
 
     const formData = reactive({
       name: {
