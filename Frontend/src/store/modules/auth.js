@@ -85,9 +85,7 @@ export const auth = {
     },
     async changePassword({ commit }, passwordForm) {
       try {
-        await apiAxios.put(`/users/change-password`, {
-          data: passwordForm,
-        })
+        await apiAxios.put(`/users/change-password`, passwordForm)
         commit("setShouldChangePassword", false)
       } catch (error) {
         const { status } = error.response
