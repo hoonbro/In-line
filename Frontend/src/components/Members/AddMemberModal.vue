@@ -1,23 +1,8 @@
 <template>
   <Modal>
     <template v-slot:modal-body>
-      <div v-if="loading" class="backdrop">
-        <!-- 로딩 스피너 -->
-        <div class="lds-spinner">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
+      <!-- 로딩 스피너 -->
+      <Loading v-if="loading" />
       <div class="header">
         <h3 class="title" @click="$emit('close')">구성원 추가</h3>
         <p class="detail">{{ officeName }}의 구성원을 추가합니다.</p>
@@ -71,8 +56,7 @@
 
 <script>
 import { reactive, ref } from "@vue/reactivity"
-import { computed } from "@vue/runtime-core"
-import axios from "axios"
+import { computed, onMounted } from "@vue/runtime-core"
 import { useStore } from "vuex"
 import {
   requiredValidator,
@@ -81,19 +65,23 @@ import {
 } from "@/lib/validator"
 import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
+import Loading from "@/components/Common/Loading.vue"
 
 export default {
   name: "AddMemberModal",
   components: {
     Modal,
     TextInput,
+    Loading,
   },
   setup(_, { emit }) {
     const store = useStore()
 
-    const officeName = JSON.parse(localStorage.getItem("user")).officeEntity
-      .officeName
+    const officeName = computed(
+      () => store.state.auth.user.officeEntity.officeName
+    )
 
+<<<<<<< HEAD
     try {
       store.dispatch("office/getDepts")
       store.dispatch("office/getJobs")
@@ -102,6 +90,10 @@ export default {
     }
     const depts = computed(() => store.state.office.depts)
     const jobs = computed(() => store.state.office.jobs)
+=======
+    const depts = ref(null)
+    const jobs = ref(null)
+>>>>>>> 7580ff9b3ffc0f1192aa47fe4e5d3d92a798ed0d
 
     const formData = reactive({
       name: {
@@ -154,13 +146,19 @@ export default {
     // ===================================================================
     const formError = ref("")
     const loading = ref(false)
+
     const submitForm = async () => {
       if (!formIsValid) return
       loading.value = true
       const submitData = { officeId: store.state.auth.user.officeId }
-      Object.keys(formData).forEach(
-        key => (submitData[key] = formData[key].value)
-      )
+      Object.keys(formData).forEach(key => {
+        // job과 dept는 selectInput을 위해 field 명을 변경해주어야 합니다.
+        if (key === "job" || key === "dept") {
+          submitData[`${key}Name`] = formData[key].value
+        } else {
+          submitData[key] = formData[key].value
+        }
+      })
       try {
         await store.dispatch("onboard/registerMember", submitData)
         emit("close")
@@ -178,6 +176,15 @@ export default {
       }
       loading.value = false
     }
+
+    onMounted(async () => {
+      try {
+        depts.value = await store.dispatch("office/getDepts")
+        jobs.value = await store.dispatch("office/getJobs")
+      } catch (error) {
+        console.log(error)
+      }
+    })
 
     return {
       officeName,
@@ -197,11 +204,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.backdrop {
-  z-index: 999;
-  background: rgba(46, 46, 51, 0.6);
-  @apply fixed inset-0 flex items-center justify-center;
-}
 .header {
   @apply grid gap-6 mb-10;
 
@@ -237,85 +239,6 @@ export default {
 
   .submit-error {
     @apply text-red-600 text-sm font-medium mx-auto;
-  }
-}
-// 로딩 스피너
-.lds-spinner {
-  color: official;
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-spinner div {
-  transform-origin: 40px 40px;
-  animation: lds-spinner 1.2s linear infinite;
-}
-.lds-spinner div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 3px;
-  left: 37px;
-  width: 6px;
-  height: 18px;
-  border-radius: 20%;
-  background: #fff;
-}
-.lds-spinner div:nth-child(1) {
-  transform: rotate(0deg);
-  animation-delay: -1.1s;
-}
-.lds-spinner div:nth-child(2) {
-  transform: rotate(30deg);
-  animation-delay: -1s;
-}
-.lds-spinner div:nth-child(3) {
-  transform: rotate(60deg);
-  animation-delay: -0.9s;
-}
-.lds-spinner div:nth-child(4) {
-  transform: rotate(90deg);
-  animation-delay: -0.8s;
-}
-.lds-spinner div:nth-child(5) {
-  transform: rotate(120deg);
-  animation-delay: -0.7s;
-}
-.lds-spinner div:nth-child(6) {
-  transform: rotate(150deg);
-  animation-delay: -0.6s;
-}
-.lds-spinner div:nth-child(7) {
-  transform: rotate(180deg);
-  animation-delay: -0.5s;
-}
-.lds-spinner div:nth-child(8) {
-  transform: rotate(210deg);
-  animation-delay: -0.4s;
-}
-.lds-spinner div:nth-child(9) {
-  transform: rotate(240deg);
-  animation-delay: -0.3s;
-}
-.lds-spinner div:nth-child(10) {
-  transform: rotate(270deg);
-  animation-delay: -0.2s;
-}
-.lds-spinner div:nth-child(11) {
-  transform: rotate(300deg);
-  animation-delay: -0.1s;
-}
-.lds-spinner div:nth-child(12) {
-  transform: rotate(330deg);
-  animation-delay: 0s;
-}
-@keyframes lds-spinner {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
   }
 }
 </style>

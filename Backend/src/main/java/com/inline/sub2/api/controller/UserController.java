@@ -77,6 +77,9 @@ public class UserController {
         return new ResponseEntity<Void>(httpStatus);
     }
 
+
+
+
     @PostMapping("/login")
     @ApiOperation(value = "로그인 성공 여부에 따라 토큰과 사용자의 데이터를 반환한다.", response = Map.class)
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto) {
@@ -98,6 +101,8 @@ public class UserController {
 
                     CommuteEntity commuteEntity = commuteService.commuteLogin(commuteDto);
                     map.put("commuteEntity", commuteEntity);
+                    System.out.println("login시");
+                    System.out.println(map.get("commuteEntity"));
                     status = HttpStatus.OK;
                 } else {
                     log.error("비밀번호가 일치하지 않습니다.");
@@ -190,6 +195,42 @@ public class UserController {
 
         return new ResponseEntity<Void>(httpStatus);
     }
+
+
+
+
+    @GetMapping("/me")
+    @ApiOperation(value = "새로고침시 로그인한 사용자 데이터를 반환한다", response = Map.class)
+    public ResponseEntity<Map<String,Object>> me(@RequestHeader Map<String, String> requestHeader) {
+        HttpStatus httpStatus = HttpStatus.OK;
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        try{
+            String token = requestHeader.get("accesstoken");
+            String email = jwtUtil.getUserNameFromJwt(token); //복호화 하여 email 얻기
+            UserEntity loginUser = userService.getUserByEmail(email);
+
+            map.put("accessToken", token);
+            map.put("userDto", loginUser);
+            CommuteEntity commuteEntity = commuteService.commuteInfo( loginUser.getUserId());
+            map.put("commuteEntity", commuteEntity);
+        }
+        catch(Exception e) {
+            httpStatus = HttpStatus.UNAUTHORIZED;
+            return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        }
+        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+    }
+
+
+
+
+
+
+
+
+
+
 
     @PutMapping("/profile")
     @ApiOperation(value = "유저의 프로필 사진을 변경한다.")

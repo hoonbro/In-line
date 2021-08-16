@@ -4,7 +4,7 @@
     <div class="links">
       <router-link :to="{ name: 'Office' }">홈</router-link>
       <router-link :to="{ name: 'Members' }">구성원</router-link>
-      <router-link :to="{ name: 'Admin' }">관리자</router-link>
+      <router-link :to="{ name: 'Admin' }" v-if="isAdmin">관리자</router-link>
     </div>
     <button class="logout" @click="logout">
       로그아웃
@@ -23,12 +23,14 @@ import { useRouter } from "vue-router"
 import { useStore } from "vuex"
 import { disconnectStomp, exitOffice } from "@/lib/websocket"
 import { computed, ref } from "@vue/runtime-core"
+import { removeAxiosConfig } from "@/lib/axios"
 
 export default {
   name: "MainNav",
   setup() {
     const router = useRouter()
     const store = useStore()
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
     const stompClient = computed(() => store.state.socket.stompClient)
     const user = computed(() => store.state.auth.user)
     const modalEl = ref(null)
@@ -37,7 +39,8 @@ export default {
       modalEl.value.isVisible = true
       const yes = await modalEl.value.show()
       if (yes) {
-        store.commit("auth/setToken", "")
+        store.commit("auth/removeToken")
+        removeAxiosConfig()
         exitOffice(stompClient.value, user.value)
         disconnectStomp()
         router.push({ name: "Home" })
@@ -46,6 +49,7 @@ export default {
 
     return {
       logout,
+      isAdmin,
       modalEl,
     }
   },

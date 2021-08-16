@@ -51,9 +51,13 @@ public class UserServiceImpl implements UserService {
             roomService.createtRoom("기본회의실-1", officeEntity.getOfficeId()); //기본 회의실 생성
             roomService.createtRoom("기본회의실-2", officeEntity.getOfficeId());
             log.info("기본 회의실 생성 완료");
+            System.out.println(admin.getDeptName());
+            System.out.println(admin.getJobName());
 
             DeptEntity deptEntity = deptService.getDeptId(admin.getDeptName(), 1l); //부서 번호 조회
             JobEntity jobEntity = jobService.getJobId(admin.getJobName(), 1l); //직책 번호 조회
+            if(deptEntity == null || jobEntity == null)
+                return null;
 
             //유저 정보 기입\
             userEntity.setEmail(admin.getEmail());

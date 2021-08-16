@@ -1,23 +1,30 @@
 <template>
   <div class="wrapper">
     <div class="member-item">
-      <div class="profile-container">
-        <span>{{ member.name[0] }}</span>
+      <div class="flex items-center gap-4">
+        <div class="profile-container">
+          <span>{{ member.name[0] }}</span>
+        </div>
+        <p class="name">{{ member.name }}</p>
       </div>
       <div class="infos">
-        <p class="font-bold text-gray-900">{{ member.name }}</p>
+        <p class="email">{{ member.email }}</p>
         <p>{{ member.deptEntity.deptName }}</p>
         <p>{{ member.jobEntity.jobName }}</p>
-        <p class="select-text">{{ member.email }}</p>
       </div>
     </div>
-    <div class="flex">
-      <button class="delete-btn" @click="deleteOnBoardMember">삭제</button>
-    </div>
+    <button class="delete-btn" @click="deleteOnBoardMember">
+      <span class="material-icons">delete</span>
+    </button>
   </div>
+  <ConfirmModal
+    ref="confirmModal"
+    :content="['등록 예정인 구성원을 삭제하시겠어요?']"
+  />
 </template>
 
 <script>
+import { ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 
 export default {
@@ -27,8 +34,12 @@ export default {
   },
   setup(props) {
     const store = useStore()
+    const confirmModal = ref(null)
 
     const deleteOnBoardMember = async () => {
+      const ok = await confirmModal.value.show()
+      if (!ok) return
+
       try {
         await store.dispatch("onboard/deleteOnBoardMember", props.member)
         store.commit("landing/addAlertModalList", {
@@ -42,42 +53,46 @@ export default {
         })
       }
     }
-    return { deleteOnBoardMember }
+    return { confirmModal, deleteOnBoardMember }
   },
 }
 </script>
 
 <style scoped lang="scss">
 .wrapper {
-  @apply flex justify-between p-4;
+  @apply flex justify-between items-baseline p-4;
 
   &:hover {
-    @apply bg-gray-100 select-none;
+    @apply bg-blue-100 select-none;
   }
 
   .member-item {
-    @apply flex items-center;
+    @apply grid gap-2 items-center;
 
     .profile-container {
-      @apply w-10 h-10 rounded-full overflow-hidden bg-blue-600 flex items-center justify-center text-sm font-bold mr-4 text-white;
+      @apply w-10 h-10 rounded-full overflow-hidden bg-blue-400 flex items-center justify-center text-sm font-bold text-white;
+    }
+    .name {
+      @apply font-medium text-gray-900 text-base;
     }
     .infos {
-      @apply flex items-center text-sm text-gray-400;
+      @apply flex gap-2 items-center text-sm text-gray-400;
+
+      .email {
+        @apply select-text text-gray-500;
+      }
 
       p {
-        @apply text-lg;
-      }
-      p:not(:last-child) {
-        @apply mr-2;
+        @apply text-sm;
       }
     }
   }
 
   .delete-btn {
-    @apply bg-red-600 rounded px-4 py-2 h-auto self-center text-white;
+    @apply rounded p-2 w-10 h-10 bg-gray-50 my-auto text-gray-400 transition-all;
 
     &:hover {
-      @apply font-bold;
+      @apply font-bold text-white bg-red-400;
     }
   }
 }

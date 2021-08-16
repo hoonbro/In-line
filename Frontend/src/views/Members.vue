@@ -6,18 +6,18 @@
           <h1 class="section-title">구성원</h1>
           <button
             class="add-member-btn"
-            v-if="true"
+            v-if="isAdmin"
             @click="addMemberModalOpen = true"
           >
             <span class="material-icons">add</span>
             <span>구성원 추가</span>
           </button>
         </div>
-        <MemberContainer />
+        <MemberContainer @openProfileModal="handleOpenProfileModal" />
       </section>
 
       <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
-      <section>
+      <section v-if="isAdmin">
         <div class="header">
           <h1 class="section-title">On Board</h1>
         </div>
@@ -66,6 +66,8 @@ export default {
     const addMemberModalOpen = ref(false)
     const profileModalOpen = ref(false)
     const profileUserId = ref(null)
+
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
     const officeName = computed(
       () => store.state.auth.user.officeEntity.officeName
     )
@@ -78,6 +80,11 @@ export default {
         }
       })
     })
+
+    const handleOpenProfileModal = userId => {
+      profileModalOpen.value = true
+      profileUserId.value = userId
+    }
 
     // =====================================================
     // On Board 관련
@@ -101,6 +108,7 @@ export default {
     }
 
     return {
+      isAdmin,
       officeName,
       searchTerm,
       searchedMembers,
@@ -109,6 +117,7 @@ export default {
       openProfileModal,
       profileUserId,
       onBoardList,
+      handleOpenProfileModal,
     }
   },
 }
@@ -116,21 +125,22 @@ export default {
 
 <style scoped lang="scss">
 .members {
-  @apply grid gap-10 px-10 my-10;
+  @apply grid gap-10 p-10;
 
   section {
     @apply grid gap-6;
 
     .header {
-      @apply flex items-center justify-between select-none;
+      @apply flex gap-2 items-center justify-between select-none;
 
       .section-title {
         @apply text-2xl font-bold;
       }
       .add-member-btn {
-        @apply py-2 px-4 flex items-center bg-blue-800 text-white font-medium rounded;
-        .material-icons {
-          @apply mr-2;
+        @apply py-2 px-4 flex items-center font-medium rounded bg-gray-200 transition;
+
+        &:hover {
+          @apply bg-blue-700 text-white;
         }
       }
     }
@@ -138,55 +148,6 @@ export default {
     .onboard-container {
       max-height: 250px;
       @apply flex flex-col bg-white rounded-lg shadow overflow-auto;
-    }
-
-    .members-container {
-      height: 504px;
-      @apply grid gap-4 grid-cols-12;
-
-      .department-container {
-        @apply col-span-4 h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
-
-        .header {
-          @apply p-4 text-sm border-b;
-        }
-
-        .departments-container {
-          @apply overflow-auto;
-
-          .department-list {
-            @apply grid;
-          }
-        }
-      }
-
-      .user-container {
-        @apply flex flex-col col-span-8 bg-white rounded-lg shadow overflow-hidden;
-
-        .search-container {
-          @apply flex-shrink-0 p-4 border-b flex items-center relative;
-
-          .search-btn {
-            @apply p-2 w-10 h-10 bg-gray-100 rounded mr-4;
-
-            span {
-              @apply text-gray-400;
-            }
-          }
-
-          input {
-            @apply py-2 px-4 rounded bg-gray-100 w-full;
-          }
-        }
-
-        .users-container {
-          @apply flex-1 overflow-auto h-full;
-
-          .user-list {
-            @apply grid;
-          }
-        }
-      }
     }
   }
 }

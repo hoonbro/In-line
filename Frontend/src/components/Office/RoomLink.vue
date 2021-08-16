@@ -13,8 +13,19 @@
         alt="이미지"
       />
     </div>
-    <div>
-      참가자 이미지
+    <div class="users-container">
+      <template v-for="user in roomUserList" :key="user.userId">
+        <div class="user-profile-container">
+          <img
+            v-if="user.profileImage"
+            :src="`/images/${user.profileImage}`"
+            :alt="user.userName"
+          />
+          <div v-else class="default-img">
+            {{ user.userName[0] }}
+          </div>
+        </div>
+      </template>
     </div>
   </router-link>
 </template>
@@ -25,6 +36,7 @@ export default {
   props: {
     title: String,
     roomId: [String, Number],
+    roomUserList: Array,
     large: {
       type: Boolean,
       default: false,
@@ -36,7 +48,7 @@ export default {
 <style scoped lang="scss">
 .room {
   height: 160px;
-  @apply p-6 rounded-lg bg-white flex flex-col justify-between shadow relative transition-colors;
+  @apply p-6 rounded-lg bg-white flex flex-col justify-between shadow relative transition-colors col-span-12 lg:col-span-6 xl:col-span-4;
 
   &:hover {
     @apply bg-blue-50;
@@ -52,6 +64,7 @@ export default {
 
   &.large {
     height: 240px;
+    @apply col-span-12 lg:col-span-6;
 
     .title {
       @apply text-2xl font-bold;
@@ -59,6 +72,20 @@ export default {
 
     .img {
       @apply w-24 h-24;
+    }
+  }
+
+  .users-container {
+    .user-profile-container {
+      @apply w-8 h-8 rounded-full overflow-hidden;
+
+      img {
+        @apply w-full h-full object-cover;
+      }
+
+      .default-img {
+        @apply w-full h-full flex items-center justify-center;
+      }
     }
   }
 }
