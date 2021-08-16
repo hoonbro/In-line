@@ -1,5 +1,6 @@
 package com.inline.sub2.api.controller;
 
+import com.inline.sub2.api.dto.DeptUserDto;
 import com.inline.sub2.api.dto.UserRegistDto;
 import com.inline.sub2.api.service.DeptService;
 import com.inline.sub2.api.service.JobService;
@@ -15,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -96,4 +94,29 @@ public class OfficeController {
         return new ResponseEntity<List<JobEntity>>(list, status);
     }
 
+    @GetMapping("/dashboard/{officeId}")
+    @ApiOperation(value = "office별 인원 관리 정보(구성원 수, 부서별 사원 수)를 반환한다.", response = Map.class)
+    public ResponseEntity<Map<String, Collection>> getCounts(@PathVariable("officeId") Long officeId) {
+        Set<Integer> officeSet = new HashSet<>();
+        Map<String, Collection> map = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        try {
+            //전체 구성원 수
+            int officeUsers = officeService.getOfficeUserCount(officeId);
+            officeSet.add(officeUsers);
+
+            //부서별 구성원 수
+            List<DeptUserDto> dept = officeService.getDeptUserCount(officeId);
+
+            map.put("officeUserCount", officeSet);
+            map.put("deptUserCount", dept);
+            log.info("인원 관리 정보 반환 성공");
+        } catch (Exception e) {
+            log.error("인원 관리 정보 반환 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<Map<String, Collection>>(map, status);
+    }
 }

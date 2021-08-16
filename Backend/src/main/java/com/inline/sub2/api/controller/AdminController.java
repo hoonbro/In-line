@@ -44,32 +44,6 @@ public class AdminController {
         return new ResponseEntity<Map<String, List<CommuteEntity>>>(map, status);
     }
 
-    @GetMapping("/dashboard/{officeId}")
-    @ApiOperation(value = "office별 인원 관리 정보(구성원 수, 부서별 사원 수)를 반환한다.", response = Map.class)
-    public ResponseEntity<Map<String, Collection>> getCounts(@PathVariable("officeId") Long officeId) {
-        Set<Integer> officeSet = new HashSet<>();
-        Map<String, Collection> map = new HashMap<>();
-        HttpStatus status = HttpStatus.OK;
-
-        try {
-            //전체 구성원 수
-            int officeUsers = adminService.getOfficeUserCount(officeId);
-            officeSet.add(officeUsers);
-
-            //부서별 구성원 수
-            List<DeptUserDto> dept = adminService.getDeptUserCount(officeId);
-
-            map.put("officeUserCount", officeSet);
-            map.put("deptUserCount", dept);
-            log.info("인원 관리 정보 반환 성공");
-        } catch (Exception e) {
-            log.error("인원 관리 정보 반환 실패");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-
-        return new ResponseEntity<Map<String, Collection>>(map, status);
-    }
-
     @PutMapping("/user/{userId}")
     @ApiOperation(value = "구성원을 퇴사 처리하고 변경된 구성원의 데이터를 반환한다.", response = UserEntity.class)
     public ResponseEntity<UserEntity> retireUser(@PathVariable Long userId) {

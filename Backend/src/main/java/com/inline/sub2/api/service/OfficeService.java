@@ -1,5 +1,6 @@
 package com.inline.sub2.api.service;
 
+import com.inline.sub2.api.dto.DeptUserDto;
 import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.OfficeEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,4 +14,8 @@ public interface OfficeService {
     OfficeEntity getOfficeName(Long officeId);
 
     Boolean duplicateOfficeName(String officeName);
+
+    int getOfficeUserCount(Long officeId);
+
+    List<DeptUserDto> getDeptUserCount(Long officeId);
 }

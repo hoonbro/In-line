@@ -68,7 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             "/commute/{commuteId}/out",
                             "/chat/{officeId}",
                             "/todos",
-                            "/todos/{todoId}"
+                            "/todos/{todoId}",
+                            "/office/dashboard/{officeId}"
                             ).hasAnyRole("USER","ADMIN")
 
 
