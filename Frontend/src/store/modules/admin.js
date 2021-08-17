@@ -54,7 +54,7 @@ export const admin = {
       try {
         await apiAxios.put(`/admin/user/${payload.userId}`)
         // 회원 정보 업데이트
-        commit("office/deleteMember", null, { root: true })
+        commit("office/deleteMember", payload.userId, { root: true })
         // await dispatch("office/getMembers", null, { root: true })
         // 부서 정보 업데이트
         await dispatch("office/getOrganization", null, { root: true })
