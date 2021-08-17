@@ -34,7 +34,7 @@ export const office = {
       })
     },
     deleteMember(state, memberId) {
-      state.member = state.member.filter(member => member.userId !== memberId)
+      state.members = state.members.filter(member => member.userId !== memberId)
     },
     updateProfileOfMembers(state, newUser) {
       state.members = state.members.map(member => {
