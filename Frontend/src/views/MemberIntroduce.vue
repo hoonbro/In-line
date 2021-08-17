@@ -1,73 +1,78 @@
 <template>
-  <section class="top">
+  <!-- <section class="mt-20">
     <div class="intro text-center">
-      <p>영수님</p>
-      <p>영수님이 이 글을 읽고 있을 때</p>
-      <p>아마 저는 자고있겠지요</p>
-      <p>반응형으로 웹페이지를 만들려면</p>
-      <p>가장 작은 사이즈부터 만들라고 하십니다</p>
-      <p>영수님</p>
-      <p>화이팅!</p>
-      <p>기본 골자는</p>
-      <p>이렇게 가시면 될 것 같습니다</p>
-      <p>이름같은 경우는 바꾸셔도 됩니다</p>
-      <p>그럼 이만</p>
-      <p>하하</p>
-      <p>하하</p>
-      <p>하하</p>
+      <p>지역 반 팀</p>
+      <p>프로젝트 주제 (1번 웹기술 WebRTC)</p>
+      <p>프로젝트 기간 (210712 ~ 210820)</p>
+      <p>서비스 명 (인라인)</p>
+      <p>서비스 설명 (</p>
+      <p>사용 기술</p>
+    </div>
+  </section> -->
+  <section class="cards">
+    <div v-for="member in members" :key="member" class="card">
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-col md:flex-row">
+          <div class="self-center ">
+            <img
+              class="m-2 w-48 h-48 rounded-full"
+              :src="member.profile"
+              alt="개인 프로필 사진"
+            />
+          </div>
+          <div class="profiles flex justify-center gap-2 md:gap-0">
+            <p>
+              이름: <span>{{ member.name }}</span>
+            </p>
+            <!-- <p>나이: {{ member.age }}</p> -->
+            <!-- 한줄 인사말..? 사용 기술스택..? -->
+            <p>
+              역할:
+              <span
+                class="text-white px-2 rounded-md"
+                :class="{
+                  frontend: member.part === 'Front-end',
+                  backend: member.part === 'Back-end',
+                  infra: member.part === 'Infra',
+                }"
+                >{{ member.part }}</span
+              >
+            </p>
+            <p>
+              MBTI:
+              <span>{{ member.mbti }}</span>
+            </p>
+          </div>
+        </div>
+        <div>
+          <hr />
+          <!-- '무언가 내용을 넣을까 말까' -->
+        </div>
+        <div class="icons">
+          <div>
+            <a :href="member.github">
+              <img
+                class="icon"
+                src="@/assets/Member/github.png"
+                alt="Github link"
+              />
+            </a>
+          </div>
+          <div>
+            <a :href="member.email">
+              <img class="icon" src="@/assets/Member/email.png" alt="" />
+            </a>
+          </div>
+          <div>
+            <a :href="member.insta">
+              <img class="icon" src="@/assets/Member/instagram.png" alt="" />
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
-  <section
-    class="mx-8 mt-20 grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
-  >
-    <div
-      v-for="member in members"
-      :key="member"
-      class="border-2 p-4 rounded-lg shadow-md"
-    >
-      <div class="flex">
-        <div><img src="@/assets/asd.gif" alt="개인 프로필 사진" /></div>
-        <div class="flex-grow grid content-evenly text-2xl font-bold">
-          <p>이름: {{ member.name }}</p>
-          <p>나이: {{ member.age }}</p>
-          <p>역할: {{ member.part }}</p>
-          <p>MBTI: {{ member.mbti }}</p>
-        </div>
-      </div>
-      <div>
-        'ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ'
-      </div>
-      <div class="flex justify-evenly">
-        <div>
-          <a :href="member.github">
-            <img
-              class="w-12 h-12 mx-auto"
-              src="@/assets/Member/github.png"
-              alt=""
-            />
-          </a>
-        </div>
-        <div>
-          <a :href="member.email">
-            <img
-              class="w-12 h-12 mx-auto"
-              src="@/assets/Member/email.png"
-              alt=""
-            />
-          </a>
-        </div>
-        <div>
-          <a :href="member.insta">
-            <img
-              class="w-12 h-12 mx-auto"
-              src="@/assets/Member/instagram.png"
-              alt=""
-            />
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <div class="h-20"></div>
 </template>
 
 <script>
@@ -79,56 +84,62 @@ export default {
       sun: {
         name: "선명준",
         age: "27",
-        mbti: "MBTI",
+        mbti: "ISFP",
         part: "Back-end",
-        github: "",
-        email: "",
-        insta: "",
+        github: "https://github.com/SunMyoungJun",
+        email: "mailto:" + "audwns101@naver.com",
+        insta: "https://www.instagram.com/sunmyoungjun/",
+        profile: require("@/assets/Member/jello.jpeg"),
       },
       kim: {
         name: "김병훈",
-        age: "29",
-        mbti: "MBTI",
+        age: "30",
+        mbti: "ISFJ",
         part: "Front-end",
-        github: "",
-        email: "",
-        insta: "",
+        github: "https://github.com/byunghun-jake",
+        email: "mailto:" + "figma@kakao.com",
+        insta: "https://www.instagram.com/kim.gam.ja/",
+        profile: require("@/assets/Member/jello.jpeg"),
       },
       byeon: {
         name: "변지훈",
         age: "27",
-        mbti: "MBTI",
+        mbti: "INTP",
         part: "Back-end",
-        github: "",
-        email: "",
-        insta: "",
+        github: "https://github.com/hoonze",
+        email: "mailto:" + "wlgns1588@naver.com",
+        insta: "https://www.instagram.com/ho_on.e/",
+        profile: require("@/assets/Member/jello.jpeg"),
       },
       lee: {
         name: "이원우",
         age: "28",
-        mbti: "MBTI",
+        mbti: "INTJ",
         part: "Front-end",
         github: "",
         email: "",
         insta: "",
+        profile: require("@/assets/Member/jello.jpeg"),
       },
       jo: {
         name: "조여래",
         age: "28",
-        mbti: "MBTI",
+        mbti: "ENTP",
         part: "Infra",
-        github: "",
-        email: "",
-        insta: "",
+        github: "https://github.com/steven9408",
+        email: "mailto:" + "whdufo@gmail.com",
+        insta: "https://www.instagram.com/yeorae_insaeng",
+        profile: require("@/assets/Member/tempImage.jpg"),
       },
       choi: {
         name: "최영수",
         age: "27",
-        mbti: "MBTI",
+        mbti: "INTP",
         part: "Front-end",
         github: "",
-        email: "",
-        insta: "",
+        email: "mailto:" + "",
+        insta: "https://www.instagram.com/choi_young_su/",
+        profile: require("@/assets/Member/tempImage.jpg"),
       },
     })
     return { members }
@@ -137,8 +148,34 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.top {
-  @apply bg-red-50 mx-64 my-36 border-4;
-  height: 50vh;
+.cards {
+  @apply mt-20 grid gap-8 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 mx-auto;
+  width: 90vw;
+
+  .card {
+    @apply border-2 p-2 rounded-lg shadow-md;
+
+    .profiles {
+      @apply flex-grow grid content-evenly text-2xl font-bold;
+
+      .frontend {
+        @apply bg-red-400;
+      }
+      .backend {
+        @apply bg-blue-400;
+      }
+      .infra {
+        @apply bg-indigo-400;
+      }
+    }
+
+    .icons {
+      @apply flex justify-evenly;
+
+      .icon {
+        @apply w-8 h-8 mx-auto;
+      }
+    }
+  }
 }
 </style>

@@ -74,14 +74,15 @@ export const office = {
       state.rooms.push(room)
     },
     updateRoom(state, { roomId, roomName }) {
-      state.room.forEach(room => {
+      state.rooms.forEach(room => {
         if (room.roomId === roomId) {
-          room.name = roomName
+          room.roomName = roomName
+          console.log(room)
         }
       })
     },
-    removeRooms(state, roomId) {
-      state.rooms.filter(room => room !== roomId)
+    removeRoom(state, roomId) {
+      state.rooms = state.rooms.filter(room => room.roomId !== roomId)
     },
     setDepts(state, depts) {
       state.depts = depts
@@ -281,18 +282,16 @@ export const office = {
           roomId: res.data.roomId,
           roomName: res.data.roomName,
         })
-        commit("setRooms", rooms)
       } catch (error) {
         throw Error("회의실을 수정하다 문제가 생겼어요.")
       }
     },
-
     async deleteRoom({ commit }, roomId) {
       try {
         await roomAxios.delete(`/${roomId}`)
         // DB에서는 삭제됐으나 front에서는 삭제가 안된 상태로 렌더링 되므로
         // filter를 이용해서 렌더링에서 제외시켜버린다
-        commit("removeRooms", roomId)
+        commit("removeRoom", roomId)
       } catch (error) {
         throw Error("회의실을 삭제하던 중 문제가 발생했어요.")
       }
