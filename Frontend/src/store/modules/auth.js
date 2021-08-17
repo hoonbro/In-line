@@ -36,7 +36,6 @@ export const auth = {
   },
   actions: {
     signUp: async (context, formData) => {
-      console.log("signUp 요청 !")
       try {
         return await apiAxios.post("/users", formData)
       } catch (error) {
@@ -48,7 +47,6 @@ export const auth = {
     },
     async login({ commit }, formData) {
       try {
-        console.log(axios.defaults.headers.common["accessToken"])
         const res = await apiAxios.post("/users/login", formData)
         setAxiosConfig(res.data.accessToken)
         commit("initToken", res.data.accessToken)
@@ -140,19 +138,20 @@ export const auth = {
             },
           }
         )
-        console.log(newProfileImg)
         return newProfileImg
       } catch (error) {
         console.log(error)
         throw Error("이미지 업로드에 실패했습니다.")
       }
     },
-    async updateProfile({ dispatch }, { userId, form }) {
+    async updateProfile({ dispatch, commit }, { userId, form }) {
       try {
         const res = await apiAxios.put(`/users/${userId}`, form)
-        await dispatch("office/getMembers", null, { root: true })
+        // member 업데이트
+        commit("office/updateMember", res.data, { root: true })
+        // await dispatch("office/getMembers", null, { root: true })
         // 부서 정보 업데이트
-        await dispatch("admin/getOrganization", null, { root: true })
+        await dispatch("office/getOrganization", null, { root: true })
         return res.data
       } catch (error) {
         throw Error("프로필 수정에 실패했어요.")
