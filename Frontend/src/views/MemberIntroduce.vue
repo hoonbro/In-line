@@ -1,63 +1,73 @@
 <template>
-  <section class="top">
+  <!-- <section class="mt-20">
     <div class="intro text-center">
-      <p>프로젝트 명</p>
-      <p>기술스택</p>
-      <p>제작기간</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>어쩌구저쩌구</p>
-      <p>하하</p>
-      <p>하하</p>
-      <p>하하</p>
+      <p>지역 반 팀</p>
+      <p>프로젝트 주제 (1번 웹기술 WebRTC)</p>
+      <p>프로젝트 기간 (210712 ~ 210820)</p>
+      <p>서비스 명 (인라인)</p>
+      <p>서비스 설명 (</p>
+      <p>사용 기술</p>
     </div>
-  </section>
+  </section> -->
   <section class="cards">
     <div v-for="member in members" :key="member" class="card">
-      <div class="flex">
-        <div>
-          <img
-            class="w-60 rounded-3xl m-3"
-            :src="member.profile"
-            alt="개인 프로필 사진"
-          />
-        </div>
-        <div class="profiles">
-          <p>이름: {{ member.name }}</p>
-          <!-- <p>나이: {{ member.age }}</p> -->
-          <!-- 한줄 인사말..? 사용 기술스택..? -->
-          <p>역할: {{ member.part }}</p>
-          <p>MBTI: {{ member.mbti }}</p>
-        </div>
-      </div>
-      <div>
-        <hr class="mb-4" />
-        <!-- '무언가 내용을 넣을까 말까' -->
-      </div>
-      <div class="icons">
-        <div>
-          <a :href="member.github">
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-col md:flex-row">
+          <div class="self-center ">
             <img
-              class="icon"
-              src="@/assets/Member/github.png"
-              alt="Github link"
+              class="m-2 w-48 h-48 rounded-full"
+              :src="member.profile"
+              alt="개인 프로필 사진"
             />
-          </a>
+          </div>
+          <div class="profiles flex justify-center gap-2 md:gap-0">
+            <p>
+              이름: <span>{{ member.name }}</span>
+            </p>
+            <!-- <p>나이: {{ member.age }}</p> -->
+            <!-- 한줄 인사말..? 사용 기술스택..? -->
+            <p>
+              역할:
+              <span
+                class="text-white px-2 rounded-md"
+                :class="{
+                  frontend: member.part === 'Front-end',
+                  backend: member.part === 'Back-end',
+                  infra: member.part === 'Infra',
+                }"
+                >{{ member.part }}</span
+              >
+            </p>
+            <p>
+              MBTI:
+              <span>{{ member.mbti }}</span>
+            </p>
+          </div>
         </div>
         <div>
-          <a :href="member.email">
-            <img class="icon" src="@/assets/Member/email.png" alt="" />
-          </a>
+          <hr />
+          <!-- '무언가 내용을 넣을까 말까' -->
         </div>
-        <div>
-          <a :href="member.insta">
-            <img class="icon" src="@/assets/Member/instagram.png" alt="" />
-          </a>
+        <div class="icons">
+          <div>
+            <a :href="member.github">
+              <img
+                class="icon"
+                src="@/assets/Member/github.png"
+                alt="Github link"
+              />
+            </a>
+          </div>
+          <div>
+            <a :href="member.email">
+              <img class="icon" src="@/assets/Member/email.png" alt="" />
+            </a>
+          </div>
+          <div>
+            <a :href="member.insta">
+              <img class="icon" src="@/assets/Member/instagram.png" alt="" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -119,7 +129,7 @@ export default {
         github: "https://github.com/steven9408",
         email: "mailto:" + "whdufo@gmail.com",
         insta: "https://www.instagram.com/yeorae_insaeng",
-        profile: require("@/assets/Member/jello.jpeg"),
+        profile: require("@/assets/Member/tempImage.jpg"),
       },
       choi: {
         name: "최영수",
@@ -129,7 +139,7 @@ export default {
         github: "",
         email: "mailto:" + "",
         insta: "https://www.instagram.com/choi_young_su/",
-        profile: require("@/assets/Member/jello.jpeg"),
+        profile: require("@/assets/Member/tempImage.jpg"),
       },
     })
     return { members }
@@ -138,27 +148,32 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.top {
-  @apply bg-red-50 mx-64 my-36 border-4;
-  height: 50vh;
-}
-
 .cards {
-  @apply mx-8 mt-20 grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mx-auto;
-  width: 90%;
+  @apply mt-20 grid gap-8 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 mx-auto;
+  width: 90vw;
 
   .card {
     @apply border-2 p-2 rounded-lg shadow-md;
 
     .profiles {
-      @apply flex-grow grid content-evenly text-2xl font-bold ml-3;
+      @apply flex-grow grid content-evenly text-2xl font-bold;
+
+      .frontend {
+        @apply bg-red-400;
+      }
+      .backend {
+        @apply bg-blue-400;
+      }
+      .infra {
+        @apply bg-indigo-400;
+      }
     }
 
     .icons {
       @apply flex justify-evenly;
 
       .icon {
-        @apply w-12 h-12 mx-auto;
+        @apply w-8 h-8 mx-auto;
       }
     }
   }
