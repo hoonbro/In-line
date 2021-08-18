@@ -43,6 +43,10 @@ public class RoomManager {
 
     private final ConcurrentMap<Long, Room> rooms = new ConcurrentHashMap<>();
 
+    public boolean isExist(Long roomId){
+        return rooms.containsKey(roomId);
+    }
+
     public Map<Long, Collection> getOfficeRooms(Long officeId){
         Map<Long, Collection> roomParticipants = new TreeMap<>();
         ConcurrentMap<Long, UserSession> participants;
