@@ -135,6 +135,10 @@ public class RoomManager {
         userRepository.moveUser(userId, roomId);
     }
 
+    public UserEntity getUser(Long userId){
+        return userRepository.getByUserId(userId);
+    }
+
     public Room getRoom(String roomName, Long roomId, Long officeId) {
 //        log.info("{}찾기 시도, roomId = {}", roomName, roomId);
         Room room = rooms.get(roomId);
