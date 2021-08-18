@@ -6,12 +6,7 @@
   >
     <div class="flex justify-between gap-4">
       <p class="title">{{ title }}</p>
-      <img
-        class="img"
-        :class="{ large: large }"
-        :src="`https://picsum.photos/seed/room-${roomId}/100`"
-        alt="이미지"
-      />
+      <img class="img" :class="{ large: large }" :src="imgUrl" alt="이미지" />
     </div>
     <div class="users-container">
       <template v-for="user in roomUserList" :key="user.userId">
@@ -31,6 +26,7 @@
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core"
 export default {
   name: "RoomLink",
   props: {
@@ -41,6 +37,12 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  setup(props) {
+    const imgUrl = computed(() =>
+      require(`@/assets/rooms/main_${props.roomId % 10}.png`)
+    )
+    return { imgUrl }
   },
 }
 </script>
@@ -59,7 +61,7 @@ export default {
   }
 
   .img {
-    @apply w-16 h-16 rounded-full;
+    @apply w-16 h-16 rounded-xl;
   }
 
   &.large {
