@@ -1,6 +1,9 @@
 <template>
   <nav>
-    <router-link class="logo" :to="{ name: 'Home' }">인-라인</router-link>
+    <router-link class="logo" :to="{ name: 'Home' }">
+      <!-- 검은색 인-라인 -->
+      <img src="@/assets/LandingPage/logo2.png" alt="" class="w-24" />
+    </router-link>
     <div class="links">
       <router-link :to="{ name: 'Office' }">홈</router-link>
       <router-link :to="{ name: 'Members' }">구성원</router-link>
