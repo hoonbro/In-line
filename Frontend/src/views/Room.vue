@@ -204,6 +204,9 @@ export default {
             }
           )
           break
+        case "invalidate":
+          router.push("/notFound")
+          break
         default:
         // console.error("Unrecognized message", parsedMessage)
       }
