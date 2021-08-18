@@ -94,7 +94,7 @@ public class CallHandler extends TextWebSocketHandler {
 
         RoomEntity roomEntity = roomManager.getRoom(roomId);
         //다른 오피스의 room으로 들어가지 못하게 막음
-        if(!officeId.equals(roomEntity.getOfficeId())){
+        if(!officeId.equals(roomEntity.getOfficeId()) || !roomManager.isExist(roomId)){
             JsonObject response = new JsonObject();
             response.addProperty("id", "invalidate");
             session.sendMessage(new TextMessage(response.toString()));
