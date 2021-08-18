@@ -9,7 +9,7 @@
     <div>
       <div class="name">
         <span>{{ member.name }}</span>
-        <span v-if="member.connected">({{ member.roomId }}번방)</span>
+        <!-- <span v-if="member.connected">({{ member.roomId }}번방)</span> -->
       </div>
       <p class="department">{{ member.deptEntity.deptName }}</p>
     </div>
