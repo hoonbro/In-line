@@ -1,8 +1,4 @@
-import axios from "axios"
-
-const chatAxios = axios.create({
-  baseURL: "/api/v1/chat",
-})
+import { apiAxios } from "@/lib/axios"
 
 export const socket = {
   namespaced: true,
@@ -47,13 +43,7 @@ export const socket = {
   },
   actions: {
     async getAllOfficeChat({ commit, rootState }) {
-      const res = await chatAxios({
-        method: "GET",
-        url: `/${rootState.auth.user.officeId}`,
-        headers: {
-          accessToken: rootState.auth.accessToken,
-        },
-      })
+      const res = await apiAxios.get(`/chat/${rootState.auth.user.officeId}`)
       commit("initOfficeChatList", res.data)
     },
   },

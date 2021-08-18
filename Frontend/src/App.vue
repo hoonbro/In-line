@@ -27,20 +27,6 @@ export default {
     const alertModalList = computed(() => store.state.landing.alertModalList)
 
     onMounted(async () => {
-      // 새로고침했을 때
-      // 1. LocalStorage => vuex
-      if (localStorage.getItem("accessToken")) {
-        store.commit("auth/setToken", localStorage.getItem("accessToken"))
-      }
-      if (localStorage.getItem("user")) {
-        store.commit("auth/setUser", JSON.parse(localStorage.getItem("user")))
-      }
-      if (localStorage.getItem("commute")) {
-        store.commit(
-          "auth/setCommute",
-          JSON.parse(localStorage.getItem("commute"))
-        )
-      }
       // 2. 데이터 불러오기 & 연결하기
       if (store.getters["auth/accessToken"] && store.getters["auth/officeId"]) {
         await setupVuexData()
@@ -71,7 +57,8 @@ body {
 
 .backdrop {
   z-index: 999;
-  @apply fixed inset-0 flex justify-center;
+  background: rgba(46, 46, 51, 0.6);
+  @apply fixed -top-10 -left-10 -right-10 -bottom-10 flex items-center justify-center;
 }
 
 .alertModalContainer {
@@ -79,6 +66,20 @@ body {
   @apply fixed top-6 right-6 flex flex-col gap-2;
 }
 
+/* Transition */
+/* fade */
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-all;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateY(-32px);
+  @apply opacity-0;
+}
+
+/* confirmModal */
 .list-enter-active,
 .list-leave-active,
 .list-move {

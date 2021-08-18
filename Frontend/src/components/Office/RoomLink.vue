@@ -6,29 +6,43 @@
   >
     <div class="flex justify-between gap-4">
       <p class="title">{{ title }}</p>
-      <img
-        class="img"
-        :class="{ large: large }"
-        :src="`https://picsum.photos/seed/room-${roomId}/100`"
-        alt="이미지"
-      />
+      <img class="img" :class="{ large: large }" :src="imgUrl" alt="이미지" />
     </div>
-    <div>
-      참가자 이미지
+    <div class="users-container">
+      <template v-for="user in roomUserList" :key="user.userId">
+        <div class="user-profile-container">
+          <img
+            v-if="user.profileImage"
+            :src="`/images/${user.profileImage}`"
+            :alt="user.userName"
+          />
+          <div v-else class="default-img">
+            {{ user.userName[0] }}
+          </div>
+        </div>
+      </template>
     </div>
   </router-link>
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core"
 export default {
   name: "RoomLink",
   props: {
     title: String,
     roomId: [String, Number],
+    roomUserList: Array,
     large: {
       type: Boolean,
       default: false,
     },
+  },
+  setup(props) {
+    const imgUrl = computed(() =>
+      require(`@/assets/rooms/main_${props.roomId % 10}.png`)
+    )
+    return { imgUrl }
   },
 }
 </script>
@@ -47,7 +61,7 @@ export default {
   }
 
   .img {
-    @apply w-16 h-16 rounded-full;
+    @apply w-16 h-16 rounded-xl;
   }
 
   &.large {
@@ -60,6 +74,20 @@ export default {
 
     .img {
       @apply w-24 h-24;
+    }
+  }
+
+  .users-container {
+    .user-profile-container {
+      @apply w-8 h-8 rounded-full overflow-hidden;
+
+      img {
+        @apply w-full h-full object-cover;
+      }
+
+      .default-img {
+        @apply w-full h-full flex items-center justify-center;
+      }
     }
   }
 }

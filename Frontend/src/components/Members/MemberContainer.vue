@@ -47,7 +47,6 @@
 import { ref } from "@vue/reactivity"
 import { useStore } from "vuex"
 import { computed, onMounted } from "@vue/runtime-core"
-import axios from "axios"
 import MemberListItem from "@/components/Members/MemberListItem.vue"
 import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
 
@@ -58,8 +57,12 @@ export default {
   setup() {
     const store = useStore()
     const searchTerm = ref("")
-    const totalUserCount = ref(null)
-    const deptList = ref(null)
+    const totalUserCount = computed(
+      () => store.state.office.organization.officeUserCount[0]
+    )
+    const deptList = computed(
+      () => store.state.office.organization.deptUserCount
+    )
     const officeName = computed(
       () => store.state.auth.user.officeEntity.officeName
     )
@@ -85,17 +88,16 @@ export default {
     }
 
     onMounted(async () => {
-      const res = await axios({
-        method: "GET",
-        url: `/api/v1/admin/dashboard/${store.getters["auth/officeId"]}`,
-        headers: {
-          accessToken: `${store.getters["auth/accessToken"]}`,
-        },
-      })
-      totalUserCount.value = res.data.officeUserCount[0]
-      deptList.value = res.data.deptUserCount
-      console.log(deptList.value)
+      try {
+        await store.dispatch("office/getOrganization")
+      } catch (error) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: error.message,
+        })
+      }
     })
+
     return {
       totalUserCount,
       deptList,

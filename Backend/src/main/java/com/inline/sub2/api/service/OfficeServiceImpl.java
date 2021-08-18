@@ -1,9 +1,11 @@
 package com.inline.sub2.api.service;
 
+import com.inline.sub2.api.dto.DeptUserDto;
 import com.inline.sub2.db.entity.DeptEntity;
 import com.inline.sub2.db.entity.OfficeEntity;
 import com.inline.sub2.db.repository.DeptRepository;
 import com.inline.sub2.db.repository.OfficeRepository;
+import com.inline.sub2.db.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class OfficeServiceImpl implements OfficeService{
 
     @Autowired
     OfficeRepository officeRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public OfficeEntity registOffice(String officeName) {
@@ -38,4 +43,13 @@ public class OfficeServiceImpl implements OfficeService{
         return isDuplicate;
     }
 
+    @Override
+    public int getOfficeUserCount(Long officeId) {
+        return userRepository.countByOfficeIdAndRetireDateIsNull(officeId);
+    }
+
+    @Override
+    public List<DeptUserDto> getDeptUserCount(Long officeId) {
+        return userRepository.countGroupByDept(officeId);
+    }
 }

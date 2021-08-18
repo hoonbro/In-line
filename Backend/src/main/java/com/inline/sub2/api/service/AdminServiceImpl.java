@@ -65,16 +65,6 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public int getOfficeUserCount(Long officeId) {
-        return userRepository.countByOfficeIdAndRetireDateIsNull(officeId);
-    }
-
-    @Override
-    public List<DeptUserDto> getDeptUserCount(Long officeId) {
-        return userRepository.countGroupByDept(officeId);
-    }
-
-    @Override
     public Long getJobYear(Long officeId) {
         Long jobYear =  userRepository.getJobYear(officeId);
         return jobYear;

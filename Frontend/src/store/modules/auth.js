@@ -1,12 +1,5 @@
+import { apiAxios, setAxiosConfig } from "@/lib/axios"
 import axios from "axios"
-
-const authAPI = axios.create({
-  baseURL: "/api/v1/users",
-})
-
-const commuteAPI = axios.create({
-  baseURL: "/api/v1/commute",
-})
 
 export const auth = {
   namespaced: true,
@@ -20,17 +13,21 @@ export const auth = {
     shouldChangePassword: false,
   },
   mutations: {
-    setToken(state, accessToken) {
+    initToken(state, accessToken) {
       state.accessToken = accessToken
       localStorage.setItem("accessToken", accessToken)
     },
+    removeToken(state) {
+      state.accessToken = ""
+      localStorage.removeItem("accessToken")
+    },
     setUser(state, userData) {
       state.user = userData
-      localStorage.setItem("user", JSON.stringify(userData))
+      // localStorage.setItem("user", JSON.stringify(userData))
     },
     setCommute(state, commuteData) {
       state.commute = commuteData
-      localStorage.setItem("commute", JSON.stringify(commuteData))
+      // localStorage.setItem("commute", JSON.stringify(commuteData))
     },
     setShouldChangePassword(state, data) {
       // data : boolean type
@@ -39,9 +36,8 @@ export const auth = {
   },
   actions: {
     signUp: async (context, formData) => {
-      console.log("signUp 요청 !")
       try {
-        return await authAPI.post("", formData)
+        return await apiAxios.post("/users", formData)
       } catch (error) {
         const { status } = error.response
         console.log(error.response)
@@ -51,11 +47,13 @@ export const auth = {
     },
     async login({ commit }, formData) {
       try {
-        const res = await authAPI.post("/login", formData)
-        commit("setToken", res.data.accessToken)
+        const res = await apiAxios.post("/users/login", formData)
+        setAxiosConfig(res.data.accessToken)
+        commit("initToken", res.data.accessToken)
         commit("setUser", res.data.userDto)
         commit("setCommute", res.data.commuteEntity)
       } catch (error) {
+        console.log(error)
         const { status } = error.response
         switch (status) {
           case 400: {
@@ -75,7 +73,7 @@ export const auth = {
     },
     async resetPassword({ commit }, email) {
       try {
-        await authAPI.put("/reset-password", email)
+        await apiAxios.put("/users/reset-password", email)
         commit("setShouldChangePassword", true)
       } catch (error) {
         console.log(error)
@@ -83,18 +81,9 @@ export const auth = {
         throw Error("🥲 이메일 전송에 실패했습니다.")
       }
     },
-    async changePassword({ commit, state }, passwordForm) {
+    async changePassword({ commit }, passwordForm) {
       try {
-        console.log(passwordForm)
-        const res = await axios({
-          method: "put",
-          url: "/api/v1/users/change-password",
-          data: passwordForm,
-          headers: {
-            accessToken: state.accessToken,
-          },
-        })
-        console.log(res)
+        await apiAxios.put(`/users/change-password`, passwordForm)
         commit("setShouldChangePassword", false)
       } catch (error) {
         const { status } = error.response
@@ -103,7 +92,9 @@ export const auth = {
             throw Error("🤨 이전 비밀번호를 다시 확인해주세요.")
           }
           default: {
-            throw Error("🥲 무슨 문제가 생긴 것 같은데, 저도 잘 모르겠네요 0ㅅ0")
+            throw Error(
+              "🥲 지금은 비밀번호를 변경할 수 없어요. 잠시 뒤 다시 시도해주세요."
+            )
           }
         }
       }
@@ -111,14 +102,7 @@ export const auth = {
     // 출퇴근
     async comeInOffice({ commit, state }) {
       try {
-        const res = await commuteAPI({
-          method: "PUT",
-          url: `/${state.commute.commuteId}/in`,
-          headers: {
-            accessToken: state.accessToken,
-          },
-        })
-        console.log(res)
+        const res = await apiAxios.put(`/commute/${state.commute.commuteId}/in`)
         const commuteData = {
           ...state.commute,
           comeIn: res.data,
@@ -130,13 +114,9 @@ export const auth = {
     },
     async comeOutOffice({ commit, state }) {
       try {
-        const res = await commuteAPI({
-          method: "PUT",
-          url: `/${state.commute.commuteId}/out`,
-          headers: {
-            accessToken: state.accessToken,
-          },
-        })
+        const res = await apiAxios.put(
+          `/commute/${state.commute.commuteId}/out`
+        )
         const commuteData = {
           ...state.commute,
           comeOut: res.data,
@@ -146,43 +126,67 @@ export const auth = {
         throw Error(error)
       }
     },
-    async updateProfileImage({ state }, formData) {
+    // 프로필
+    async updateProfileImage(_, formData) {
       try {
-        const { data: newProfileImg } = await authAPI({
-          method: "PUT",
-          url: "/profile",
-          data: formData,
-          headers: {
-            accessToken: state.accessToken,
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        console.log(newProfileImg)
+        const { data: newProfileImg } = await apiAxios.put(
+          `/users/profile`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
         return newProfileImg
       } catch (error) {
         console.log(error)
         throw Error("이미지 업로드에 실패했습니다.")
       }
     },
-    async updateProfile({ commit, state }, { userId, form }) {
+    async updateProfile({ dispatch, commit }, { userId, form }) {
       try {
-        const res = await authAPI({
-          method: "PUT",
-          url: `/${userId}`,
-          data: form,
-          headers: {
-            accessToken: state.accessToken,
-          },
-        })
+        const res = await apiAxios.put(`/users/${userId}`, form)
+        // member 업데이트
+        commit("office/updateMember", res.data, { root: true })
+        // await dispatch("office/getMembers", null, { root: true })
+        // 부서 정보 업데이트
+        await dispatch("office/getOrganization", null, { root: true })
         return res.data
       } catch (error) {
         throw Error("프로필 수정에 실패했어요.")
       }
     },
+    async getMe({ commit }, accessToken) {
+      if (!accessToken) {
+        return
+      }
+
+      try {
+        const res = await apiAxios.get("/users/me", {
+          headers: {
+            accessToken,
+          },
+        })
+        commit("initToken", res.data.accessToken)
+        commit("setUser", res.data.userDto)
+        commit("setCommute", res.data.commuteEntity)
+        return res.data.accessToken
+      } catch (error) {
+        commit(
+          "landing/addAlertModalList",
+          {
+            type: "error",
+            message: error,
+          },
+          { root: true }
+        )
+      }
+    },
   },
   getters: {
     isAdmin(state) {
-      return state.user.auth === "ROLE_ADMIN"
+      return state.user && state.user.auth === "ROLE_ADMIN"
     },
     officeId(state) {
       return state.user.officeId

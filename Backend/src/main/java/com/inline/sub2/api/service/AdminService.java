@@ -14,9 +14,5 @@ public interface AdminService {
 
     Double getRetireRate(Long officeId);
 
-    int getOfficeUserCount(Long officeId);
-
-    List<DeptUserDto> getDeptUserCount(Long officeId);
-
     Long getJobYear(Long officeId);
 }

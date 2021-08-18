@@ -25,6 +25,9 @@ export const connectStomp = (userId, officeId) => {
             } else if (data.type === "userUpdate") {
               console.log(data.members)
               store.commit("office/updateConnectionOfMembers", data.members)
+              setTimeout(() => {
+                store.dispatch("office/getRooms")
+              }, 1000)
             }
             console.groupEnd()
           }

@@ -94,7 +94,6 @@ public class CallHandler extends TextWebSocketHandler {
         roomManager.moveUser(userId, roomId);
         final UserSession user = room.join(officeId, userId, userName, profileImage, session);
         registry.register(user);
-        log.info(roomManager.getOfficeRooms(officeId).toString());
     }
 
     private void leaveRoom(UserSession user) throws IOException {

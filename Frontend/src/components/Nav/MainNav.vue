@@ -1,6 +1,9 @@
 <template>
   <nav>
-    <router-link class="logo" :to="{ name: 'Home' }">인-라인</router-link>
+    <router-link class="logo" :to="{ name: 'Home' }">
+      <!-- 검은색 인-라인 -->
+      <img src="@/assets/LandingPage/logo2.png" alt="" class="w-24" />
+    </router-link>
     <div class="links">
       <router-link :to="{ name: 'Office' }">홈</router-link>
       <router-link :to="{ name: 'Members' }">구성원</router-link>
@@ -23,6 +26,7 @@ import { useRouter } from "vue-router"
 import { useStore } from "vuex"
 import { disconnectStomp, exitOffice } from "@/lib/websocket"
 import { computed, ref } from "@vue/runtime-core"
+import { removeAxiosConfig } from "@/lib/axios"
 
 export default {
   name: "MainNav",
@@ -38,7 +42,8 @@ export default {
       modalEl.value.isVisible = true
       const yes = await modalEl.value.show()
       if (yes) {
-        store.commit("auth/setToken", "")
+        store.commit("auth/removeToken")
+        removeAxiosConfig()
         exitOffice(stompClient.value, user.value)
         disconnectStomp()
         router.push({ name: "Home" })

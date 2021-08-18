@@ -1,15 +1,10 @@
-import axios from "axios"
-
-const adminAPI = axios.create({
-  baseURL: `/api/v1/admin`,
-})
+import { apiAxios } from "@/lib/axios"
 
 export const admin = {
   namespaced: true,
   state: () => ({
     attendances: [],
     retires: [],
-    members: [],
     years: [],
   }),
   mutations: {
@@ -19,29 +14,18 @@ export const admin = {
     setRetires(state, retires) {
       state.retires = retires
     },
-    setMembers(state, members) {
-      state.members = members
-    },
+
     setYears(state, years) {
       state.years = years
     },
   },
-  getters: {
-    user(state) {
-      return state.user
-    },
-  },
+  getters: {},
   actions: {
-    async getAttendances({ commit, rootState }, officeId) {
+    async getAttendances({ commit }, officeId) {
       try {
-        const res = await adminAPI({
-          method: "GET",
-          url: `/members/commute`,
+        const res = await apiAxios.get("/admin/members/commute", {
           params: {
             officeId,
-          },
-          headers: {
-            accessToken: rootState.auth.accessToken,
           },
         })
         commit("setAttendances", res.data)
@@ -50,46 +34,32 @@ export const admin = {
         console.log(error)
       }
     },
-    async getRetires({ commit, rootState }, officeId) {
+    async getRetires({ commit }, officeId) {
       try {
-        const res = await adminAPI({
-          method: "GET",
-          url: `/retireRate/${officeId}`,
-          headers: {
-            accessToken: rootState.auth.accessToken,
-          },
-        })
+        const res = await apiAxios.get(`/admin/retireRate/${officeId}`)
         commit("setRetires", res.data)
       } catch (error) {
         console.log(error)
       }
     },
-    async getMembers({ commit, rootState }, officeId) {
+    async getYears({ commit }, officeId) {
       try {
-        const res = await adminAPI({
-          method: "GET",
-          url: `/dashboard/${officeId}`,
-          headers: {
-            accessToken: rootState.auth.accessToken,
-          },
-        })
-        commit("setMembers", res.data)
+        const res = await apiAxios.get(`/admin/jobyear/${officeId}`)
+        commit("setYears", res.data)
       } catch (error) {
         console.log(error)
       }
     },
-    async getYears({ commit, rootState }, officeId) {
+    async deleteUser({ dispatch, commit }, payload) {
       try {
-        const res = await adminAPI({
-          method: "GET",
-          url: `/jobyear/${officeId}`,
-          headers: {
-            accessToken: rootState.auth.accessToken,
-          },
-        })
-        commit("setYears", res.data)
+        await apiAxios.put(`/admin/user/${payload.userId}`)
+        // 회원 정보 업데이트
+        commit("office/deleteMember", payload.userId, { root: true })
+        // await dispatch("office/getMembers", null, { root: true })
+        // 부서 정보 업데이트
+        await dispatch("office/getOrganization", null, { root: true })
       } catch (error) {
-        console.log(error)
+        throw Error(error)
       }
     },
   },
