@@ -49,7 +49,7 @@ public class RoomManager {
         for(Long key :rooms.keySet()){
             Room room = rooms.get(key);
 
-            if(room.getOfficeId() != officeId)
+            if(!room.getOfficeId().equals(officeId))
                 continue;
 
             participants = room.getParticipants();
