@@ -43,13 +43,17 @@ public class RoomManager {
 
     private final ConcurrentMap<Long, Room> rooms = new ConcurrentHashMap<>();
 
+    public boolean isExist(Long roomId){
+        return rooms.containsKey(roomId);
+    }
+
     public Map<Long, Collection> getOfficeRooms(Long officeId){
         Map<Long, Collection> roomParticipants = new TreeMap<>();
         ConcurrentMap<Long, UserSession> participants;
         for(Long key :rooms.keySet()){
             Room room = rooms.get(key);
 
-            if(room.getOfficeId() != officeId)
+            if(!room.getOfficeId().equals(officeId))
                 continue;
 
             participants = room.getParticipants();
@@ -133,6 +137,10 @@ public class RoomManager {
 
     public void moveUser(Long userId, Long roomId){
         userRepository.moveUser(userId, roomId);
+    }
+
+    public UserEntity getUser(Long userId){
+        return userRepository.getByUserId(userId);
     }
 
     public Room getRoom(String roomName, Long roomId, Long officeId) {

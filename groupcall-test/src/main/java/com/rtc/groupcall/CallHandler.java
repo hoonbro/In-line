@@ -3,6 +3,7 @@ package com.rtc.groupcall;
 import java.io.IOException;
 
 import com.rtc.groupcall.db.entity.RoomEntity;
+import com.rtc.groupcall.db.entity.UserEntity;
 import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,11 +91,20 @@ public class CallHandler extends TextWebSocketHandler {
         String profileImage = params.get("profileImage").getAsString();
 //        log.info(" {}님의 {} 접근 요청", name, roomName);
 
+
+        RoomEntity roomEntity = roomManager.getRoom(roomId);
+        //다른 오피스의 room으로 들어가지 못하게 막음
+        if(!officeId.equals(roomEntity.getOfficeId()) || !roomManager.isExist(roomId)){
+            JsonObject response = new JsonObject();
+            response.addProperty("id", "invalidate");
+            session.sendMessage(new TextMessage(response.toString()));
+            return;
+        }
+
         Room room = roomManager.getRoom(roomName, roomId, officeId);
         roomManager.moveUser(userId, roomId);
         final UserSession user = room.join(officeId, userId, userName, profileImage, session);
         registry.register(user);
-        log.info(roomManager.getOfficeRooms(officeId).toString());
     }
 
     private void leaveRoom(UserSession user) throws IOException {
