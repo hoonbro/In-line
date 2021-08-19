@@ -15,7 +15,8 @@ WORKDIR ./data
 #RUN tee tee "/etc/apt/sources.list.d/kurento.list" >/dev/null <<EOF
 #RUN apt-get update && apt-get install --no-install-recommends --yes kurento-media-server
 RUN chmod +x gradlew
-RUN ./gradlew bootJar -Dspring-boot.run.jvmArguments="-Dkms.url=ws://i5d207.p.ssafy.io:8888/kurento"
+RUN ./gradlew bootJar
+RUN echo $DOMAIN
 ENV JAVA_OPTS=""
 
-ENTRYPOINT ["java","-Dkms.url=ws://i5d207.p.ssafy.io:8888/kurento", "-jar", "/data/build/libs/demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT java -Dkms.url=ws://i5d207.p.ssafy.io:8888/kurento -jar /data/build/libs/demo-0.0.1-SNAPSHOT.jar
