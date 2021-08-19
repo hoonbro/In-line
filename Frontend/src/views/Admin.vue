@@ -13,15 +13,15 @@
                   <span>🤩</span>
                 </h3>
                 <div class="content">
-                  <span>{{ totalMemberCount }}</span>
+                  <span>{{ totalMemberCount }} 명</span>
                 </div>
               </div>
             </div>
             <div class="top-box-item large">
               <div class="flex flex-col h-full">
-                <h3 class="title">퇴사자 수😅</h3>
+                <h3 class="title">퇴사율😅</h3>
                 <p class="content">
-                  <span>{{ retires }}</span>
+                  <span>{{ retires }} %</span>
                 </p>
               </div>
             </div>
@@ -29,7 +29,7 @@
               <div class="flex flex-col h-full">
                 <h3 class="title">근속년수😎</h3>
                 <p class="content">
-                  <span>{{ years }}</span>
+                  <span>{{ years }} 년</span>
                 </p>
               </div>
             </div>
