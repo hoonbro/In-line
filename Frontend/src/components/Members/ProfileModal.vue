@@ -20,7 +20,7 @@
             @change="updateProfileImage"
           />
           <button class="edit-btn" v-if="isMine" @click="clickInputEl">
-            <span class="material-icons">edit</span>
+            <span class="material-icons photo">insert_photo</span>
           </button>
         </div>
       </div>
@@ -360,7 +360,7 @@ header {
   @apply mb-10 flex justify-center;
 
   .profile-img-wrapper {
-    @apply w-32 h-32 rounded-full relative text-lg font-bold overflow-hidden;
+    @apply w-32 h-32 rounded-full relative text-lg font-bold;
 
     img {
       @apply w-full h-full object-cover rounded-full;
@@ -371,14 +371,15 @@ header {
     }
 
     button {
-      @apply p-1 w-8 h-8 bg-white rounded-full shadow-sm border border-gray-100 absolute right-0 bottom-0 transition-colors;
+      @apply p-1 w-8 h-8 bg-white rounded-full shadow-md absolute right-0 bottom-0 transition-colors;
 
       &:hover {
         @apply bg-blue-100;
       }
 
       .material-icons {
-        @apply text-gray-500;
+        font-size: 1.25rem;
+        @apply text-blue-400;
       }
     }
   }

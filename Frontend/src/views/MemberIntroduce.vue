@@ -100,7 +100,7 @@ export default {
       },
       lee: {
         name: "이원우",
-        hidden: "개발빼고 다 잘함",
+        hidden: "만능 재주꾼",
         age: "28",
         mbti: "INTJ",
         part: "Front-end",
