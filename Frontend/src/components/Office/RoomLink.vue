@@ -19,6 +19,7 @@
           <div v-else class="default-img">
             {{ user.userName[0] }}
           </div>
+          <div class="tooltip">{{ user.userName }}</div>
         </div>
       </template>
     </div>
@@ -78,15 +79,25 @@ export default {
   }
 
   .users-container {
+    @apply flex gap-2 w-full;
+
     .user-profile-container {
-      @apply w-8 h-8 rounded-full overflow-hidden;
+      @apply w-8 h-8 relative;
 
       img {
-        @apply w-full h-full object-cover;
+        @apply w-full h-full rounded-full object-cover;
       }
 
       .default-img {
-        @apply w-full h-full flex items-center justify-center;
+        @apply w-full h-full rounded-full bg-gray-50 flex items-center justify-center;
+      }
+
+      .tooltip {
+        @apply hidden;
+      }
+
+      &:hover .tooltip {
+        @apply flex absolute p-1 text-sm  bg-white rounded-lg shadow-md top-10 left-0 w-16 justify-center;
       }
     }
   }
