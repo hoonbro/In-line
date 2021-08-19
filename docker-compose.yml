@@ -1,15 +1,23 @@
 version: '3.7'
 
-services:
-        jenkins:
-                image: 'jenkins/jenkins'
-                restart: unless-stopped
-                user: root
-                privileged: true
+services: 
+        inline_backend:
+                build: Backend
                 ports:
-                        - '5000:8080'
-                volumes:
-                        - '/home/ubuntu/docker/jenkins-data:/var/jenkins_home'
-                        - '/var/run/docker.sock:/var/run/docker.sock'
-                        - '/usr/bin/docker:/usr/bin/docker'
-                container_name: 'inline_jenkins'
+                        - '8080:8080'
+                container_name: 'inline_backend'
+
+        inline_rtc:
+                build: groupcall-test
+                ports:
+                        - '8998:8998'
+                container_name: 'inline_rtc'
+                #depends_on:
+                #        - 'inline_kms'
+
+        inline_frontend:
+                build: Frontend
+                ports:
+                        - '7070:80'
+                container_name: 'inline_frontend'
+
