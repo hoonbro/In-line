@@ -9,7 +9,6 @@
             v-if="isAdmin"
             @click="addMemberModalOpen = true"
           >
-            <span class="material-icons">add</span>
             <span>구성원 추가</span>
           </button>
         </div>
@@ -139,7 +138,7 @@ export default {
         @apply text-2xl font-bold;
       }
       .add-member-btn {
-        @apply py-2 px-4 flex items-center font-medium rounded bg-gray-200 transition;
+        @apply py-2 px-4 flex items-center font-medium rounded transition;
 
         &:hover {
           @apply bg-blue-700 text-white;
