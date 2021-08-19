@@ -67,7 +67,7 @@
         <div class="img-container">
           <img
             class="lg:hidden first"
-            src="@/assets/LandingPage/office_mobile-1.jpg"
+            src="@/assets/LandingPage/office_mobile-1.png"
             alt="홈페이지 사진1"
             data-aos="fade-up"
             data-aos-duration="1000"
@@ -75,7 +75,7 @@
           />
           <img
             class="lg:hidden second"
-            src="@/assets/LandingPage/office_mobile-2.jpg"
+            src="@/assets/LandingPage/office_mobile-2.png"
             alt="홈페이지 사진2"
             data-aos="fade-up"
             data-aos-duration="1000"
@@ -83,7 +83,7 @@
           />
           <img
             class="hidden lg:block first"
-            src="@/assets/LandingPage/office_pc-1.jpg"
+            src="@/assets/LandingPage/office_pc-1.png"
             alt="홈페이지 사진1"
             data-aos="fade-up"
             data-aos-duration="1000"
@@ -91,7 +91,7 @@
           />
           <img
             class="hidden lg:block second"
-            src="@/assets/LandingPage/office_pc-2.jpg"
+            src="@/assets/LandingPage/office_pc-2.png"
             alt="홈페이지 사진2"
             data-aos="fade-up"
             data-aos-duration="1000"
@@ -113,7 +113,7 @@
         <div class="img-container">
           <img
             class="lg:hidden first"
-            src="@/assets/LandingPage/office_mobile-1.jpg"
+            src="@/assets/LandingPage/member_mobile-1.png"
             alt="홈페이지 사진1"
             data-aos="fade-right"
             data-aos-duration="1000"
@@ -121,7 +121,7 @@
           />
           <img
             class="lg:hidden second"
-            src="@/assets/LandingPage/office_mobile-2.jpg"
+            src="@/assets/LandingPage/member_mobile-2.png"
             alt="홈페이지 사진2"
             data-aos="fade-left"
             data-aos-duration="1000"
@@ -129,7 +129,7 @@
           />
           <img
             class="hidden lg:block first"
-            src="@/assets/LandingPage/office_pc-1.jpg"
+            src="@/assets/LandingPage/member_pc-1.png"
             alt="홈페이지 사진1"
             data-aos="fade-right"
             data-aos-duration="1000"
@@ -137,7 +137,7 @@
           />
           <img
             class="hidden lg:block second"
-            src="@/assets/LandingPage/office_pc-2.jpg"
+            src="@/assets/LandingPage/member_pc-2.png"
             alt="홈페이지 사진2"
             data-aos="fade-left"
             data-aos-duration="1000"
@@ -159,7 +159,7 @@
         <div class="img-container">
           <img
             class="lg:hidden first"
-            src="@/assets/LandingPage/office_mobile-1.jpg"
+            src="@/assets/LandingPage/admin_mobile-1.png"
             alt="홈페이지 사진1"
             data-aos="fade-up-right"
             data-aos-duration="1000"
@@ -167,7 +167,7 @@
           />
           <img
             class="lg:hidden second"
-            src="@/assets/LandingPage/office_mobile-2.jpg"
+            src="@/assets/LandingPage/admin_mobile-2.png"
             alt="홈페이지 사진2"
             data-aos="fade-up-left"
             data-aos-duration="1000"
@@ -175,7 +175,7 @@
           />
           <img
             class="hidden lg:block first"
-            src="@/assets/LandingPage/office_pc-1.jpg"
+            src="@/assets/LandingPage/admin_pc-1.png"
             alt="홈페이지 사진1"
             data-aos="fade-up-right"
             data-aos-duration="1000"
@@ -183,7 +183,7 @@
           />
           <img
             class="hidden lg:block second"
-            src="@/assets/LandingPage/office_pc-2.jpg"
+            src="@/assets/LandingPage/admin_pc-2.png"
             alt="홈페이지 사진2"
             data-aos="fade-up-left"
             data-aos-duration="1000"
