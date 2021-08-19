@@ -52,7 +52,7 @@
         <router-link v-if="isMine" :to="{ name: 'ChangePassword' }">
           비밀번호 변경
         </router-link>
-        <button v-if="isAdmin" @click="deleteUser">
+        <button v-if="isAdmin && !isMine" @click="deleteUser">
           회원탈퇴
         </button>
       </div>
