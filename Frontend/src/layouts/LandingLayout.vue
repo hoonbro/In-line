@@ -14,7 +14,7 @@
         <div class="info_inner">
           <div class="flex items-center gap-1">
             <span class="material-icons">call</span>
-            <span>070-1234-5678</span>
+            <span>010-7285-0598</span>
           </div>
           <div class="flex items-center gap-1">
             <span class="material-icons">email</span>
@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="info_inner">
-          <p>사업자 등록번호: 123-123-123</p>
+          <p>사업자 등록번호: 599-29-00572</p>
           <p>서비스 이용약관</p>
           <p>개인정보 처리방침</p>
         </div>
