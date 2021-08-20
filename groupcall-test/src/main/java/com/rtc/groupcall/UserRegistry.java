@@ -2,20 +2,24 @@ package com.rtc.groupcall;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
+@Slf4j
 public class UserRegistry {
 
-    private final ConcurrentHashMap<String, UserSession> usersByName = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, UserSession> usersById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, UserSession> usersBySessionId = new ConcurrentHashMap<>();
 
     public void register(UserSession user) {
-        usersByName.put(user.getName(), user);
+//        log.info("user register user name : {}", user.getName());
+        usersById.put(user.getUserId(), user);
         usersBySessionId.put(user.getSession().getId(), user);
+//        log.info("user register : {}",user.toString());
     }
 
-    public UserSession getByName(String name) {
-        return usersByName.get(name);
+    public UserSession getById(Long userId) {
+        return usersById.get(userId);
     }
 
     public UserSession getBySession(WebSocketSession session) {
@@ -23,12 +27,12 @@ public class UserRegistry {
     }
 
     public boolean exists(String name) {
-        return usersByName.keySet().contains(name);
+        return usersById.keySet().contains(name);
     }
 
     public UserSession removeBySession(WebSocketSession session) {
         final UserSession user = getBySession(session);
-        usersByName.remove(user.getName());
+        usersById.remove(user.getUserId());
         usersBySessionId.remove(session.getId());
         return user;
     }

@@ -1,98 +1,88 @@
 <template>
   <Modal>
     <template v-slot:modal-body>
+      <!-- 로딩 스피너 -->
+      <Loading v-if="loading" />
       <div class="header">
         <h3 class="title" @click="$emit('close')">구성원 추가</h3>
-        <p class="detail">구미 2반 7팀의 구성원을 추가합니다.</p>
+        <p class="detail">{{ officeName }}의 구성원을 추가합니다.</p>
       </div>
       <div class="add-form">
         <div class="input-list">
-          <TextInput
-            v-for="(field, key) in formData"
-            :key="key"
-            :name="key"
-            v-model="field.value"
-            :field="field"
-            :formData="formData"
-          />
+          <div v-for="(field, key) in formData" :key="key">
+            <SelectInput
+              v-if="key === 'dept'"
+              v-model="field.value"
+              :name="key"
+              :field="field"
+              :items="depts"
+            />
+            <SelectInput
+              v-else-if="key === 'job'"
+              v-model="field.value"
+              :name="key"
+              :field="field"
+              :items="jobs"
+            />
+            <TextInput
+              v-else
+              v-model="field.value"
+              :name="key"
+              :formData="formData"
+              :field="field"
+              @update:validate="handleUpdateValidate(formData, $event)"
+              @submit="submitForm"
+            />
+          </div>
         </div>
-        <button
-          class="submit-btn"
-          :class="{ disabled: !formIsValid }"
-          :disabled="!formIsValid"
-          @click="submitForm"
-        >
-          구성원 추가하기
-        </button>
+        <div class="grid gap-1">
+          <button
+            class="submit-btn"
+            :class="{
+              disabled: !formIsValid,
+              error: formError,
+            }"
+            :disabled="!formIsValid"
+            @click="submitForm"
+          >
+            구성원 추가하기
+          </button>
+          <p class="submit-error">{{ formError }}</p>
+        </div>
       </div>
     </template>
   </Modal>
 </template>
 
 <script>
-import { reactive } from "@vue/reactivity"
-import { computed } from "@vue/runtime-core"
-import axios from "axios"
+import { reactive, ref } from "@vue/reactivity"
+import { computed, onMounted } from "@vue/runtime-core"
+import { useStore } from "vuex"
 import {
   requiredValidator,
   emailValidator,
-  confirmPasswordValidator,
-  passwordSecurityValidator,
+  handleUpdateValidate,
 } from "@/lib/validator"
 import TextInput from "@/components/TextInput.vue"
 import Modal from "@/components/Common/Modal.vue"
+import Loading from "@/components/Common/Loading.vue"
 
 export default {
   name: "AddMemberModal",
   components: {
     Modal,
     TextInput,
+    Loading,
   },
   setup(_, { emit }) {
-    // const requiredValidator = key => {
-    //   if (formData[key].value < 1) {
-    //     formData[key].errors.required = "필수 입력 요소입니다."
-    //     return false
-    //   }
-    //   delete formData[key].errors.required
-    //   return true
-    // }
+    const store = useStore()
 
-    // const emailValidator = key => {
-    //   if (
-    //     !/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/.test(
-    //       formData[key].value
-    //     )
-    //   ) {
-    //     formData[key].errors.invalidEmail = "올바른 이메일 주소를 입력해주세요."
-    //     return false
-    //   }
-    //   delete formData[key].errors.invalidEmail
-    //   return true
-    // }
+    const officeName = computed(
+      () => store.state.auth.user.officeEntity.officeName
+    )
 
-    // const confirmPasswordValidator = key => {
-    //   if (formData[key].value !== formData.password.value) {
-    //     formData[key].errors.notMatch = "비밀번호가 일치하지 않습니다."
-    //     return false
-    //   }
-    //   delete formData[key].errors.notMatch
-    //   return true
-    // }
-
-    // const passwordSecurityValidator = key => {
-    //   if (
-    //     !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/.test(
-    //       formData[key].value
-    //     )
-    //   ) {
-    //     formData[key].errors.weekPassword =
-    //       "대소문자, 숫자, 특수문자 조합으로 8자리 이상으로 작성하세요."
-    //     return false
-    //   }
-    //   delete formData[key].errors.weekPassword
-    //   return true
-    // }
+    const depts = ref(null)
+    const jobs = ref(null)
 
     const formData = reactive({
       name: {
@@ -109,36 +99,23 @@ export default {
         validators: [requiredValidator, emailValidator],
         errors: {},
       },
-      department: {
+      dept: {
         label: "소속",
-        type: "text",
         value: "",
         validators: [requiredValidator],
         errors: {},
       },
-      position: {
-        label: "역할(직무)",
-        type: "text",
+      job: {
+        label: "역할",
         value: "",
         validators: [requiredValidator],
-        errors: {},
-      },
-      password: {
-        label: "비밀번호",
-        type: "password",
-        value: "",
-        validators: [requiredValidator, passwordSecurityValidator],
-        errors: {},
-      },
-      confirmPassword: {
-        label: "비밀번호 확인",
-        type: "password",
-        value: "",
-        validators: [requiredValidator, confirmPasswordValidator],
         errors: {},
       },
     })
 
+    // ===================================================================
+    // 유효성 검사
+    // ===================================================================
     const allFieldIsFilled = computed(() => {
       return Object.keys(formData).every(key => formData[key].value)
     })
@@ -153,32 +130,63 @@ export default {
       return allFieldIsFilled.value && allFieldDoesNotHaveError.value
     })
 
-    const submitForm = () => {
-      const submitData = {}
+    // ===================================================================
+    // api 요청
+    // ===================================================================
+    const formError = ref("")
+    const loading = ref(false)
+
+    const submitForm = async () => {
+      if (!formIsValid) return
+      loading.value = true
+      const submitData = { officeId: store.state.auth.user.officeId }
       Object.keys(formData).forEach(key => {
-        if (key === "confirmPassword") return
-        submitData[key] = formData[key].value
+        // job과 dept는 selectInput을 위해 field 명을 변경해주어야 합니다.
+        if (key === "job" || key === "dept") {
+          submitData[`${key}Name`] = formData[key].value
+        } else {
+          submitData[key] = formData[key].value
+        }
       })
-      alert("Post 요청")
-      axios({
-        url: "/api/v1/users",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: submitData,
-      }).then(res => {
-        console.log(res)
+      try {
+        await store.dispatch("onboard/registerMember", submitData)
         emit("close")
-      })
+        store.commit("landing/addAlertModalList", {
+          type: "success",
+          message: `${submitData.name}(${submitData.email})님께 메일을 보냈습니다!`,
+        })
+      } catch (error) {
+        formError.value = error.message
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "메일 전송 실패",
+        })
+        console.log(error)
+      }
+      loading.value = false
     }
 
+    onMounted(async () => {
+      try {
+        depts.value = await store.dispatch("office/getDepts")
+        jobs.value = await store.dispatch("office/getJobs")
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
     return {
+      officeName,
+      depts,
+      jobs,
       formData,
+      formError,
       submitForm,
       allFieldIsFilled,
       allFieldDoesNotHaveError,
       formIsValid,
+      handleUpdateValidate,
+      loading,
     }
   },
 }
@@ -198,6 +206,13 @@ export default {
 
   .input-list {
     @apply grid gap-4;
+
+    .select-box {
+      @apply w-full bg-gray-50 py-4 outline-none rounded-md border border-gray-300 px-3 focus:border-blue-600;
+    }
+    .selectLabel {
+      @apply text-gray-600;
+    }
   }
   .submit-btn {
     @apply py-4 rounded-xl bg-blue-400 text-white font-bold;
@@ -205,6 +220,14 @@ export default {
     &.disabled {
       @apply bg-gray-400;
     }
+
+    &.error {
+      @apply bg-red-600;
+    }
+  }
+
+  .submit-error {
+    @apply text-red-600 text-sm font-medium mx-auto;
   }
 }
 </style>

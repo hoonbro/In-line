@@ -1,36 +1,47 @@
 <template>
-  <div class="grid gap-2">
+  <div class="grid gap-1" ref="root">
     <div
       class="input-container"
       :class="{
         error: field.errors && Object.keys(field.errors).length,
+        disabled: disabled,
       }"
     >
       <input
         :type="field.type"
         :value="modelValue"
+        ref="input"
         @input="handleInput"
         @focus="labelActive = true"
         @blur="handleBlur"
+        @keydown.enter="$emit('submit')"
         autocomplete="off"
+        :maxlength="maxlength"
+        :disabled="disabled"
       />
       <label class="label" :class="{ active: labelActive }">
         {{ field.label }}
       </label>
     </div>
-    <div
-      class="text-sm text-red-500 font-medium grid gap-1"
-      v-if="field.errors && Object.keys(field.errors).length"
-    >
-      <p v-for="(error, key) in field.errors" :key="key">
-        {{ error }}
-      </p>
-    </div>
+    <transition-group>
+      <div
+        class="error-list"
+        v-if="field.errors && Object.keys(field.errors).length"
+      >
+        <p
+          v-for="(error, key) in field.errors"
+          :key="key"
+          class="error-list-item"
+        >
+          {{ error }}
+        </p>
+      </div>
+    </transition-group>
   </div>
 </template>
 
 <script>
-import { ref } from "@vue/reactivity"
+import { ref, computed, watch } from "vue"
 export default {
   name: "TextInput",
   props: {
@@ -40,21 +51,41 @@ export default {
     name: {
       type: String,
     },
-    field: Object,
     formData: Object,
+    field: Object,
+    maxlength: {
+      type: Number,
+      default: 200,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "update:validate", "submit"],
   setup(props, { emit }) {
+    const root = ref(null)
+    const input = ref(null)
+
+    const modelValue = computed(() => props.modelValue)
     const labelActive = ref(Boolean(props.modelValue))
+
+    watch(modelValue, value => {
+      labelActive.value = Boolean(value)
+    })
 
     const validate = () => {
       props.field.validators.forEach(validator => {
-        validator(props.formData, props.name)
+        const res = validator(props.formData, props.name, input.value.value)
+        emit("update:validate", res)
       })
     }
 
     const handleBlur = () => {
-      validate()
+      // Input에 클릭한 후 모달을 끌 때, validate가 실행되는 것을 방지
+      if (root.value) {
+        validate()
+      }
       labelActive.value = props.modelValue ? true : false
     }
 
@@ -63,12 +94,13 @@ export default {
       emit("update:modelValue", event.target.value)
       // Error가 있는 경우, Input Event 발생 시 매번 검사
       if (props.field.errors && Object.keys(props.field.errors).length) {
-        console.log("input")
         validate()
       }
     }
 
     return {
+      root,
+      input,
       labelActive,
       handleBlur,
       handleInput,
@@ -79,7 +111,7 @@ export default {
 
 <style scoped lang="scss">
 .input-container {
-  @apply w-full bg-gray-50 relative;
+  @apply w-full bg-gray-50 relative rounded-md;
 
   label {
     transform: translateY(-50%);
@@ -94,11 +126,35 @@ export default {
   input {
     @apply w-full pt-6 pb-2 px-4 bg-transparent z-10 relative outline-none rounded-md border border-gray-300 focus:border-blue-600;
   }
+  &.disabled {
+    @apply bg-gray-300;
+
+    label {
+      @apply text-gray-800;
+    }
+
+    input {
+      @apply cursor-not-allowed;
+    }
+  }
   &.error {
     @apply bg-red-50;
 
     input {
       @apply border-red-500;
+    }
+  }
+}
+.error-list {
+  @apply text-sm text-red-500 font-medium grid gap-1;
+
+  .error-list-item {
+    @apply relative pl-3;
+
+    &::before {
+      content: "";
+      transform: translateY(-50%);
+      @apply absolute top-1/2 left-0 w-1 h-1 bg-red-400 rounded-full;
     }
   }
 }

@@ -1,59 +1,36 @@
 <template>
-  <div class="members">
-    <section>
-      <div class="header">
-        <h1 class="section-title">구성원</h1>
-        <button
-          class="add-member-btn"
-          v-if="true"
-          @click="addMemberModalOpen = true"
-        >
-          <span class="material-icons">add</span>
-          <span>구성원 추가</span>
-        </button>
-      </div>
-      <div class="members-container">
-        <div class="department-container">
-          <div class="header">
-            ssafy_2반_7팀 (회사 이름)
-          </div>
-          <div class="departments-container">
-            <ul class="department-list">
-              <DepartmentListItem
-                v-for="i in 2"
-                :key="i"
-                :name="'FE'"
-                :count="3"
-              />
-              <DepartmentListItem
-                v-for="i in 2"
-                :key="i"
-                :name="'BE'"
-                :count="3"
-              />
-            </ul>
-          </div>
+  <div>
+    <div class="members">
+      <section>
+        <div class="header">
+          <h1 class="section-title">구성원</h1>
+          <button
+            class="add-member-btn"
+            v-if="isAdmin"
+            @click="addMemberModalOpen = true"
+          >
+            <span>구성원 추가</span>
+          </button>
         </div>
-        <div class="user-container">
-          <div class="search-container">
-            <button class="search-btn">
-              <span class="material-icons">search</span>
-            </button>
-            <input type="text" placeholder="이름을 검색할 수 있어요." />
-          </div>
-          <div class="users-container">
-            <ul class="user-list" v-if="members && members.length">
-              <MemberListItem
-                v-for="member in members"
-                :key="member.id"
-                :member="member"
-                @click="openProfileModal(member.id)"
-              />
-            </ul>
-          </div>
+        <MemberContainer @openProfileModal="handleOpenProfileModal" />
+      </section>
+
+      <!-- 임시 멤버 (onBoard 등록된 멤버)  -->
+      <section v-if="isAdmin">
+        <div class="header">
+          <h1 class="section-title">On Board</h1>
         </div>
-      </div>
-    </section>
+        <div class="onboard-container">
+          <ul>
+            <OnBoardMemberListItem
+              v-for="onBoardMember in onBoardList"
+              :key="onBoardMember.onboardId"
+              :member="onBoardMember"
+            />
+          </ul>
+        </div>
+      </section>
+    </div>
     <AddMemberModal
       v-if="addMemberModalOpen"
       @close="addMemberModalOpen = false"
@@ -67,46 +44,81 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue"
-import axios from "axios"
-import MemberListItem from "@/components/Members/MemberListItem.vue"
-import DepartmentListItem from "@/components/Members/DepartmentListItem.vue"
+import { computed, onMounted, ref } from "vue"
+import { useStore } from "vuex"
+import MemberContainer from "@/components/Members/MemberContainer.vue"
 import AddMemberModal from "@/components/Members/AddMemberModal.vue"
 import ProfileModal from "@/components/Members/ProfileModal.vue"
+import OnBoardMemberListItem from "@/components/Members/OnBoardMemberListItem.vue"
 
 export default {
   name: "Members",
   components: {
-    MemberListItem,
-    DepartmentListItem,
+    MemberContainer,
     AddMemberModal,
     ProfileModal,
+    OnBoardMemberListItem,
   },
   setup() {
-    const members = ref([])
+    const store = useStore()
+    const searchTerm = ref("")
     const addMemberModalOpen = ref(false)
     const profileModalOpen = ref(false)
     const profileUserId = ref(null)
+
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
+    const officeName = computed(
+      () => store.state.auth.user.officeEntity.officeName
+    )
+    const searchedMembers = computed(() => {
+      return store.state.office.members.filter(member => {
+        if (searchTerm.value) {
+          return member.name.includes(searchTerm.value)
+        } else {
+          return true
+        }
+      })
+    })
+
+    const handleOpenProfileModal = userId => {
+      profileModalOpen.value = true
+      profileUserId.value = userId
+    }
+
+    // =====================================================
+    // On Board 관련
+    const onBoardList = computed(() => store.state.onboard.onBoardList)
+    onMounted(async () => {
+      if (isAdmin.value) {
+        try {
+          await store.dispatch(
+            "onboard/getOnBoardList",
+            store.state.auth.user.officeEntity.officeId
+          )
+        } catch (error) {
+          console.log(error.message)
+        }
+      }
+    })
+    // On Board 관련 끝
+    // =====================================================
 
     const openProfileModal = userId => {
       profileUserId.value = userId
       profileModalOpen.value = true
     }
 
-    onMounted(async () => {
-      const res = await axios({
-        url: `http://localhost:3000/users`,
-        // url: `/api/v1/users`,
-      })
-      members.value = res.data
-    })
-
     return {
-      members,
+      isAdmin,
+      officeName,
+      searchTerm,
+      searchedMembers,
       addMemberModalOpen,
       profileModalOpen,
       openProfileModal,
       profileUserId,
+      onBoardList,
+      handleOpenProfileModal,
     }
   },
 }
@@ -114,76 +126,29 @@ export default {
 
 <style scoped lang="scss">
 .members {
-  scrollbar-width: none;
-  @apply bg-gray-100 p-10 grid gap-10 content-start overflow-auto;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  @apply grid gap-10 p-10;
 
   section {
     @apply grid gap-6;
 
     .header {
-      @apply flex items-center justify-between;
+      @apply flex gap-2 items-center justify-between select-none;
+
       .section-title {
         @apply text-2xl font-bold;
       }
       .add-member-btn {
-        @apply py-2 px-4 flex items-center bg-blue-800 text-white font-medium rounded;
-        .material-icons {
-          @apply mr-2;
+        @apply py-2 px-4 flex items-center font-medium rounded transition;
+
+        &:hover {
+          @apply bg-blue-700 text-white;
         }
       }
     }
 
-    .members-container {
-      height: 504px;
-      @apply grid gap-4 grid-cols-12;
-
-      .department-container {
-        @apply col-span-4 h-full grid content-start bg-white rounded-lg shadow overflow-hidden;
-
-        .header {
-          @apply p-4 text-sm border-b;
-        }
-
-        .departments-container {
-          @apply overflow-auto;
-
-          .department-list {
-            @apply grid;
-          }
-        }
-      }
-
-      .user-container {
-        @apply flex flex-col col-span-8 bg-white rounded-lg shadow overflow-hidden;
-
-        .search-container {
-          @apply flex-shrink-0 p-4 border-b flex items-center;
-
-          .search-btn {
-            @apply p-2 w-10 h-10 bg-gray-100 rounded mr-4;
-
-            span {
-              @apply text-gray-400;
-            }
-          }
-
-          input {
-            @apply py-2 px-4 rounded bg-gray-100 w-full;
-          }
-        }
-
-        .users-container {
-          @apply flex-1 overflow-auto h-full;
-
-          .user-list {
-            @apply grid;
-          }
-        }
-      }
+    .onboard-container {
+      max-height: 250px;
+      @apply flex flex-col bg-white rounded-lg shadow overflow-auto;
     }
   }
 }

@@ -27,7 +27,7 @@ export default {
       name: store.state["user"].name,
     })
 
-    let ws = new WebSocket(`wss://13.124.47.223:8995/groupcall`)
+    let ws = new WebSocket(`wss://i5d207.p.ssafy.io:8995/groupcall`)
     ws.onopen = function(event) {
       ws.send("TEST!")
     }
@@ -77,7 +77,7 @@ export default {
 
   .video-chat {
     .video-part {
-      @apply grid grid-cols-5 m-12 bg-Teal-300;
+      @apply grid grid-cols-5 m-12 bg-teal-300;
     }
     .video-part2 {
       @apply grid grid-cols-4 m-12 bg-red-500;

@@ -1,36 +1,59 @@
 <template>
   <nav>
-    <router-link class="logo" :to="{ name: 'Home' }">인-라인</router-link>
+    <router-link class="logo" :to="{ name: 'Home' }">
+      <!-- 검은색 인-라인 -->
+      <img src="@/assets/LandingPage/logo2.png" alt="" class="w-24" />
+    </router-link>
     <div class="links">
       <router-link :to="{ name: 'Office' }">홈</router-link>
       <router-link :to="{ name: 'Members' }">구성원</router-link>
-      <router-link :to="{ name: 'Admin' }">관리자</router-link>
+      <router-link :to="{ name: 'Admin' }" v-if="isAdmin">관리자</router-link>
     </div>
     <button class="logout" @click="logout">
       로그아웃
     </button>
   </nav>
+  <ConfirmModal
+    ref="modalEl"
+    :content="['로그아웃 하시겠습니까?']"
+    :confirmButton="'네'"
+    :cancelButton="'아니요'"
+  />
 </template>
 
 <script>
 import { useRouter } from "vue-router"
+import { useStore } from "vuex"
+import { disconnectStomp, exitOffice } from "@/lib/websocket"
+import { computed, ref } from "@vue/runtime-core"
+import { removeAxiosConfig } from "@/lib/axios"
 
 export default {
   name: "MainNav",
   setup() {
     const router = useRouter()
+    const store = useStore()
+    const isAdmin = computed(() => store.getters["auth/isAdmin"])
+    const stompClient = computed(() => store.state.socket.stompClient)
+    const user = computed(() => store.state.auth.user)
+    const modalEl = ref(null)
 
-    const logout = () => {
-      const yes = confirm("로그아웃 하시겠습니까?")
+    const logout = async () => {
+      modalEl.value.isVisible = true
+      const yes = await modalEl.value.show()
       if (yes) {
-        localStorage.removeItem("jwt")
-        localStorage.removeItem("auth")
+        store.commit("auth/removeToken")
+        removeAxiosConfig()
+        exitOffice(stompClient.value, user.value)
+        disconnectStomp()
         router.push({ name: "Home" })
       }
     }
 
     return {
       logout,
+      isAdmin,
+      modalEl,
     }
   },
 }

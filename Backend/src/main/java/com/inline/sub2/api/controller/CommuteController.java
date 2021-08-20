@@ -6,10 +6,14 @@ import com.inline.sub2.db.entity.CommuteEntity;
 import com.querydsl.core.types.dsl.Param;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,44 +25,46 @@ public class CommuteController {
     @Autowired
     CommuteService commuteService;
 
-    @PostMapping("/in")
-    @ApiOperation(value = "출근 버튼 클릭 시 출근 처리한다")
-    public ResponseEntity<Map<String,Object>> in(@RequestBody CommuteDto commuteDto) {
+    @PutMapping("/{commuteId}/in")
+    @ApiOperation(value = "출근 버튼 클릭 시 출근 처리한다", response = CommuteEntity.class)
+    public ResponseEntity<String> in(@PathVariable("commuteId") Long commuteId) {
         HttpStatus httpStatus = HttpStatus.OK;
         CommuteEntity commuteEntity = null;
-        Map<String,Object> map = new HashMap<String,Object>();
-
+        String comeIn = "";
         try{
-             commuteEntity = commuteService.commuteIn(commuteDto);
-            System.out.println(commuteEntity.getCommuteId()+"@#@@@@@@@@@@@@@@");
+            commuteEntity = commuteService.commuteIn(commuteId);
+
+            Date In = commuteEntity.getComeIn();
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+             comeIn = transFormat.format(In).split(" ")[1];
             httpStatus = HttpStatus.CREATED;
-            map.put("commuteId",commuteEntity.getCommuteId());
-            map.put("comeIn",commuteEntity.getComeIn());
         }
         catch(Exception e) {
            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        return new ResponseEntity<String>(comeIn,httpStatus);
     }
 
 
-    @PatchMapping("/out/{commuteId}")
-    @ApiOperation(value = "퇴근 버튼 클릭 시 퇴근 처리한다")
-    public ResponseEntity<Map<String,Object>> out(@PathVariable("commuteId") Long commuteId) {
-        System.out.println(commuteId);
-
+    @PutMapping("/{commuteId}/out")
+    @ApiOperation(value = "퇴근 버튼 클릭 시 퇴근 처리한다", response = CommuteEntity.class)
+    public ResponseEntity<String> out(@PathVariable("commuteId") Long commuteId) {
         HttpStatus httpStatus = HttpStatus.OK;
-        Map<String,Object> map = new HashMap<String,Object> ();
+        CommuteEntity commuteEntity = null;
+        String comeOut ="";
         try {
-            CommuteEntity commuteEntity = commuteService.commuteOut(commuteId);
-            map.put("commuteId",commuteEntity.getCommuteId());
-            map.put("comeOut",commuteEntity.getComeOut());
+            commuteEntity = commuteService.commuteOut(commuteId);
+
+            Date Out = commuteEntity.getComeOut();
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            comeOut = transFormat.format(Out).split(" ")[1];
+
             httpStatus = HttpStatus.CREATED;
         }
         catch(Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<Map<String,Object>>(map,httpStatus);
+        return new ResponseEntity<String>(comeOut,httpStatus);
     }
 
 
