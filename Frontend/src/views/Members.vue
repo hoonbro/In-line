@@ -9,7 +9,6 @@
             v-if="isAdmin"
             @click="addMemberModalOpen = true"
           >
-            <span class="material-icons">add</span>
             <span>구성원 추가</span>
           </button>
         </div>
@@ -90,13 +89,15 @@ export default {
     // On Board 관련
     const onBoardList = computed(() => store.state.onboard.onBoardList)
     onMounted(async () => {
-      try {
-        await store.dispatch(
-          "onboard/getOnBoardList",
-          store.state.auth.user.officeEntity.officeId
-        )
-      } catch (error) {
-        console.log(error.message)
+      if (isAdmin.value) {
+        try {
+          await store.dispatch(
+            "onboard/getOnBoardList",
+            store.state.auth.user.officeEntity.officeId
+          )
+        } catch (error) {
+          console.log(error.message)
+        }
       }
     })
     // On Board 관련 끝
@@ -137,7 +138,7 @@ export default {
         @apply text-2xl font-bold;
       }
       .add-member-btn {
-        @apply py-2 px-4 flex items-center font-medium rounded bg-gray-200 transition;
+        @apply py-2 px-4 flex items-center font-medium rounded transition;
 
         &:hover {
           @apply bg-blue-700 text-white;

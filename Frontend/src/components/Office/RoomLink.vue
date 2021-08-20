@@ -6,12 +6,7 @@
   >
     <div class="flex justify-between gap-4">
       <p class="title">{{ title }}</p>
-      <img
-        class="img"
-        :class="{ large: large }"
-        :src="`https://picsum.photos/seed/room-${roomId}/100`"
-        alt="이미지"
-      />
+      <img class="img" :class="{ large: large }" :src="imgUrl" alt="이미지" />
     </div>
     <div class="users-container">
       <template v-for="user in roomUserList" :key="user.userId">
@@ -24,6 +19,7 @@
           <div v-else class="default-img">
             {{ user.userName[0] }}
           </div>
+          <div class="tooltip">{{ user.userName }}</div>
         </div>
       </template>
     </div>
@@ -31,6 +27,7 @@
 </template>
 
 <script>
+import { computed } from "@vue/runtime-core"
 export default {
   name: "RoomLink",
   props: {
@@ -41,6 +38,12 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  setup(props) {
+    const imgUrl = computed(() =>
+      require(`@/assets/rooms/main_${props.roomId % 10}.png`)
+    )
+    return { imgUrl }
   },
 }
 </script>
@@ -59,7 +62,7 @@ export default {
   }
 
   .img {
-    @apply w-16 h-16 rounded-full;
+    @apply w-16 h-16 rounded-xl;
   }
 
   &.large {
@@ -76,15 +79,25 @@ export default {
   }
 
   .users-container {
+    @apply flex gap-2 w-full;
+
     .user-profile-container {
-      @apply w-8 h-8 rounded-full overflow-hidden;
+      @apply w-8 h-8 relative;
 
       img {
-        @apply w-full h-full object-cover;
+        @apply w-full h-full rounded-full object-cover;
       }
 
       .default-img {
-        @apply w-full h-full flex items-center justify-center;
+        @apply w-full h-full rounded-full bg-gray-50 flex items-center justify-center;
+      }
+
+      .tooltip {
+        @apply hidden;
+      }
+
+      &:hover .tooltip {
+        @apply flex absolute p-1 text-sm  bg-white rounded-lg shadow-md top-10 left-0 w-16 justify-center;
       }
     }
   }

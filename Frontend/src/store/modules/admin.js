@@ -5,10 +5,6 @@ export const admin = {
   state: () => ({
     attendances: [],
     retires: [],
-    members: {
-      deptUserCount: [],
-      officeUserCount: [],
-    },
     years: [],
   }),
   mutations: {
@@ -18,28 +14,12 @@ export const admin = {
     setRetires(state, retires) {
       state.retires = retires
     },
-    setMembers(state, members) {
-      state.members = members
-    },
+
     setYears(state, years) {
       state.years = years
     },
   },
-  getters: {
-    user(state) {
-      return state.user
-    },
-    members(state) {
-      return state.members
-    },
-    memberCountOndept(state) {
-      console.log(state)
-      return state.members.deptUserCount
-    },
-    totalMemberCount(state) {
-      return state.members.officeUserCount[0]
-    },
-  },
+  getters: {},
   actions: {
     async getAttendances({ commit }, officeId) {
       try {
@@ -62,14 +42,6 @@ export const admin = {
         console.log(error)
       }
     },
-    async getMembers({ commit }, officeId) {
-      try {
-        const res = await apiAxios.get(`/admin/dashboard/${officeId}`)
-        commit("setMembers", res.data)
-      } catch (error) {
-        console.log(error)
-      }
-    },
     async getYears({ commit }, officeId) {
       try {
         const res = await apiAxios.get(`/admin/jobyear/${officeId}`)
@@ -78,25 +50,14 @@ export const admin = {
         console.log(error)
       }
     },
-    async deleteUser({ dispatch }, payload) {
+    async deleteUser({ dispatch, commit }, payload) {
       try {
         await apiAxios.put(`/admin/user/${payload.userId}`)
         // 회원 정보 업데이트
-        await dispatch("office/getMembers", null, { root: true })
+        commit("office/deleteMember", payload.userId, { root: true })
+        // await dispatch("office/getMembers", null, { root: true })
         // 부서 정보 업데이트
-        await dispatch("getOrganization")
-      } catch (error) {
-        throw Error(error)
-      }
-    },
-    async getOrganization({ rootGetters, commit }) {
-      try {
-        const res = await apiAxios.get(
-          `/admin/dashboard/${rootGetters["auth/officeId"]}`
-        )
-        console.log(res.data)
-        commit("setMembers", res.data)
-        return res.data
+        await dispatch("office/getOrganization", null, { root: true })
       } catch (error) {
         throw Error(error)
       }

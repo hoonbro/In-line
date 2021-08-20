@@ -98,7 +98,7 @@ export default {
 
     //////////////////////////////////room chat 추가한 부분//////////////////////////////////
     const connectRoomChat = () => {
-      const serverURL = "https://i5d207.p.ssafy.io:8995/chatStomp"
+      const serverURL = `${process.env.VUE_APP_GROUPCALL_BASE_URL}/chatStomp`
       const socket = new SockJS(serverURL)
       const roomStompClient = Stomp.over(socket)
       roomStompClient.connect(
@@ -203,6 +203,9 @@ export default {
               }
             }
           )
+          break
+        case "invalidate":
+          router.push("/notFound")
           break
         default:
         // console.error("Unrecognized message", parsedMessage)

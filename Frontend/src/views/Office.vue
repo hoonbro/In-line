@@ -26,19 +26,6 @@
           />
         </div>
       </div>
-      <div class="rooms-row">
-        <header>
-          <h1>소규모 미팅룸🤩</h1>
-        </header>
-        <div class="rooms-container">
-          <RoomLink
-            v-for="room in smallRoomList"
-            :key="room.roomId"
-            :title="room.roomName"
-            :roomId="room.roomId"
-          />
-        </div>
-      </div>
       <div class="button-group">
         <button
           class="room-manage-btn"
