@@ -23,6 +23,7 @@
             :key="room.roomId"
             :title="room.roomName"
             :roomId="room.roomId"
+            :roomUserList="room.roomUserList"
           />
         </div>
       </div>
