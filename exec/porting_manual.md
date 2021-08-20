@@ -152,7 +152,7 @@ cd exec
 - Dump data mysql로 
 
 ```bash
-sudo mysql -u root -p  inline.sql < db.sql
+sudo mysql -u root -p  inline < inline.sql
 ```
 
 
