@@ -1,24 +1,26 @@
 import { createRouter, createWebHistory } from "vue-router"
+import { moveRoom } from "@/lib/websocket"
+
 import LandingLayout from "@/layouts/LandingLayout.vue"
 import OfficeLayout from "@/layouts/OfficeLayout.vue"
 import RoomLayout from "@/layouts/RoomLayout.vue"
+import AuthLayout from "@/layouts/AuthLayout.vue"
 
 import Home from "@/views/Home.vue"
-import RegistOffice from "@/views/RegistOffice.vue"
+import MemberIntroduce from "@/views/MemberIntroduce.vue"
 import Office from "@/views/Office.vue"
 import Members from "@/views/Members.vue"
 import Admin from "@/views/Admin.vue"
-import Room2 from "@/views/Room2.vue"
+import Room from "@/views/Room.vue"
+import ResetPassword from "@/views/ResetPassword.vue"
+import ChangePassword from "@/views/ChangePassword.vue"
+import Signup from "@/views/Signup.vue"
+import store from "@/store"
 
 const routes = [
   {
     path: "/",
     component: LandingLayout,
-    // localStorage에 jwt가 있으면 Office로 라우팅
-    beforeEnter: (to, from, next) => {
-      if (localStorage.getItem("jwt")) next({ name: "Office" })
-      else next()
-    },
     children: [
       {
         path: "",
@@ -26,9 +28,9 @@ const routes = [
         component: Home,
       },
       {
-        path: "regist-office",
-        name: "RegistOffice",
-        component: RegistOffice,
+        path: "member-introduce",
+        name: "MemberIntroduce",
+        component: MemberIntroduce,
       },
     ],
   },
@@ -55,15 +57,65 @@ const routes = [
     ],
   },
   {
-    path: "/rooms/",
+    path: "/rooms",
     component: RoomLayout,
     meta: { loginRequired: true },
+    beforeEnter: (to, from, next) => {
+      if (to.fullPath === "/rooms/") {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "잘못된 접근입니다.",
+        })
+        next({ name: "Office" })
+      } else {
+        next()
+      }
+    },
     children: [
       {
         path: "/rooms/:roomId",
         name: "Room",
-        component: Room2,
+        component: Room,
         props: true,
+      },
+    ],
+  },
+  {
+    path: "/auth",
+    component: AuthLayout,
+    beforeEnter: (to, from, next) => {
+      // 로그인 필수 X + 로그인 되어있다면 접근 금지
+      if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "잘못된 접근입니다.",
+        })
+        next({ name: "Office" })
+      } else {
+        next()
+      }
+    },
+    children: [
+      {
+        path: "reset-password",
+        name: "ResetPassword",
+        component: ResetPassword,
+      },
+      {
+        path: "change-password",
+        name: "ChangePassword",
+        component: ChangePassword,
+        meta: { loginRequired: true },
+      },
+    ],
+  },
+  {
+    path: "/onboarding",
+    component: AuthLayout,
+    children: [
+      {
+        path: "signup",
+        component: Signup,
       },
     ],
   },
@@ -83,14 +135,28 @@ const router = createRouter({
 // from: 현재 url에 해당하는 라우팅 객체
 // next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
 router.beforeEach((to, from, next) => {
-  // login이 필수인데, localStorage에 jwt가 없으면
-  //  -> Home으로 보낸다 (로그인을 하라는 param과 함께)
-  // const isLoginRequired = to.matched.some(
-  //   routeInfo => routeInfo.meta.loginRequired
-  // )
-  if (to.meta.loginRequired && !localStorage.getItem("jwt")) {
+  // 로그인하지 않은 유저 접근 금지인 페이지 -> 로그인으로 이동
+  console.log(Boolean(localStorage.getItem("accessToken")))
+  if (to.meta.loginRequired && !localStorage.getItem("accessToken")) {
+    console.log("홈으로 이동")
     next({ name: "Home", params: { shouldLogin: true } })
+    // 로그인한 유저 접근 금지인 페이지 -> 로비(?)로 이동
+  } else if (!to.meta.loginRequired && localStorage.getItem("accessToken")) {
+    next({ name: "Office" })
   } else next()
+})
+
+router.afterEach((to, from) => {
+  if (to.fullPath.includes("office")) {
+    if (from.fullPath === "/") {
+      moveRoom(store.getters["auth/user"].roomId)
+    } else {
+      moveRoom(store.getters["office/lobbyId"])
+    }
+  } else if (to.fullPath.includes("rooms")) {
+    console.log(to.params)
+    moveRoom(to.params.roomId)
+  }
 })
 
 export default router

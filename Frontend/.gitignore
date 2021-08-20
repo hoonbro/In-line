@@ -4,8 +4,8 @@ node_modules
 
 
 # local env files
-.env.local
-.env.*.local
+# .env.local
+# .env.*.local
 
 # Log files
 npm-debug.log*
@@ -15,9 +15,13 @@ pnpm-debug.log*
 
 # Editor directories and files
 .idea
+package-lock.json
 .vscode
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# package-lock.json
+package-lock.json

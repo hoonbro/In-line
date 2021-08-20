@@ -1,186 +1,289 @@
 <template>
-  <div class="back-ground"></div>
-  <section class="home">
-    <!--  -->
-    <article class="">
-      <h2 class="title">인-라인[명사] : 선 안에 있는, 사람을 잇는</h2>
-      <div class="content">
-        <div class="item-img-container">
-          <img src="@/assets/home-image.png" alt="" />
-        </div>
-        <div class="item-text-container">
-          <div class="">
-            <p class="item-title">In-Line</p>
-            <p class="item-content">
-              단일 회의실에 불과했던 기존의 <br />
-              가상회의 서비스를 개선한 웹 사무실 플랫폼입니다.
-            </p>
-          </div>
-          <div class="">
-            <p class="item-title">人-Line</p>
-            <p class="item-content">
-              직원들의 재택근무 소통 환경을 개선하고, <br />관리자의 관리
-              편의성을 높이는 서비스입니다.
-            </p>
-          </div>
-        </div>
-      </div>
-    </article>
-    <!--  -->
-    <article data-aos="fade-left" data-aos-duration="2000">
-      <h2 class="title text-right">Office</h2>
-      <div class="content">
-        <div class="item-text-container">
-          <div class="main-explain">
-            <p class="explain">
-              아직도 회의실로 출근하시나요?<br />
-              이제부터는 '인-라인'입니다.
-            </p>
-          </div>
-        </div>
-        <div class="item-img-container">
-          <img src="@/assets/home-image2.png" alt="" />
-        </div>
-      </div>
-    </article>
-    <!--  -->
-    <article data-aos="fade-right" data-aos-duration="2000">
-      <h2 class="title">Room</h2>
-      <div class="content">
-        <div class="item-img-container">
-          <img src="@/assets/home-image3.png" alt="" />
-        </div>
-        <div class="item-text-container">
-          <div class="main-explain">
-            <span class="explain"
-              >불필요하고 복잡한 UI? <br />
-              지금부터는 '인-라인'입니다.</span
-            >
-          </div>
-        </div>
-      </div>
-    </article>
-    <!--  -->
-    <article data-aos="fade-up" data-aos-duration="4000" data-aos-delay="500">
-      <h2 class="title text-right">Admin</h2>
-      <div class="content">
-        <div class="item-text-container">
-          <div class="main-explain">
-            <span class="explain"
-              >비대면으로 불편해진 인사 관리?<br />
-
-              오늘부터는 '인-라인'입니다.
-            </span>
-          </div>
-        </div>
-        <div class="item-img-container">
-          <img src="@/assets/home-image4.png" alt="" />
-        </div>
-      </div>
-    </article>
-    <!--  -->
+  <section class="background-img">
+    <div class="img-cover"></div>
+    <div class="content">
+      <img
+        class="mx-auto"
+        src="@/assets/LandingPage/logo1.png"
+        alt="in-line logo"
+      />
+      <h1 class="text-xl lg:text-3xl font-bold mx-auto">
+        선 안에 있는, 사람을 잇는
+      </h1>
+    </div>
   </section>
+  <!--///////////////////////////////////////////////////////////////////////-->
+  <section
+    class="flex flex-col bg-gray-50 items-center justify-center gap-10 py-20"
+  >
+    <div class="mx-4">
+      <p class="sub-text">
+        단일 회의실에 불과했던<br />
+        기존의 가상회의 서비스를 개선한<br />
+        <span class="text-blue-600">웹 사무실 플랫폼</span>입니다.<br />
+        재택근무 환경과 관리자의 편의성,<br />
+        <span class="text-blue-600">인라인</span>으로 업무 효율성을 높여보세요!
+      </p>
+    </div>
+    <!-- <div class="flex justify-between w-full">
+      <div class="icon">
+        <div class="icon-image">
+          <img src="@/assets/LandingPage/video-call.png" alt="화상 로고" />
+        </div>
+        <div class="icon-explain">
+          <span></span>
+        </div>
+      </div>
+      <div class="icon">
+        <div class="icon-image">
+          <img src="@/assets/LandingPage/chat-box.png" alt="채팅 로고" />
+        </div>
+        <div class="icon-explain">
+          <span></span>
+        </div>
+      </div>
+      <div class="icon">
+        <div class="icon-image">
+          <img src="@/assets/LandingPage/bar-chart.png" alt="인사이트 로고" />
+        </div>
+        <div class="icon-explain">
+          <span></span>
+        </div>
+      </div>
+    </div> -->
+  </section>
+  <!--///////////////////////////////////////////////////////////////////////-->
+  <div class="container mx-auto">
+    <section class="content-section">
+      <div class="section__inner">
+        <header>
+          <h1>사무실</h1>
+          <p class="">
+            회의실 관리부터<br />
+            근무 상태 파악까지<br />
+            간편하게
+          </p>
+        </header>
+        <div class="img-container">
+          <img
+            class="lg:hidden first"
+            src="@/assets/LandingPage/office_mobile-1.png"
+            alt="홈페이지 사진1"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="lg:hidden second"
+            src="@/assets/LandingPage/office_mobile-2.png"
+            alt="홈페이지 사진2"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="hidden lg:block first"
+            src="@/assets/LandingPage/office_pc-1.png"
+            alt="홈페이지 사진1"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="hidden lg:block second"
+            src="@/assets/LandingPage/office_pc-2.png"
+            alt="홈페이지 사진2"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+        </div>
+      </div>
+    </section>
+    <!--///////////////////////////////////////////////////////////////////////-->
+    <section class="content-section">
+      <div class="section__inner">
+        <header>
+          <h1>구성원</h1>
+          <p class="item-text">
+            구성원 관리를<br />
+            스마트하게
+          </p>
+        </header>
+        <div class="img-container">
+          <img
+            class="lg:hidden first"
+            src="@/assets/LandingPage/member_mobile-1.png"
+            alt="홈페이지 사진1"
+            data-aos="fade-right"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="lg:hidden second"
+            src="@/assets/LandingPage/member_mobile-2.png"
+            alt="홈페이지 사진2"
+            data-aos="fade-left"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="hidden lg:block first"
+            src="@/assets/LandingPage/member_pc-1.png"
+            alt="홈페이지 사진1"
+            data-aos="fade-right"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="hidden lg:block second"
+            src="@/assets/LandingPage/member_pc-2.png"
+            alt="홈페이지 사진2"
+            data-aos="fade-left"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+        </div>
+      </div>
+    </section>
+    <!--///////////////////////////////////////////////////////////////////////-->
+    <section class="bg-gray-50 content-section">
+      <div class="section__inner">
+        <header>
+          <h1>관리</h1>
+          <p>
+            인사이트 파악과<br />
+            근태 관리를 손쉽게
+          </p>
+        </header>
+        <div class="img-container">
+          <img
+            class="lg:hidden first"
+            src="@/assets/LandingPage/admin_mobile-1.png"
+            alt="홈페이지 사진1"
+            data-aos="fade-up-right"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="lg:hidden second"
+            src="@/assets/LandingPage/admin_mobile-2.png"
+            alt="홈페이지 사진2"
+            data-aos="fade-up-left"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="hidden lg:block first"
+            src="@/assets/LandingPage/admin_pc-1.png"
+            alt="홈페이지 사진1"
+            data-aos="fade-up-right"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+          <img
+            class="hidden lg:block second"
+            src="@/assets/LandingPage/admin_pc-2.png"
+            alt="홈페이지 사진2"
+            data-aos="fade-up-left"
+            data-aos-duration="1000"
+            data-aos-anchor-placement="bottom-bottom"
+          />
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
 import AOS from "aos"
-import "aos/dist/aos.css"
-
-AOS.init()
 
 export default {
   name: "Home",
-  components: {},
+  setup() {
+    AOS.init()
+  },
 }
 </script>
 
 <style scoped lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap");
-
-* {
-  font-family: "Gowun Batang", serif;
+/* image animation */
+.img-enter-from,
+.img-leave-to {
+  transform: translateY(40px);
+  @apply opacity-0;
 }
-.home {
-  @apply container mt-40 px-4 mx-auto mb-20 grid gap-40;
 
-  img {
-    @apply border-4 border-black;
+.img-enter-active,
+.img-leave-active {
+  @apply transition-all duration-1000 delay-100;
+}
+
+.background-img {
+  position: relative;
+  background-position: center;
+  background-image: url("../assets/LandingPage/handhand.png");
+  height: 100vh;
+  background-size: cover;
+  .img-cover {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
   }
+  .content {
+    transform: translate(-50%, -50%);
+    @apply absolute top-1/2 left-1/2 text-7xl text-white z-10 text-center w-full;
+  }
+}
 
-  article {
-    @apply bg-gray-100 rounded px-4 py-6 md:p-10;
+.sub-text {
+  word-break: keep-all;
+  white-space: pre-wrap;
+  @apply text-center font-bold text-xl lg:text-2xl;
+}
 
-    .title {
-      @apply text-2xl font-bold mb-6 md:text-4xl md:mb-10;
+.icon {
+  .icon-image {
+    @apply mx-auto w-20 h-20;
+  }
+  .icon-explain {
+    @apply mx-10 text-2xl;
+  }
+}
+
+.content-section {
+  @apply flex flex-col gap-4 py-20 lg:py-40 h-screen;
+
+  .section__inner {
+    @apply mx-4 grid gap-10;
+
+    header {
+      @apply grid gap-2;
+
+      h1 {
+        @apply text-blue-600 text-xl font-bold;
+      }
+
+      p {
+        @apply text-2xl font-bold md:text-3xl;
+      }
     }
 
-    .content {
-      @apply grid gap-10 lg:grid-cols-12 lg:gap-6;
-    }
-
-    .item-img-container {
-      @apply w-full rounded-xl lg:col-span-6;
+    .img-container {
+      @apply relative;
 
       img {
-        @apply rounded-lg;
-      }
-    }
-
-    .item-text-container {
-      @apply grid gap-6 lg:col-span-6;
-
-      .item-title {
-        @apply text-xl font-bold mb-2 md:text-2xl;
+        @apply max-w-xs md:max-w-md lg:max-w-xl xl:max-w-3xl 2xl:max-w-4xl shadow-2xl;
       }
 
-      .item-content {
-        @apply text-lg font-medium md:text-xl;
-      }
-    }
-
-    .main-explain {
-      @apply text-xl font-bold md:text-2xl;
-    }
-  }
-
-  .article {
-    @apply bg-gray-100 rounded p-4;
-
-    .explain {
-      @apply text-6xl;
-    }
-
-    .title {
-      @apply text-xl md:text-3xl font-bold;
-    }
-
-    .content {
-      @apply grid grid-cols-12 h-80 gap-6;
-
-      .main-explain {
-        @apply p-1;
-        line-height: 220px;
-      }
-      .item-left-img {
-        @apply col-span-12 md:col-start-1 md:col-end-6 mt-10;
-      }
-      .item-right-text {
-        @apply col-span-12 md:col-start-6 md:col-end-13 grid gap-4;
-
-        .big {
-          @apply md:text-6xl;
-        }
-
-        .medium {
-          @apply md:text-4xl;
-        }
+      img.first {
+        @apply h-96 md:h-auto absolute -top-6 md:-top-32 right-0;
       }
 
-      .item-right-img {
-        @apply col-start-8 col-end-13;
-      }
-      .item-left-text {
-        @apply col-start-1 col-end-8 grid gap-4;
+      img.second {
+        @apply h-96 md:h-auto absolute top-10 left-0;
       }
     }
   }

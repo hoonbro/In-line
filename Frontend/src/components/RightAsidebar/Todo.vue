@@ -23,19 +23,20 @@
     <div class="todo-list">
       <TodoListItem
         v-for="todo in todos"
-        :key="todo.id"
+        :key="todo.todoId"
         :todo="todo"
         @toggleComplete="handleToggleComplete"
         @delete="deleteTodo"
       />
     </div>
   </div>
+  <ConfirmModal ref="confirmModal" :content="['할 일을 삭제할까요?']" />
 </template>
 
 <script>
-import axios from "axios"
-import { reactive, ref, onMounted } from "vue"
+import { reactive, ref, onMounted, computed } from "vue"
 import TodoListItem from "@/components/RightAsidebar/TodoListItem.vue"
+import { useStore } from "vuex"
 
 export default {
   name: "Todo",
@@ -43,7 +44,12 @@ export default {
     TodoListItem,
   },
   setup() {
-    const todos = ref([])
+    // const todos = ref([])
+    const store = useStore()
+    const todos = computed(() => {
+      return store.getters["office/sortedTodosByDone"]
+    })
+    const confirmModal = ref(null)
     const formData = reactive({
       title: "",
       content: "",
@@ -51,30 +57,30 @@ export default {
     })
     const editMode = ref(false)
 
-    const getTodos = async () => {
-      const res = await axios.get("http://localhost:3000/todos")
-      todos.value = res.data
+    const getTodos = () => {
+      store.dispatch("office/getTodos", store.getters["auth/userId"])
     }
 
     const createTodos = async () => {
       if (!formData.title || !formData.content) {
-        alert("내용을 입력하세요")
+        store.commit("landing/addAlertModalList", {
+          type: "error",
+          message: "내용을 입력하세요.",
+        })
         return
       }
 
       try {
-        const res = await axios({
-          // url: "/api/v1/todos",
-          url: "http://localhost:3000/todos",
-          method: "POST",
-          data: {
-            title: formData.title,
-            content: formData.content,
-            day: formData.day,
-            done: false,
-          },
+        const todo = {
+          title: formData.title,
+          content: formData.content,
+          day: formData.day,
+          done: false,
+        }
+        await store.dispatch("office/createTodo", todo)
+        store.commit("landing/addAlertModalList", {
+          message: "할일이 생성되었습니다.",
         })
-        todos.value.push(res.data)
         Object.keys(formData).forEach(key => {
           formData[key] = ""
         })
@@ -91,31 +97,15 @@ export default {
       }
     }
 
-    const handleToggleComplete = async (todoId, currentDone) => {
-      const res = await axios({
-        // url: `/api/v1/todos/${todoId}`,
-        url: `http://localhost:3000/todos/${todoId}`,
-        method: "PATCH",
-        data: {
-          done: !currentDone,
-        },
-      })
-      todos.value.forEach(todo => {
-        if (todo.id === todoId) {
-          todo.done = !todo.done
-        }
-      })
-      console.log(res)
+    const handleToggleComplete = async todoId => {
+      store.dispatch("office/toggleTodoDone", todoId)
     }
 
     const deleteTodo = async todoId => {
-      const res = await axios({
-        // url: `/api/v1/todos/${todoId}`,
-        url: `http://localhost:3000/todos/${todoId}`,
-        method: "DELETE",
-      })
-      console.log(res)
-      todos.value = todos.value.filter(todo => todo.id !== todoId)
+      const ok = await confirmModal.value.show()
+      if (ok) {
+        store.dispatch("office/deleteTodo", todoId)
+      }
     }
 
     onMounted(() => {
@@ -126,6 +116,7 @@ export default {
       todos,
       formData,
       editMode,
+      confirmModal,
       handleAddBtnClick,
       handleToggleComplete,
       deleteTodo,
@@ -156,13 +147,13 @@ export default {
     }
 
     .button-container {
-      @apply flex;
+      @apply flex gap-1;
 
       .form-btn {
         @apply text-sm font-medium text-white flex-1 py-2 flex items-center justify-center rounded-lg;
 
         &.add {
-          @apply bg-blue-800 mr-1;
+          @apply bg-blue-800;
         }
 
         &.cancel {

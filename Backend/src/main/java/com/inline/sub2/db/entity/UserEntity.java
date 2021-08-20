@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -48,6 +47,10 @@ public class UserEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date joinDate;
 
+    @Column(name = "retire_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date retireDate;
+
     @Column(name = "auth")
     private String auth;
 
@@ -55,7 +58,7 @@ public class UserEntity {
     private boolean login;
 
     @Column(name = "room_id")
-    private Long roomId = 1l;
+    private Long roomId;
 
     @Column(name = "dept_id")
     private Long deptId;
@@ -65,4 +68,21 @@ public class UserEntity {
 
     @Column(name = "office_id")
     private Long officeId;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", insertable = false, updatable = false)
+    private RoomEntity roomEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "job_id", insertable = false, updatable = false)
+    private JobEntity jobEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "dept_id", insertable = false, updatable = false)
+    private DeptEntity deptEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "office_id", insertable = false, updatable = false)
+    private OfficeEntity officeEntity;
+
 }

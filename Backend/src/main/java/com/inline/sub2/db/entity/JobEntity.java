@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Getter
@@ -23,5 +25,6 @@ public class JobEntity {
     private String jobName;
 
     @Column(name = "office_id")
-    private Long office_id;
+    private Long officeId;
+
 }

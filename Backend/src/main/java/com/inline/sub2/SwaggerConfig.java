@@ -38,7 +38,7 @@ public class SwaggerConfig {
         responseMessages.add(new ResponseMessageBuilder().code(404).message("페이지를 찾을 수 없습니다.").build());
         return new Docket(DocumentationType.SWAGGER_2).consumes(getConsumeContentTypes()).produces(getProduceContentTypes())
                 .apiInfo(apiInfo()).groupName(version).select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.inline.sub2.api.controller"))
                 .paths(postPaths()).build()
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET,responseMessages);

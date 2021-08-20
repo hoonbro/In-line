@@ -2,68 +2,144 @@
   <aside>
     <div class="infos">
       <p class="hello-message">
-        김병훈님,
+        {{ userName }}님,
         <br />
         안녕하세요! 🙌
       </p>
       <div class="workinfo">
-        <p class="label">오늘 근무 일정</p>
-        <p class="time">09:00 - 18:00</p>
-        <button
-          class="work-btn"
-          :class="{
-            start: workType === 'start',
-            doing: workType === 'doing',
-            done: workType === 'done',
-          }"
-          @click="changeWorkType"
-        >
-          <span class="material-icons-outlined icon">
-            alarm
-          </span>
-          <span v-if="workType === 'start'">업무 시작</span>
-          <span v-else-if="workType === 'doing'">업무 중</span>
-          <span v-else>업무 종료</span>
-        </button>
+        <div class="flex gap-2">
+          <button
+            class="work-btn"
+            :class="{ comein: comeInTime }"
+            @click="comeInOffice"
+          >
+            <span class="material-icons-outlined icon">
+              alarm
+            </span>
+            <span>출근</span>
+            <span>{{ comeInTime || "-" }}</span>
+          </button>
+          <button
+            class="work-btn"
+            :class="{ comeout: comeOutTime }"
+            @click="comeOutOffice"
+          >
+            <span class="material-icons-outlined icon">
+              directions_run
+            </span>
+            <span>퇴근</span>
+            <span>{{ comeOutTime || "-" }}</span>
+          </button>
+        </div>
       </div>
     </div>
     <hr />
     <div class="members">
-      <div class="member online" v-for="i in 4" :key="i">
-        <img :src="`https://picsum.photos/seed/user-1-${i}/40`" alt="프로필" />
-        <div>
-          <p class="name">김병훈</p>
-          <p class="department">Develop</p>
-        </div>
-      </div>
-      <div class="member" v-for="i in 10" :key="i">
-        <img :src="`https://picsum.photos/seed/user-2-${i}/40`" alt="프로필" />
-        <div>
-          <p class="name">김병훈</p>
-          <p class="department">Develop</p>
-        </div>
-      </div>
+      <MemberListItem
+        v-for="member in members"
+        :key="member.userId"
+        :member="member"
+        @click="handleMemberClick(member.userId, member.name)"
+      />
     </div>
   </aside>
+  <!-- Commute Modal -->
+  <ConfirmModal ref="confirmModal" :content="confirmModalContent" />
 </template>
 
 <script>
-import { ref } from "@vue/reactivity"
+import { computed, ref } from "@vue/runtime-core"
+import { useStore } from "vuex"
+import MemberListItem from "@/components/LeftAsidebar/MemberListItem.vue"
+
 export default {
   name: "LeftAsidebar",
-  setup() {
-    const workType = ref("start")
+  components: {
+    MemberListItem,
+  },
+  emits: ["click:openTodoModal"],
+  setup(_, { emit }) {
+    const store = useStore()
+    const userName = computed(() => store.state.auth.user.name)
+    const members = computed(
+      () => store.getters["office/sortedMembersByOnline"]
+    )
+    const commute = computed(() => store.state.auth.commute)
+    const comeInTime = computed(() => {
+      if (commute.value.comeIn) {
+        return `${commute.value.comeIn.slice(0, 2)}시
+        ${commute.value.comeIn.slice(3, 5)}분`
+      } else {
+        return ""
+      }
+    })
+    const comeOutTime = computed(() => {
+      if (commute.value.comeOut) {
+        return `${commute.value.comeOut.slice(0, 2)}시
+        ${commute.value.comeOut.slice(3, 5)}분`
+      } else {
+        return ""
+      }
+    })
 
-    const changeWorkType = () => {
-      const workTypes = ["start", "doing", "done"]
-      const current = workTypes.findIndex(item => {
-        return item === workType.value
-      })
-      workType.value = workTypes[(current + 1) % 3]
+    const confirmModal = ref(null)
+    const confirmModalContent = ref([])
+
+    const comeInOffice = async () => {
+      const now = new Date(Date.now())
+      const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
+
+      confirmModalContent.value = [
+        `현재 시간: ${currentTime}`,
+        "출근하시겠습니까?",
+      ]
+      confirmModal.value.isVisible = true
+      const ok = await confirmModal.value.show()
+      if (ok) {
+        await store.dispatch("auth/comeInOffice")
+        store.commit("landing/addAlertModalList", {
+          type: "success",
+          message: "안녕하세요! 오늘 하루도 화이팅!!",
+        })
+      }
+      confirmModalContent.value = []
     }
+
+    const comeOutOffice = async () => {
+      const now = new Date(Date.now())
+      const currentTime = `${now.getHours()}시 ${now.getMinutes()}분`
+
+      confirmModalContent.value = [
+        `현재 시간: ${currentTime}`,
+        "퇴근하시겠습니까?",
+      ]
+      confirmModal.value.isVisible = true
+      const ok = await confirmModal.value.show()
+      if (ok) {
+        await store.dispatch("auth/comeOutOffice")
+        store.commit("landing/addAlertModalList", {
+          type: "success",
+          message: "오늘 하루도 수고 많으셨어요!",
+        })
+      }
+      confirmModalContent.value = []
+    }
+
+    const handleMemberClick = (userId, userName) => {
+      console.log(userId)
+      emit("click:openTodoModal", { userId, userName })
+    }
+
     return {
-      workType,
-      changeWorkType,
+      userName,
+      members,
+      comeInTime,
+      comeOutTime,
+      comeInOffice,
+      comeOutOffice,
+      confirmModalContent,
+      confirmModal,
+      handleMemberClick,
     }
   },
 }
@@ -78,40 +154,27 @@ aside {
     @apply grid gap-6;
 
     .hello-message {
-      @apply text-lg font-bold;
+      @apply text-xl font-bold;
     }
 
     .workinfo {
-      p {
-        @apply text-lg;
-      }
-
-      .label {
-        @apply font-bold mb-1;
-      }
-
-      .time {
-        @apply font-medium mb-4;
-      }
-
       .work-btn {
-        @apply flex items-center justify-center text-sm font-bold w-full py-2 border rounded outline-none;
+        @apply grid gap-1 content-start text-sm font-bold w-full py-2 border rounded outline-none transition;
 
         .icon {
           font-size: 20px;
-          @apply mr-2;
         }
 
-        &.start {
+        &:hover {
+          @apply bg-blue-200;
+        }
+
+        &.comein {
           @apply border-blue-600 text-blue-600 bg-blue-100;
         }
 
-        &.doing {
-          @apply border-green-600 text-green-600 bg-green-100;
-        }
-
-        &.end {
-          @apply border-gray-600 text-gray-600 bg-gray-100;
+        &.comeout {
+          @apply border-red-600 text-red-600 bg-red-100;
         }
       }
     }
@@ -123,35 +186,6 @@ aside {
 
   .members {
     @apply grid gap-2 overflow-auto;
-
-    .member {
-      @apply flex p-2 relative rounded bg-white items-center select-none cursor-pointer;
-
-      &::before {
-        content: "";
-        @apply absolute z-10 top-2 left-2 w-2 h-2 bg-gray-400 rounded-full;
-      }
-
-      &.online::before {
-        @apply bg-green-400;
-      }
-
-      img {
-        @apply w-9 h-9 object-cover object-center rounded-full mr-2 relative;
-      }
-
-      p {
-        @apply text-sm;
-      }
-
-      .name {
-        @apply mb-1;
-      }
-
-      .department {
-        @apply text-gray-500;
-      }
-    }
   }
 }
 </style>

@@ -1,37 +1,16 @@
-// 영수
-import axios from "axios"
-
 export const landing = {
   namespaced: true,
-  state: () => ({}),
+  state: {
+    alertModalList: [],
+  },
   getters: {},
-  mutations: {},
-  actions: {
-    registerOffice: async (context, formData) => {
-      try {
-        const res = await axios({
-          method: "post",
-          url: "/api/v1/office",
-          data: formData,
-        })
-        return new Promise((resolve, reject) => resolve(res))
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    login: async (context, formData) => {
-      try {
-        const res = await axios({
-          method: "post",
-          url: "/api/v1/users/login",
-          data: formData,
-        })
-        localStorage.setItem("jwt", res.data.accessToken)
-        localStorage.setItem("auth", res.data.userDto.auth)
-        return new Promise(resolve => resolve(res))
-      } catch (error) {
-        console.log(error)
-      }
+  mutations: {
+    addAlertModalList(state, alertModalItem) {
+      state.alertModalList.push({ ...alertModalItem, created: Date.now() })
+      setTimeout(() => {
+        state.alertModalList.shift()
+      }, 5000)
     },
   },
+  actions: {},
 }
