@@ -6,5 +6,3 @@
 - Remove : 파일 삭제
 - Docs: 설명 추가(주석,문서 등)(Docs: README 수정)
 - ETC: 기타(gitignore 등)
-
-f
