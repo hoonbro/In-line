@@ -1,0 +1,60 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'war'
+}
+
+group = 'com.rtc'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest
+            {
+                attributes 'Main-Class': 'com.hoon.chat.ChattingStompApplication'
+            }
+    from {        configurations.compile.collect
+            {
+                it.isDirectory() ? it : zipTree(it)
+            }
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.kurento:kurento-client:6.15.0'
+    implementation 'org.kurento:kurento-utils-js:6.15.0'
+    implementation 'org.webjars:webjars-locator:0.40'
+    implementation 'org.webjars:bootstrap:4.6.0'
+    implementation 'org.webjars.bower:demo-console:1.5.1'
+    implementation 'org.webjars.bower:adapter.js:6.4.0'
+    implementation 'org.webjars.bower:jquery:3.3.1'
+    implementation 'org.webjars.bower:ekko-lightbox:4.0.2'
+    implementation 'org.springframework:spring-websocket:5.3.6'
+    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '4.4.0'
+}
+
+test {
+    useJUnitPlatform()
+}
