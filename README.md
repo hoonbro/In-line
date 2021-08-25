@@ -1,4 +1,6 @@
-## Commit Message
+## 기록들
+[프로젝트 활동 기록(Notion)](https://www.notion.so/binitiger/SSAFY_-2-_7-c80a086175fe43c09e8fc5ad01f0ba8e)
+## Commit Role
 ![image](https://user-images.githubusercontent.com/66583397/126730413-60f85a6c-40dd-4246-a5e7-24015ea3fe0a.png)
 - Fix: 치명적인 기능 오작동 수정(Fix: 회원가입 버튼 클릭 시 이벤트 발생하지 않음)
 - Feat: 새로운 기능 추가(Feat: 회의 참가 요청 메세지 전송)
