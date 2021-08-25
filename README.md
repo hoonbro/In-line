@@ -9,6 +9,8 @@
 
 ### 개발 인원🙎‍♂️
 * 6명
+![image](https://user-images.githubusercontent.com/66583397/130754089-4606b817-10e0-480b-b6d5-fc1891f3487e.png)
+
 
 ### 기술 스택🌈
 #### Front-end
@@ -47,7 +49,7 @@
 ✔️ 추가 예정
 
 ### 기록들 :speech_balloon:
-[프로젝트 활동 기록(Notion)](https://www.notion.so/binitiger/SSAFY_-2-_7-c80a086175fe43c09e8fc5ad01f0ba8e)
+> [프로젝트 활동 기록(Notion)](https://www.notion.so/binitiger/SSAFY_-2-_7-c80a086175fe43c09e8fc5ad01f0ba8e)
 
 ### Commit Role
 ![image](https://user-images.githubusercontent.com/66583397/126730413-60f85a6c-40dd-4246-a5e7-24015ea3fe0a.png)
