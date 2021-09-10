@@ -48,7 +48,7 @@
 3) Infra  
 ✔️ 추가 예정
 
-### 기록들 :speech_balloon:
+### 기록들 :speech_balloon: 
 > [프로젝트 활동 기록(Notion)](https://www.notion.so/binitiger/SSAFY_-2-_7-c80a086175fe43c09e8fc5ad01f0ba8e)
 
 ### Commit Role
