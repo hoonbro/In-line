@@ -111,4 +111,4 @@
 - Update: 기능적으로는 이상이 없지만 보완(Update: Nav bar 가시성 향상)
 - Remove : 파일 삭제
 - Docs: 설명 추가(주석,문서 등)(Docs: README 수정)
-- ETC: 기타(gitignore 등)
+- ETC: 기타(gitignore 등) 
