@@ -14,7 +14,7 @@
 
 ### 기술 스택🌈
 #### Front-end
-* TailwindSS
+* TailwindCSS
 * aos
 * JSON-Server
 * vue3
