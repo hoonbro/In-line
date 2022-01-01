@@ -81,7 +81,7 @@
 ![8 전체 채팅](https://user-images.githubusercontent.com/66583397/135076957-29e8bb94-a53f-4846-849e-9fb6c9f8c3ff.jpg)
 #### 8-1)Todo(등록)
 ![9 todo-1](https://user-images.githubusercontent.com/66583397/135076960-b101a32d-508f-491b-8e28-5e1ff3101f7a.jpg)
-#### 8-2)Todo(수정,삭제)
+#### 8-2)Todo(수정,삭제) 
 ![9 todo-2](https://user-images.githubusercontent.com/66583397/135076963-dfe4e00b-1bfd-4472-84e0-d31207b86c69.jpg)
 #### 9-1)전체 구성원
 ![10 구성원페이지-1](https://user-images.githubusercontent.com/66583397/135076966-4f585fa5-d9af-46db-bdae-b5ac016715fe.jpg)
