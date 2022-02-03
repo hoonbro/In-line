@@ -6,6 +6,7 @@ import com.inline.sub2.db.entity.CommuteEntity;
 import com.inline.sub2.db.entity.UserEntity;
 import com.inline.sub2.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,30 +24,24 @@ import java.util.*;
 @RestController
 @RequestMapping("/users")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    OfficeService officeService;
+    private final OfficeService officeService;
 
-    @Autowired
-    DeptService deptService;
+    private final DeptService deptService;
 
-    @Autowired
-    JobService jobService;
+    private final JobService jobService;
 
-    @Autowired
-    CommuteService commuteService;
+    private final CommuteService commuteService;
 
-    @Autowired
-    EmailService emailService;
-    @Autowired
-    JwtUtil jwtUtil;
+    private final EmailService emailService;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     @ApiOperation(value = "office별 전체 회원 리스트를 반환한다.", response = List.class)
@@ -250,11 +245,11 @@ public class UserController {
         String filePath = "/home/ubuntu/images/" + name;
 
         try (
-            // 파일 저장할 경로 + 파일명을 파라미터로 넣고 fileOutputStream 객체 생성하고
+                // 파일 저장할 경로 + 파일명을 파라미터로 넣고 fileOutputStream 객체 생성하고
 
-            FileOutputStream fos = new FileOutputStream(filePath);
-            // file로 부터 inputStream을 가져온다.
-            InputStream is = file.getInputStream();) {
+                FileOutputStream fos = new FileOutputStream(filePath);
+                // file로 부터 inputStream을 가져온다.
+                InputStream is = file.getInputStream();) {
 
             // 파일을 읽을 크기 만큼의 buffer를 생성하고
             // ( 보통 1024, 2048, 4096, 8192 와 같이 배수 형식으로 버퍼의 크기를 잡는 것이 일반적이다.)
