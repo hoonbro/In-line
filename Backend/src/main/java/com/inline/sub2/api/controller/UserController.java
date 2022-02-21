@@ -29,10 +29,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final DeptService deptService;
-
-    private final JobService jobService;
-
     private final CommuteService commuteService;
 
     private final EmailService emailService;
