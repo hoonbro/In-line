@@ -48,6 +48,10 @@
 3) Infra  
 ✔️ 추가 예정
 
+### 프로젝트 구조
+![아키텍쳐](https://user-images.githubusercontent.com/66583397/164008514-6e3ad034-4ba0-40c9-8ba1-4941dcf91a3a.png)
+
+
 ### 구현 화면(설명 추가 예정)
 #### 1-1)랜딩 페이지
 ![1 홈화면-1](https://user-images.githubusercontent.com/66583397/135076926-bb28f2cc-d852-4e52-b80d-30cef32c70c3.jpg)
