@@ -55,7 +55,7 @@
 ### 구현 화면(설명 추가 예정)
 #### 1-1)랜딩 페이지
 ![1 홈화면-1](https://user-images.githubusercontent.com/66583397/135076926-bb28f2cc-d852-4e52-b80d-30cef32c70c3.jpg)
-#### 1-2)랜딩 페이지(전체)
+#### 1-2)랜딩 페이지(전체) 
 ![1 홈화면-2](https://user-images.githubusercontent.com/66583397/135076929-15b21225-59b7-458f-a127-dd8c2e47f568.jpg)
 #### 2)팀 소개 화면
 ![2 팀소개](https://user-images.githubusercontent.com/66583397/135076932-1bfd4dd9-5727-49cd-af1e-e2982eac7262.jpg)
