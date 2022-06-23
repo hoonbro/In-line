@@ -12,7 +12,7 @@
 ![image](https://user-images.githubusercontent.com/66583397/130754089-4606b817-10e0-480b-b6d5-fc1891f3487e.png)
 
 
-### 기술 스택🌈
+### 기술 스택🌈 
 #### Front-end
 * TailwindCSS
 * aos
